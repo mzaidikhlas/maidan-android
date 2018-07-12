@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:windowTranslucentStatus">true</item>
         <!--<item name="android:windowTranslucentNavigation">true</item>-->
@@ -10,6 +10,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="maidan_theme" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="maidan_theme" parent="Theme.AppCompat.Light.NoActionBar" />
 
 </resources>
