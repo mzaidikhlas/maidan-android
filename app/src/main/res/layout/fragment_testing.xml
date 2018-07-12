@@ -1,0 +1,45 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TestingFragment">
+
+    <TextView
+        android:id="@+id/latitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="196dp"
+        android:text="Latitude:"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/latitude_textview"
+        android:layout_width="66dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/longitude_textview"
+        android:layout_alignTop="@+id/latitude"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/longitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Longitude:"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/longitude_textview"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/longitude"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/longitude"
+        android:textSize="16sp" />
+
+</RelativeLayout>
