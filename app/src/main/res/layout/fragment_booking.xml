@@ -25,9 +25,11 @@
         android:layout_marginBottom="32dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:background="@drawable/light_green_to_dark_green_1"
         android:elevation="7dp"
         android:text="Search"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
