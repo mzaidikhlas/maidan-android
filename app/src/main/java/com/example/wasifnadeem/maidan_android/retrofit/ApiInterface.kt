@@ -1,4 +1,4 @@
-package com.example.wasifnadeem.maidan_android
+package com.example.wasifnadeem.maidan_android.retrofit
 
 import retrofit2.Call
 import retrofit2.http.*
