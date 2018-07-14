@@ -1,0 +1,25 @@
+package com.example.wasifnadeem.maidan_android
+
+import retrofit2.Call
+import retrofit2.http.*
+
+interface ApiInterface {
+    //User Routes
+    @GET("user")
+        fun getAllUsers(): Call<ApiResponse>
+
+    @GET("user/{id}")
+        fun getUserById(@Path("id") id: Int): Call<ApiResponse>
+
+    @POST("user")
+        fun createUser(@Body id: Int): Call<ApiResponse>
+
+    @DELETE("user/{id}")
+        fun deleteUser(@Path("id") id: Int): Call<ApiResponse>
+
+    //Booking Routes
+
+    //Venue Routes
+
+    //Transaction Routes
+}
