@@ -11,6 +11,7 @@ import com.example.wasifnadeem.maidan_android.R
 import com.example.wasifnadeem.maidan_android.models.User
 import com.example.wasifnadeem.maidan_android.retrofit.ApiInterface
 import com.example.wasifnadeem.maidan_android.retrofit.ApiResponse
+import com.example.wasifnadeem.maidan_android.retrofit.PayloadFormat
 import com.example.wasifnadeem.maidan_android.retrofit.RetrofitClient
 import com.google.android.gms.common.api.Api
 import retrofit2.Call
@@ -21,7 +22,7 @@ import java.util.ArrayList
 
 class HomeFragment : Fragment() {
 
-    private lateinit var users: ArrayList<User>
+    private lateinit var users: ArrayList<PayloadFormat>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -39,13 +40,17 @@ class HomeFragment : Fragment() {
         call.enqueue(object : Callback<ApiResponse>{
             override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
                 Log.d("Error", t!!.message)
+                throw t
             }
 
             override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
                 Log.d("Response check", "Aya hai")
-                if (response!!.isSuccessful) {
+                Log.d("Response check2", response!!.body().toString())
+                if (response.isSuccessful) {
                     users = ArrayList()
-                    users = response.body()!!.getPayload()
+                    users = response.body()!!.ge
+                    Log.d("UsersData", users.toString())
+
                 }
             }
         });
