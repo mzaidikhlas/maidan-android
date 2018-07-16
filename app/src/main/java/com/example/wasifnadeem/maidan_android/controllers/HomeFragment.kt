@@ -8,7 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.wasifnadeem.maidan_android.R
+import com.example.wasifnadeem.maidan_android.models.Booking
 import com.example.wasifnadeem.maidan_android.models.User
+import com.example.wasifnadeem.maidan_android.models.UserRecord
+import com.example.wasifnadeem.maidan_android.models.Venue
 import com.example.wasifnadeem.maidan_android.retrofit.ApiInterface
 import com.example.wasifnadeem.maidan_android.retrofit.ApiResponse
 import com.example.wasifnadeem.maidan_android.retrofit.PayloadFormat
@@ -22,7 +25,8 @@ import java.util.ArrayList
 
 class HomeFragment : Fragment() {
 
-    private lateinit var users: ArrayList<PayloadFormat>
+    private var payload: ArrayList<PayloadFormat>? = null
+    private var payloadData: Any? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -39,18 +43,36 @@ class HomeFragment : Fragment() {
 
         call.enqueue(object : Callback<ApiResponse>{
             override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
-                Log.d("Error", t!!.message)
-                throw t
+                Log.d("Error", t!!.toString())
+                throw error(t.message!!)
             }
 
             override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
-                Log.d("Response check", "Aya hai")
-                Log.d("Response check2", response!!.body().toString())
-                if (response.isSuccessful) {
-                    users = ArrayList()
-                    users = response.body()!!.ge
-                    Log.d("UsersData", users.toString())
+                Log.d("ApiResponse", "Aya hai")
+                if (response!!.isSuccessful) {
+                    if (response.body()!!.getStatusCode() == 200) {
+                        Log.d("ApiResponse", response.body()!!.toString())
 
+                        payload = response.body()!!.getPayload()
+                        Log.d("ApiResponsePayload", payload!!.toString())
+
+                        if (response.body()!!.getType() == "User" ) {
+//                            payloadData = response.body()!!.getPayload()[0].getData() as User
+//                            Log.d("ApiResponsePayloadData", payloadData.toString())
+
+                            var a: Any? = null
+                            val u: Any = User("null","Yoo","null",3131212,3213212,"null", UserRecord("null"))
+
+                            a = u as User
+                            Log.d("ApiTesting",a.getName())
+//                            Log.d("ApiTestingPayload", name)
+                        }
+                        else throw error("The requested data is not compatible with this fragment")
+
+                    } else {
+                        Log.d("ApiResponse", "Nahe aya")
+                        throw error(response.body()!!.getMessage())
+                    }
                 }
             }
         });
