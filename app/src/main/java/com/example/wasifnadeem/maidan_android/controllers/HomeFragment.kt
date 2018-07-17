@@ -6,22 +6,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.example.wasifnadeem.maidan_android.R
-import com.example.wasifnadeem.maidan_android.models.Booking
 import com.example.wasifnadeem.maidan_android.models.User
-import com.example.wasifnadeem.maidan_android.models.UserRecord
-import com.example.wasifnadeem.maidan_android.models.Venue
 import com.example.wasifnadeem.maidan_android.retrofit.ApiInterface
 import com.example.wasifnadeem.maidan_android.retrofit.ApiResponse
 import com.example.wasifnadeem.maidan_android.retrofit.PayloadFormat
 import com.example.wasifnadeem.maidan_android.retrofit.RetrofitClient
-import com.google.android.gms.common.api.Api
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.ArrayList
-
 
 class HomeFragment : Fragment() {
 
@@ -48,24 +43,21 @@ class HomeFragment : Fragment() {
             }
 
             override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
-                Log.d("ApiResponse", "Aya hai")
+
                 if (response!!.isSuccessful) {
                     if (response.body()!!.getStatusCode() == 200) {
-                        Log.d("ApiResponse", response.body()!!.toString())
-
                         payload = response.body()!!.getPayload()
                         Log.d("ApiResponsePayload", payload!!.toString())
 
                         if (response.body()!!.getType() == "User" ) {
-//                            payloadData = response.body()!!.getPayload()[0].getData() as User
-//                            Log.d("ApiResponsePayloadData", payloadData.toString())
+                            val gson = Gson()
 
-                            var a: Any? = null
-                            val u: Any = User("null","Yoo","null",3131212,3213212,"null", UserRecord("null"))
+                            payloadData = response.body()!!.getPayload()[0].getData()
 
-                            a = u as User
-                            Log.d("ApiTesting",a.getName())
-//                            Log.d("ApiTestingPayload", name)
+                            val jsonObject = gson.toJsonTree(payloadData).asJsonObject
+                            payloadData = gson.fromJson(jsonObject, User::class.java)
+
+                            Log.d("ApiResponsePayloadData", (payloadData as User).getName())
                         }
                         else throw error("The requested data is not compatible with this fragment")
 
@@ -76,6 +68,11 @@ class HomeFragment : Fragment() {
                 }
             }
         });
-
     }
 }
+//var a: Any? = null
+//val u: Any = User("null","Yoo","null",3131212,3213212,"null", UserRecord("null"))
+//
+//a = u as User
+//Log.d("ApiTesting",a.getName())
+////                            Log.d("ApiTestingPayload", name)
