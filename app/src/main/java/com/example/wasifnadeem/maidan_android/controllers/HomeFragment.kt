@@ -27,7 +27,7 @@ class HomeFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_home, container, false)
-            apiCall()
+           // apiCall()
         return view
     }
     private fun apiCall (){
