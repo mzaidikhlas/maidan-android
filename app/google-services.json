@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "889703628133",
+    "firebase_url": "https://maidan-d79d9.firebaseio.com",
+    "project_id": "maidan-d79d9",
+    "storage_bucket": "maidan-d79d9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889703628133:android:46a9a2bbb2d60db1",
+        "android_client_info": {
+          "package_name": "com.example.wasifnadeem.maidan_android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "889703628133-8jen6p1gped0re8nj6dvqr66aegkju1f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wasifnadeem.maidan_android",
+            "certificate_hash": "ad0f5f2d20fda6e1cad4c598f89c55c66005c575"
+          }
+        },
+        {
+          "client_id": "889703628133-vrfgiksn7dmgh8lgehuni86a89m1tsi9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpjxwnHgr-GuR6-wIf6942Q4mv8HOgSYM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889703628133-vrfgiksn7dmgh8lgehuni86a89m1tsi9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
