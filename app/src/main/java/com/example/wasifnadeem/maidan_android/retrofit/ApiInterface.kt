@@ -17,9 +17,15 @@ interface ApiInterface {
     @DELETE("user/{id}")
         fun deleteUser(@Path("id") id: Int): Call<ApiResponse>
 
+
+    @POST("user/testing")
+        fun testing(@Header("Authorization") idToken: String): Call<ApiResponse>
+
     //Booking Routes
 
     //Venue Routes
 
     //Transaction Routes
+
+
 }
