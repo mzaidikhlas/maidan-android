@@ -5,7 +5,7 @@
     android:layout_marginLeft="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TestingFragment">
+    tools:context="com.maidan.android.client.TestingFragment">
 
     <TextView
         android:id="@+id/latitude"

@@ -4,4 +4,9 @@
     <string name="title_book">Book</string>
     <string name="title_favorites">Favorites</string>
     <string name="title_settings">Settings</string>
+    <string name="facebook_sign_in">Facebook Sign In</string>
+
+    <!--Facebook-->
+    <string name="facebook_app_id">2263000640383569</string>
+    <string name="fb_login_protocol_scheme">fb2263000640383569</string>
 </resources>

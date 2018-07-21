@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:889703628133:android:46a9a2bbb2d60db1",
+        "mobilesdk_app_id": "1:889703628133:android:ac5c27bdbdcc0ded",
         "android_client_info": {
-          "package_name": "com.example.wasifnadeem.maidan_android"
+          "package_name": "com.maidan.android.client"
         }
       },
       "oauth_client": [
         {
-          "client_id": "889703628133-8jen6p1gped0re8nj6dvqr66aegkju1f.apps.googleusercontent.com",
+          "client_id": "889703628133-d46cf4mrffh0kjfnkftrq3jpv06a4r26.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.wasifnadeem.maidan_android",
+            "package_name": "com.maidan.android.client",
             "certificate_hash": "ad0f5f2d20fda6e1cad4c598f89c55c66005c575"
           }
         },
