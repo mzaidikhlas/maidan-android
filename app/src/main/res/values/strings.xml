@@ -9,4 +9,7 @@
     <!--Facebook-->
     <string name="facebook_app_id">2263000640383569</string>
     <string name="fb_login_protocol_scheme">fb2263000640383569</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

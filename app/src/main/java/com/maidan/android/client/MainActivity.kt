@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var mAuth: FirebaseAuth
+    //private lateinit var mAuth: FirebaseAuth
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
@@ -37,17 +37,17 @@ class MainActivity : AppCompatActivity() {
         false
     }
 
-    override fun onStart() {
-        super.onStart()
-        val currentUser: FirebaseUser = mAuth.currentUser!!
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        val currentUser: FirebaseUser = mAuth.currentUser!!
+//    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mAuth = FirebaseAuth.getInstance()
+//        mAuth = FirebaseAuth.getInstance()
 
 //        signInWithEmailPassword("waif.nadeem90@gmail.com", "passwordNeedToBeSecure")
 
