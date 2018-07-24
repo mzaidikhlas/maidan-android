@@ -26,7 +26,7 @@ class CategoryRecyclerviewAdapter(val categoryList: ArrayList<Category>) : Recyc
     }
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val textViewName = itemView.findViewById(R.id.categoryTitle) as TextView ;
+        val textViewName = itemView.findViewById(R.id.categoryText) as TextView ;
         val imageViewIcon = itemView.findViewById(R.id.categoryIcon) as ImageView;
     }
 }

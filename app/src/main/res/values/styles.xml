@@ -12,4 +12,33 @@
 
     <style name="maidan_theme" parent="Theme.AppCompat.Light.NoActionBar" />
 
+    <style name="radius">
+        <item name="android:background">@drawable/radius</item>
+    </style>
+
+
+    <style name="Recycler" parent="Theme.AppCompat">
+        <item name="android:background">@drawable/category_btn_state</item>
+        <item name="android:shadowColor">#60F282</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:fontFamily">Monteserrat</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="button" parent="Theme.AppCompat">
+        <item name="android:background">@drawable/gradient</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:fontFamily">Raleway</item>
+        <item name="android:textColor">@color/white</item>
+
+    </style>
+
+    <style name="DatePickerTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">#42DE95</item>
+
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+
 </resources>

@@ -30,11 +30,22 @@ import com.google.android.gms.maps.model.Marker
 import android.location.LocationManager
 import android.provider.Settings
 import android.support.v7.app.AlertDialog
+import android.widget.Button
+import android.widget.FrameLayout
+import kotlinx.android.synthetic.main.fragment_booking.*
 
 
 class BookingFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
+
+    //layouts
+    private lateinit var mapView: FrameLayout
+    private lateinit var date: Button
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var search: Button
+
+    private lateinit var myDataSet: ArrayList<Category> ;
 
     private var latitude: Double = 0.toDouble();
     private var longitude: Double = 0.toDouble();
@@ -52,9 +63,6 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
         private const val MY_PERMISSION_CODE: Int = 1000
     }
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var myDataSet: ArrayList<Category> ;
-
     private val isLocationEnabled: Boolean
         get() {
             locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -62,9 +70,14 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
         }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState:    Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_booking, container, false)
+
+        mapView = view.findViewById(R.id.map)
+        date = view.findViewById(R.id.date_btn)
+        search = view.findViewById(R.id.search_btn)
+        recyclerView = view.findViewById(R.id.category);
 
         myDataSet = ArrayList();
 
@@ -81,27 +94,25 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
         myDataSet.add(Category(null, "Something"))
         myDataSet.add(Category(null, "Something"))
 
-
-        recyclerView = view.findViewById(R.id.my_recycler_view);
         recyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayout.HORIZONTAL, false);
         recyclerView.adapter = CategoryRecyclerviewAdapter(myDataSet);
 
-        checkLocation()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if (checkLocationPermission()){
-                buildLocationRequest();
-                buildLocationCallback()
-                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
-                fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper())
-            }
-            else{
-                buildLocationRequest();
-                buildLocationCallback()
-                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
-                fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper())
-            }
+       if  (checkLocation()) {
+           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+               if (checkLocationPermission()) {
+                   buildLocationRequest();
+                   buildLocationCallback()
+                   fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
+                   fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+               } else {
+                   buildLocationRequest();
+                   buildLocationCallback()
+                   fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
+                   fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+               }
 
-        }
+           }
+       }
         return view;
     }
 
