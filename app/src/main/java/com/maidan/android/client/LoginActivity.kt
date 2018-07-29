@@ -49,13 +49,14 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        //layout
+        loginButtonFB = findViewById(R.id.button_facebook_login);
+        loginButtonGoogle = findViewById(R.id.button_google_login);
+
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
 
         if (user == null){
-            loginButtonFB = findViewById(R.id.button_facebook_login);
-            loginButtonGoogle = findViewById(R.id.button_google_login);
-
             //Google
             loginButtonGoogle.setOnClickListener {
                 View.OnClickListener {
@@ -78,7 +79,6 @@ class LoginActivity : AppCompatActivity() {
             };
         }
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 

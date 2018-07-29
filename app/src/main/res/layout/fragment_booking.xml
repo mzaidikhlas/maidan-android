@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.maidan.android.client.controllers.HomeFragment">
 
+    <!--Google Maps-->
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -19,66 +20,84 @@
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/date_btn"
-        android:background="@drawable/radius"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:drawableRight="@drawable/calendar"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="40dp"
-        android:fontFamily="Raleway"
-        android:textColor="@color/dateColor"
-        android:textStyle="bold"
-        android:textAlignment="textStart"
-        android:textSize="16sp"
-        android:layout_marginLeft="20dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:autoSizeTextType="uniform"
-        android:text="@string/pick_date"
-
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/category"
+    <!--Header-->
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/bookingHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/search_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3"
-        app:layout_constraintVertical_bias="0.973">
+        app:layout_constraintTop_toTopOf="parent">
 
-    </android.support.v7.widget.RecyclerView>
+        <Button
+            android:id="@+id/date_btn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="40dp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/radius"
+            android:drawableRight="@drawable/calendar"
+            android:fontFamily="Raleway"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/pick_date"
+            android:textAlignment="textStart"
+            android:textColor="@color/dateColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/search_btn"
-        style="@style/button"
-        android:layout_width="0dp"
-        android:layout_height="59dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:autoSizeTextType="uniform"
-        android:text="SEARCH"
-        android:paddingRight="20dp"
-        android:drawableRight="@drawable/left_arrow"
+    </android.support.constraint.ConstraintLayout>
+
+    <!--Footer-->
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/bookingFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.52"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/search_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button3"
+            app:layout_constraintVertical_bias="0.973">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <Button
+            android:id="@+id/search_btn"
+            style="@style/button"
+            android:layout_width="0dp"
+            android:layout_height="59dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:autoSizeTextType="uniform"
+            android:drawableRight="@drawable/left_arrow"
+            android:paddingRight="20dp"
+            android:text="SEARCH"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.52"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.maidan.android.client.controllers
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,8 +17,6 @@ import com.maidan.android.client.R
 import com.maidan.android.client.adapter.CategoryRecyclerviewAdapter
 import com.maidan.android.client.models.Category
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.LatLng
 import android.location.Location
 import android.os.Build
 import android.os.Looper
@@ -25,27 +24,44 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.Marker
 import android.location.LocationManager
 import android.provider.Settings
 import android.support.v7.app.AlertDialog
 import android.widget.Button
 import android.widget.FrameLayout
-import kotlinx.android.synthetic.main.fragment_booking.*
-
+import com.google.android.gms.maps.model.*
+import com.google.gson.Gson
+import com.maidan.android.client.models.Venue
+import com.maidan.android.client.retrofit.ApiInterface
+import com.maidan.android.client.retrofit.ApiResponse
+import com.maidan.android.client.retrofit.PayloadFormat
+import com.maidan.android.client.retrofit.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.util.*
 
 class BookingFragment : Fragment(), OnMapReadyCallback {
 
+    //Google Maps
     private lateinit var mMap: GoogleMap
+    private lateinit var markerOptions: MarkerOptions
+
+    //Log Tag
+    private val TAG = "Venues"
 
     //layouts
     private lateinit var mapView: FrameLayout
     private lateinit var date: Button
     private lateinit var recyclerView: RecyclerView
-    private lateinit var search: Button
+    private lateinit var searchBtn: Button
+    private lateinit var datePicker: DatePickerDialog
 
-    private lateinit var myDataSet: ArrayList<Category> ;
+    private lateinit var myDataSet: ArrayList<Category>
+    private lateinit var venues: ArrayList<Venue>
+
+    //Api Call Response
+    private var payload: ArrayList<PayloadFormat>? = null
 
     private var latitude: Double = 0.toDouble();
     private var longitude: Double = 0.toDouble();
@@ -76,14 +92,30 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
 
         mapView = view.findViewById(R.id.map)
         date = view.findViewById(R.id.date_btn)
-        search = view.findViewById(R.id.search_btn)
+        searchBtn = view.findViewById(R.id.search_btn)
         recyclerView = view.findViewById(R.id.category);
+
+        //calender code
+        date.setOnClickListener {
+            val c = Calendar.getInstance()
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
+
+            datePicker = DatePickerDialog(context, R.style.DatePickerTheme, DatePickerDialog.OnDateSetListener { p0, p1, p2, p3 ->
+                Log.d("P0", p0.toString());
+                Log.d("P1", p1.toString());
+                Log.d("P2", p2.toString());
+                Log.d("P3", p3.toString());
+            }, year, month, day)
+            datePicker.show()
+        }
 
         myDataSet = ArrayList();
 
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
+        myDataSet.add(Category(null, "FootBall"))
+        myDataSet.add(Category(null, "Hockey"))
+        myDataSet.add(Category(null, "Cricket"))
         myDataSet.add(Category(null, "Something"))
         myDataSet.add(Category(null, "Something"))
         myDataSet.add(Category(null, "Something"))
@@ -110,9 +142,15 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
                }
-
            }
        }
+
+        //Search Button click listner
+        searchBtn.setOnClickListener {
+            Log.d(TAG, "search btn")
+            onSearchClick()
+        }
+
         return view;
     }
 
@@ -121,6 +159,68 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
 
         val fragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment ;
         fragment.getMapAsync(this);
+    }
+
+    private fun onSearchClick(){
+        //val fragment = childFragmentManager.findFragmentById(R.id.bookingFooter) as SupportMapFragment
+        Log.d(TAG, "search btn click liestner")
+        val venueFragment = VenueFragment()
+        val args = Bundle()
+        args.putSerializable("venues", venues)
+
+        venueFragment.arguments = args
+
+        childFragmentManager.beginTransaction().addToBackStack("booking fragment").add(R.id.bookingFooter, venueFragment).commit()
+    }
+
+    //Getting all values according to recyclerview selected items
+    private fun setMarkers(categoryName: String){
+        val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
+        val call: Call<ApiResponse> = apiService.getVenues(categoryName)
+        venues = ArrayList()
+
+        call.enqueue(object: Callback<ApiResponse>{
+            override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
+                Log.d(TAG, t.toString())
+            }
+
+            override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
+                if (response!!.isSuccessful){
+                    if (response.body()!!.getStatusCode() == 200){
+                        Log.d(TAG, "Response")
+
+                        if (response.body()!!.getType() == "Venue"){
+                            val gson = Gson()
+                            payload = response.body()!!.getPayload()
+
+                            var venue: Venue? = null
+                            Log.d(TAG, "Payload$payload")
+
+                            for (item: PayloadFormat in payload!!){
+                                val jsonObject = gson.toJsonTree(item.getData()).asJsonObject
+                                Log.d(TAG, "Json$jsonObject")
+                                venue = gson.fromJson(jsonObject, Venue::class.java)
+
+                                Log.d(TAG, venue.toString())
+
+                                markerOptions = MarkerOptions()
+                                        .position(LatLng(venue!!.getLocation().getLatitude(), venue.getLocation().getLongitude()))
+                                        .title(venue.getName())
+                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+
+                                mMap.addMarker(markerOptions)
+
+                                venues.add(venue)
+                            }
+                        }
+
+                    }else {
+                        Log.d(TAG, "Error Response")
+                        Log.d(TAG, response.body()!!.getMessage())
+                    }
+                }
+            }
+        });
 
     }
 
@@ -225,6 +325,8 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mMap.isMyLocationEnabled = true
+                Log.d(TAG, "IDhr aya hai")
+                setMarkers("Cricket")
             }
         }
         else

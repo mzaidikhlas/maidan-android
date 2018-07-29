@@ -1,15 +1,17 @@
 package com.maidan.android.client.models
 
+import java.io.Serializable
+
 data class Venue(private var name: String, private var location: Location, private var pictures: ArrayList<String>,
                  private var verified: Boolean, private var amenities: Amenities, private var reviews: Reviews, private var owner: User,
                  private var activityType: String, private var rate: Rate, private var minBookingHour: Int,
-                 private var createdAt: String, private var updatedAt: String) {
+                 private var createdAt: String, private var updatedAt: String): Serializable {
 
     //Getters
     fun getName(): String{return this.name}
     fun getLocation(): Location {return this.location}
     fun getPictures(): ArrayList<String>{return this.pictures}
-    fun getVerifies(): Boolean{return this.verified}
+    fun getVerified(): Boolean{return this.verified}
     fun getAmenities(): Amenities {return this.amenities}
     fun getReviews(): Reviews {return this.reviews}
     fun getOwner(): User {return this.owner}
@@ -23,7 +25,7 @@ data class Venue(private var name: String, private var location: Location, priva
     fun setName(name: String){this.name = name}
     fun setLocation(location: Location){this.location = location}
     fun setPictures(pictures: ArrayList<String>){this.pictures = pictures}
-    fun setVerifies(verified: Boolean){this.verified = verified}
+    fun setVerified(verified: Boolean){this.verified = verified}
     fun setAmenities(amenities: Amenities){this.amenities = amenities}
     fun setReviews(reviews: Reviews){this.reviews = reviews}
     fun setOwner(owner: User){this.owner = owner}

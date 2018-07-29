@@ -15,4 +15,5 @@
 
     <!--Date picker-->
     <string name="pick_date">SELECT DATE</string>
+    <string name="pickaground">pickaground</string>
 </resources>
