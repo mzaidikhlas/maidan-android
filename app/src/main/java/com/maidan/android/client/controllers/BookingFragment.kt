@@ -46,12 +46,12 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
     //Google Maps
     private lateinit var mMap: GoogleMap
     private lateinit var markerOptions: MarkerOptions
+    private lateinit var mapView: FrameLayout
 
     //Log Tag
     private val TAG = "Venues"
 
     //layouts
-    private lateinit var mapView: FrameLayout
     private lateinit var date: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchBtn: Button
@@ -90,7 +90,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_booking, container, false)
 
-        mapView = view.findViewById(R.id.map)
+        mapView = view.findViewById(R.id.mapBooking)
         date = view.findViewById(R.id.date_btn)
         searchBtn = view.findViewById(R.id.search_btn)
         recyclerView = view.findViewById(R.id.category);
@@ -157,7 +157,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment ;
+        val fragment = childFragmentManager.findFragmentById(R.id.mapBooking) as SupportMapFragment ;
         fragment.getMapAsync(this);
     }
 
@@ -170,7 +170,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
 
         venueFragment.arguments = args
 
-        childFragmentManager.beginTransaction().addToBackStack("booking fragment").add(R.id.bookingFooter, venueFragment).commit()
+        fragmentManager!!.beginTransaction().addToBackStack("booking fragment").replace(R.id.fragment_layout, venueFragment).commit()
     }
 
     //Getting all values according to recyclerview selected items
@@ -206,7 +206,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
                                 markerOptions = MarkerOptions()
                                         .position(LatLng(venue!!.getLocation().getLatitude(), venue.getLocation().getLongitude()))
                                         .title(venue.getName())
-                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
 
                                 mMap.addMarker(markerOptions)
 
@@ -240,7 +240,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
                 val markerOptions = MarkerOptions()
                         .position(latLng)
                         .title("Your position")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
                 mMarker = mMap.addMarker(markerOptions)
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(11f))
@@ -324,12 +324,11 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
         mMap = googleMap
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mMap.isMyLocationEnabled = true
+
                 Log.d(TAG, "IDhr aya hai")
                 setMarkers("Cricket")
             }
         }
-        else
-            mMap.isMyLocationEnabled = true
+
     }
 }

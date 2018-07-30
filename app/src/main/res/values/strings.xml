@@ -14,6 +14,18 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!--Date picker-->
+    <!--Application View-->
     <string name="pick_date">SELECT DATE</string>
-    <string name="pickaground">pickaground</string>
+    <string name="pickaground">PICK A GROUND</string>
+    <string name="VenueName">MODEL TOWN WHITES</string>
+    <string name="SelectDate">Select Date</string>
+
+    <!-- Dropdown list -->
+    <string-array name="match_overs">
+        <item>20 overs</item>
+        <item>10 overs</item>
+        <item>5 overs</item>
+    </string-array>
+
+    <string name="Book">BOOK</string>
 </resources>

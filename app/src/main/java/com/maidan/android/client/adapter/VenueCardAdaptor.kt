@@ -1,16 +1,21 @@
 package com.maidan.android.client.adapter
 
+import android.os.Bundle
+import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.maidan.android.client.R
+import com.maidan.android.client.controllers.DetailedVenueFragment
 import com.maidan.android.client.models.Venue
+import com.squareup.picasso.Picasso
 import java.util.ArrayList
 
-class VenueCardAdaptor(private val venues: ArrayList<Venue>) : RecyclerView.Adapter<VenueCardAdaptor.ViewHolder>() {
+class VenueCardAdaptor(private val venues: ArrayList<Venue>, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<VenueCardAdaptor.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.venue_card, parent, false)
@@ -27,6 +32,19 @@ class VenueCardAdaptor(private val venues: ArrayList<Venue>) : RecyclerView.Adap
         holder.name.text = venue.getName()
         holder.address.text = venue.getLocation().getArea()
         holder.price.text = venue.getRate().getPerHrRate().toString()
+        Picasso.get().load(R.drawable.sample).into(holder.imageViewIcon)
+
+        holder.itemView.setOnClickListener {
+            Log.d("VenueCardAdapter", venue.toString())
+
+            val detailedVenueFragment = DetailedVenueFragment()
+            val args = Bundle()
+            args.putSerializable("venue", venue)
+
+            detailedVenueFragment.arguments = args
+
+            fragmentManager.beginTransaction().addToBackStack("venue fragment").replace(R.id.fragment_layout, detailedVenueFragment).commit()
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

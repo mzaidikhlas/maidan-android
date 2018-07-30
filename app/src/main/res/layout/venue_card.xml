@@ -22,10 +22,10 @@
 
             <ImageView
                 android:id="@+id/ground"
+                android:contentDescription="Venue title"
                 android:layout_width="0dp"
                 android:layout_height="110dp"
                 android:layout_marginBottom="20dp"
-                android:src="@drawable/sample"
                 app:layout_constraintBottom_toTopOf="@+id/type"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -77,6 +77,8 @@
             <View
                 android:id="@+id/divider"
                 style="@style/Divider"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
