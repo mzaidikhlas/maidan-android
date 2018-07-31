@@ -5,43 +5,36 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import android.widget.TextView
-import com.facebook.*
-import com.maidan.android.client.retrofit.ApiInterface
-import com.maidan.android.client.retrofit.ApiResponse
-import com.maidan.android.client.retrofit.RetrofitClient
+import android.widget.Toast
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import com.facebook.login.LoginResult
-import com.facebook.FacebookException
-import com.facebook.FacebookCallback
-import com.google.firebase.auth.*
-import android.widget.Toast
-import com.facebook.login.LoginManager
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.AuthResult
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.*
+import com.maidan.android.client.retrofit.ApiInterface
+import com.maidan.android.client.retrofit.ApiResponse
+import com.maidan.android.client.retrofit.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
-class LoginActivity : AppCompatActivity() {
+class SignupActivity : AppCompatActivity() {
 
-    private var TAG = "SignIn"
+    private var TAG = "Signup"
 
     //layout
-    private lateinit var loginBtnFB: Button
-    private lateinit var loginBtnGoogle: Button
-    private lateinit var loginBtnEmail: Button
-    private lateinit var signupTxt: TextView
-
-    private lateinit var userEmailTxt: TextView
-    private lateinit var passwordTxt: TextView
+    private lateinit var signupBtn: Button
+    private lateinit var facebookBtn: Button
+    private lateinit var googleBtn: Button
 
     //Firebase
     private lateinit var mAuth: FirebaseAuth
@@ -52,39 +45,21 @@ class LoginActivity : AppCompatActivity() {
     //facebook
     private var callbackManager: CallbackManager? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_signup)
 
-        //layout
-        loginBtnFB = findViewById(R.id.facebook);
-        loginBtnGoogle = findViewById(R.id.google);
-        loginBtnEmail = findViewById(R.id.login_btn)
-        signupTxt = findViewById(R.id.signup)
-        userEmailTxt = findViewById(R.id.userEmail)
-        passwordTxt = findViewById(R.id.password)
+        googleBtn = findViewById(R.id.google_btn)
+        facebookBtn = findViewById(R.id.facebook_btn)
+        signupBtn = findViewById(R.id.signup_btn)
 
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
 
         if (user == null){
-            //Login through email password
-            loginBtnEmail.setOnClickListener {
-                if (userEmailTxt.text.isNotEmpty()){
-                    if (passwordTxt.text.isNotEmpty()){
-                        val email = userEmailTxt.text.toString()
-                        val password = passwordTxt.text.toString()
-                        Log.d(TAG, "Email: $email, Password: $password")
-                        signInWithEmailPassword(email, password)
-                    }
-                    else
-                        Log.d(TAG, "Password field is required")
-                }
-                else
-                    Log.d(TAG, "Both fields are required")
-            }
             //Google
-            loginBtnGoogle.setOnClickListener {
+            googleBtn.setOnClickListener {
                 Log.d(TAG, "Google listener")
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(getString(R.string.default_web_client_id))
@@ -93,20 +68,23 @@ class LoginActivity : AppCompatActivity() {
                 mGoogleSignInClient = GoogleSignIn.getClient(application,gso)
                 signInWithGoogle()
             }
+
             //Facebook
-            loginBtnFB.setOnClickListener {
+            facebookBtn.setOnClickListener {
                 Log.d(TAG, "Facebook listener")
                 callbackManager = CallbackManager.Factory.create();
                 signInWithFacebook()
             };
-            signupTxt.setOnClickListener {
-                val signupIntent = Intent(this,SignupActivity::class.java)
-                this.startActivity(signupIntent)
+            signupBtn.setOnClickListener {
+               val signupEmailActivity = Intent(this,SignupEmailActivity::class.java)
+               this.startActivity(signupEmailActivity)
             }
         }
-        else
-            updateUI(user)
+        else {
+            mAuth.signOut()
+        }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -128,57 +106,6 @@ class LoginActivity : AppCompatActivity() {
                 Log.w(TAG, "Google sign in failed", e)
                 // ...
             }
-        }
-    }
-
-
-    //Sign in through email and password
-    private fun signInWithEmailPassword(email: String, password: String) {
-        try {
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        Log.d("UserException", "NotCompleted")
-                        if (task.isSuccessful){
-                            Log.d("UserException", "Completed")
-                            val user: FirebaseUser = mAuth.currentUser!!
-                            Log.d(TAG,user.toString())
-                            user.getIdToken(true)
-                                    .addOnCompleteListener { task2 ->
-                                        if (task2.isSuccessful) {
-                                            val idToken = task2.result.token
-                                            Log.d("User", idToken)
-
-                                            val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
-
-                                            val call: Call<ApiResponse> = apiService.getUserInfoByEmail(idToken!!)
-
-                                            call.enqueue(object: Callback<ApiResponse> {
-                                                override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
-                                                    Log.d("UserApiError", t.toString())
-                                                }
-
-                                                override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
-                                                    if (response!!.isSuccessful){
-                                                        Log.d("UserApiSuccess", response.body().toString())
-                                                        updateUI(user)
-                                                    }
-                                                }
-                                            })
-                                        } else {
-                                            // Handle error -> task.getException();
-                                            Log.d("UserTokenError1", "Error")
-                                        }
-                                    }
-                        }
-
-                        else{
-                            Log.d("UserTokenError", "Error")
-                        }
-                    }
-
-        }
-        catch (e: Exception){
-            Log.d("UserException", "Yeh hai")
         }
     }
 
@@ -204,7 +131,7 @@ class LoginActivity : AppCompatActivity() {
                         Log.d(TAG, "signInWithCredentialGoogle:success")
                         val user = mAuth.currentUser
                         Log.d(TAG, user!!.email)
-                        updateUI(user)
+                        //updateUI(user)
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredentialGoogle:failure", task.exception)
@@ -214,12 +141,7 @@ class LoginActivity : AppCompatActivity() {
 
                     // ...
                 }
-    }
 
-    private fun updateUI(user: FirebaseUser) {
-        val mainActivity = Intent(this,MainActivity::class.java)
-        mainActivity.putExtra("loginUser", user)
-        this.startActivity(mainActivity)
     }
 
     //Facebook sign in

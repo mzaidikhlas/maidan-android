@@ -30,7 +30,10 @@ import android.support.v7.app.AlertDialog
 import android.widget.Button
 import android.widget.FrameLayout
 import com.google.android.gms.maps.model.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
+import com.maidan.android.client.LoginActivity
 import com.maidan.android.client.models.Venue
 import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
@@ -60,6 +63,10 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
     private lateinit var myDataSet: ArrayList<Category>
     private lateinit var venues: ArrayList<Venue>
 
+    //Firebase
+    private lateinit var mAuth: FirebaseAuth
+    private lateinit var currentUser: FirebaseUser
+
     //Api Call Response
     private var payload: ArrayList<PayloadFormat>? = null
 
@@ -88,6 +95,15 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState:    Bundle?): View? {
         // Inflate the layout for this fragment
+        mAuth = FirebaseAuth.getInstance()
+        if (mAuth.currentUser != null){
+            currentUser = mAuth.currentUser!!
+        }
+        else{
+            Log.d(TAG, "Booking Fragment Auth null")
+            val loginIntent = Intent(activity, LoginActivity::class.java)
+            activity!!.startActivity(loginIntent)
+        }
         val view = inflater.inflate(R.layout.fragment_booking, container, false)
 
         mapView = view.findViewById(R.id.mapBooking)
@@ -175,53 +191,62 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
 
     //Getting all values according to recyclerview selected items
     private fun setMarkers(categoryName: String){
-        val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
-        val call: Call<ApiResponse> = apiService.getVenues(categoryName)
-        venues = ArrayList()
+        currentUser.getIdToken(true)
+                .addOnCompleteListener { task2 ->
+                    if (task2.isSuccessful) {
+                        val idToken = task2.result.token
+                        Log.d("User", idToken)
 
-        call.enqueue(object: Callback<ApiResponse>{
-            override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
-                Log.d(TAG, t.toString())
-            }
+                        val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
+                        val call: Call<ApiResponse> = apiService.getVenues(categoryName, idToken!!)
 
-            override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
-                if (response!!.isSuccessful){
-                    if (response.body()!!.getStatusCode() == 200){
-                        Log.d(TAG, "Response")
+                        venues = ArrayList()
 
-                        if (response.body()!!.getType() == "Venue"){
-                            val gson = Gson()
-                            payload = response.body()!!.getPayload()
-
-                            var venue: Venue? = null
-                            Log.d(TAG, "Payload$payload")
-
-                            for (item: PayloadFormat in payload!!){
-                                val jsonObject = gson.toJsonTree(item.getData()).asJsonObject
-                                Log.d(TAG, "Json$jsonObject")
-                                venue = gson.fromJson(jsonObject, Venue::class.java)
-
-                                Log.d(TAG, venue.toString())
-
-                                markerOptions = MarkerOptions()
-                                        .position(LatLng(venue!!.getLocation().getLatitude(), venue.getLocation().getLongitude()))
-                                        .title(venue.getName())
-                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
-
-                                mMap.addMarker(markerOptions)
-
-                                venues.add(venue)
+                        call.enqueue(object: Callback<ApiResponse>{
+                            override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
+                                Log.d(TAG, t.toString())
                             }
-                        }
 
-                    }else {
-                        Log.d(TAG, "Error Response")
-                        Log.d(TAG, response.body()!!.getMessage())
+                            override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
+                                if (response!!.isSuccessful){
+                                    if (response.body()!!.getStatusCode() == 200){
+                                        Log.d(TAG, "Response")
+
+                                        if (response.body()!!.getType() == "Venue"){
+                                            val gson = Gson()
+                                            payload = response.body()!!.getPayload()
+
+                                            var venue: Venue? = null
+                                            Log.d(TAG, "Payload$payload")
+
+                                            for (item: PayloadFormat in payload!!){
+                                                val jsonObject = gson.toJsonTree(item.getData()).asJsonObject
+                                                Log.d(TAG, "Json$jsonObject")
+                                                venue = gson.fromJson(jsonObject, Venue::class.java)
+                                                Log.d(TAG, venue.toString())
+
+                                                markerOptions = MarkerOptions()
+                                                        .position(LatLng(venue!!.getLocation().getLatitude(), venue.getLocation().getLongitude()))
+                                                        .title(venue.getName())
+                                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
+                                                mMap.addMarker(markerOptions)
+
+                                                venues.add(venue)
+                                            }
+                                        }
+
+                                    }else {
+                                        Log.d(TAG, "Error Response")
+                                        Log.d(TAG, response.body()!!.getMessage())
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        // Handle error -> task.getException();
+                        Log.d("UserTokenError1", "Error")
                     }
                 }
-            }
-        });
-
     }
 
     private fun buildLocationCallback() {

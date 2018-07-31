@@ -5,6 +5,9 @@ import retrofit2.http.*
 
 interface ApiInterface {
     //User Routes
+    @GET("user/getByEmail")
+        fun getUserInfoByEmail(@Header("Authorization") idToken: String): Call<ApiResponse>
+
     @GET("user")
         fun getAllUsers(): Call<ApiResponse>
 
@@ -24,7 +27,7 @@ interface ApiInterface {
 
     //Venue Routes
     @GET("venue/selectedVenues/{category}")
-        fun getVenues(@Path("category") category: String): Call<ApiResponse>
+        fun getVenues(@Path("category") category: String, @Header("Authorization") idToken: String): Call<ApiResponse>
 
     //Transaction Routes
 

@@ -1,8 +1,10 @@
 package com.maidan.android.client.models
 
+import java.io.Serializable
+
 data class User(private var email: String, private var name: String, private var password: String,
                 private var phone: Number, private var cnic: Number, private var displayAvatar: String,
-                private var userRecord: UserRecord) {
+                private var userRecord: UserRecord): Serializable {
     fun getEmail(): String {
         return this.email
     }
