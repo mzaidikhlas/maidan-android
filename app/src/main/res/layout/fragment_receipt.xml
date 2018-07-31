@@ -14,13 +14,13 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/radius"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.84">
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <ImageView
@@ -105,6 +105,7 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/receiptBookingDate"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/receiptMaidanIcon" />
 
@@ -115,13 +116,13 @@
             android:layout_marginStart="16dp"
             android:text="11 July, 2018"
             android:textSize="15sp"
-            app:layout_constraintBottom_toTopOf="@+id/receiptOvers"
+            app:layout_constraintBottom_toTopOf="@+id/receiptBookingHours"
             app:layout_constraintEnd_toStartOf="@+id/textView21"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/receiptVenueName" />
 
         <TextView
-            android:id="@+id/receiptOvers"
+            android:id="@+id/receiptBookingHours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="100dp"
@@ -130,7 +131,7 @@
             android:text="20 overs - 4 hours"
             android:textSize="15sp"
             app:layout_constraintBottom_toTopOf="@+id/textView14"
-            app:layout_constraintEnd_toStartOf="@+id/textView15"
+            app:layout_constraintEnd_toStartOf="@+id/totalPerHourPrice"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/receiptBookingDate" />
 
@@ -142,12 +143,12 @@
             android:layout_marginStart="20dp"
             android:text="Convenience Fee"
             android:textSize="15sp"
-            app:layout_constraintEnd_toStartOf="@+id/textView16"
+            app:layout_constraintEnd_toStartOf="@+id/totalConvenienceFee"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/receiptOvers" />
+            app:layout_constraintTop_toBottomOf="@+id/receiptBookingHours" />
 
         <TextView
-            android:id="@+id/textView15"
+            android:id="@+id/totalPerHourPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="48dp"
@@ -156,11 +157,11 @@
             android:text="Rs. 15,000/-"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/receiptOvers"
+            app:layout_constraintStart_toEndOf="@+id/receiptBookingHours"
             app:layout_constraintTop_toBottomOf="@+id/receiptVenueName" />
 
         <TextView
-            android:id="@+id/textView16"
+            android:id="@+id/totalConvenienceFee"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:layout_marginEnd="22dp"
@@ -168,10 +169,10 @@
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView14"
-            app:layout_constraintTop_toBottomOf="@+id/textView15" />
+            app:layout_constraintTop_toBottomOf="@+id/totalPerHourPrice" />
 
         <Button
-            android:id="@+id/book_btn"
+            android:id="@+id/pay_btn"
             style="@style/book_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -191,12 +192,12 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="Total"
-            app:layout_constraintEnd_toStartOf="@+id/textView19"
+            app:layout_constraintEnd_toStartOf="@+id/total"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
         <TextView
-            android:id="@+id/textView19"
+            android:id="@+id/total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -233,7 +234,7 @@
             android:layout_marginTop="45dp"
             android:text="Would you like some extras?"
             android:textSize="15sp"
-            app:layout_constraintBottom_toTopOf="@+id/book_btn"
+            app:layout_constraintBottom_toTopOf="@+id/pay_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -248,7 +249,7 @@
             android:layout_marginEnd="130dp"
             android:text="8AM - 12PM"
             android:textSize="15sp"
-            app:layout_constraintBottom_toTopOf="@+id/textView15"
+            app:layout_constraintBottom_toTopOf="@+id/totalPerHourPrice"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/receiptBookingDate"
             app:layout_constraintTop_toBottomOf="@+id/receiptVenueName"

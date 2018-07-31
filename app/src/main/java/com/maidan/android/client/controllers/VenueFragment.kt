@@ -1,5 +1,6 @@
 package com.maidan.android.client.controllers
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -20,27 +21,42 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.maidan.android.client.LoginActivity
 import com.maidan.android.client.R
 import com.maidan.android.client.models.Venue
 import java.util.ArrayList
 import com.maidan.android.client.adapter.VenueCardAdaptor
 
 class VenueFragment : Fragment(), OnMapReadyCallback {
+
+    //Layout
     private lateinit var venueCard: RecyclerView
     private lateinit var venues: ArrayList<Venue>
-
-    //Google Maps
-    private lateinit var mMap: GoogleMap
-    private lateinit var markerOptions: MarkerOptions
-    private lateinit var mapView: FrameLayout
     private lateinit var back: Button
     private lateinit var filter: Button
 
     private var TAG = "VenuePage"
 
+    //Firebase
+    private lateinit var mAuth: FirebaseAuth
+
+    //Google Maps
+    private lateinit var mMap: GoogleMap
+    private lateinit var markerOptions: MarkerOptions
+    private lateinit var mapView: FrameLayout
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        mAuth = FirebaseAuth.getInstance()
+        val currentUser = mAuth.currentUser
+        if (currentUser == null ){
+            val loginIntent =  Intent(activity,  LoginActivity::class.java)
+            activity!!.startActivity(loginIntent)
+        }
+
         val view = inflater.inflate(R.layout.fragment_venue, container, false)
 
         venues = arguments!!.getSerializable("venues") as ArrayList<Venue>
