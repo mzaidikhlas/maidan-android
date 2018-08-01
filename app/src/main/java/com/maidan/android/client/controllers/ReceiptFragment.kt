@@ -10,7 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.gson.Gson
 
 import com.maidan.android.client.R
 import com.maidan.android.client.models.Booking
@@ -112,8 +112,17 @@ class ReceiptFragment : Fragment() {
                 mAuth.currentUser!!.getIdToken(true).addOnCompleteListener {task ->
                     if (task.isSuccessful){
                         val idToken = task.result.token
+
+                        Log.d(TAG, "Token Receipt $idToken")
+
+                        val gson = Gson()
+                        val bookingJson = gson.toJson(booking)
+                        Log.d(TAG, "Booking $booking")
+                        Log.d(TAG, "Booking json $bookingJson")
+
                         val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
-                        val call: Call<ApiResponse> = apiService.createBooking(booking, idToken!!)
+                        val call: Call<ApiResponse> = apiService.createBooking(idToken!!, booking)
+
                         call.enqueue(object: Callback<ApiResponse>{
                             override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
                                 Log.d(TAG, "Receipt Error $t")

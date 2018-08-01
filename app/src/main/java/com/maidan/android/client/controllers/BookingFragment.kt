@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -73,8 +74,11 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
     private var latitude: Double = 0.toDouble();
     private var longitude: Double = 0.toDouble();
 
+    //Google Maps
     private lateinit var myLastLocation: Location
     private var mMarker: Marker? = null
+    private lateinit var city: String
+    private lateinit var country: String
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
@@ -198,7 +202,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
                         Log.d("User", idToken)
 
                         val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
-                        val call: Call<ApiResponse> = apiService.getVenues(categoryName, idToken!!)
+                        val call: Call<ApiResponse> = apiService.getVenues(categoryName, country, city, idToken!!)
 
                         venues = ArrayList()
 
@@ -259,6 +263,17 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
 
                 latitude = myLastLocation.latitude
                 longitude = myLastLocation.longitude
+
+                val gcd = Geocoder(context, Locale.getDefault())
+                val address =  gcd.getFromLocation(latitude, longitude, 1)
+                Log.d(TAG, "Address $address")
+
+                city = address[0].locality
+                country = address[0].countryName
+
+                Log.d(TAG, "Locality ${address[0].locality}")
+                Log.d(TAG, "Latitude ${address[0].latitude}")
+                Log.d(TAG, "Longitude ${address[0].longitude}")
 
                 val latLng = LatLng(latitude,longitude)
                 Log.d("LatLng", latLng.toString())
@@ -347,6 +362,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 

@@ -65,7 +65,7 @@ class SignupActivity : AppCompatActivity() {
                         .requestIdToken(getString(R.string.default_web_client_id))
                         .requestEmail()
                         .build();
-                mGoogleSignInClient = GoogleSignIn.getClient(application,gso)
+                mGoogleSignInClient = GoogleSignIn.getClient(this,gso)
                 signInWithGoogle()
             }
 
@@ -131,7 +131,7 @@ class SignupActivity : AppCompatActivity() {
                         Log.d(TAG, "signInWithCredentialGoogle:success")
                         val user = mAuth.currentUser
                         Log.d(TAG, user!!.email)
-                        //updateUI(user)
+                        updateUI(user)
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredentialGoogle:failure", task.exception)
@@ -142,6 +142,12 @@ class SignupActivity : AppCompatActivity() {
                     // ...
                 }
 
+    }
+
+    private fun updateUI(user: FirebaseUser) {
+        val mainActivity = Intent(this,MainActivity::class.java)
+        mainActivity.putExtra("loginUser", user)
+        this.startActivity(mainActivity)
     }
 
     //Facebook sign in

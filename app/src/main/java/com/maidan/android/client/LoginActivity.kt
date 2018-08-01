@@ -225,8 +225,7 @@ class LoginActivity : AppCompatActivity() {
     //Facebook sign in
     private fun signInWithFacebook(){
         // Callback registration
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("user_photos", "email", "public_profile", "user_posts"));
-        LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
 
         LoginManager.getInstance().registerCallback(callbackManager,
                 object: FacebookCallback<LoginResult> {
@@ -257,7 +256,7 @@ class LoginActivity : AppCompatActivity() {
                         val user = mAuth.currentUser;
                         Log.d(TAG, user!!.email)
 
-                        //updateUI(user);
+                        updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception);

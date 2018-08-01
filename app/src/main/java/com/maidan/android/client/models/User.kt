@@ -3,7 +3,7 @@ package com.maidan.android.client.models
 import java.io.Serializable
 
 data class User(private var email: String, private var name: String, private var password: String,
-                private var phone: Number, private var cnic: Number, private var displayAvatar: String,
+                private var phone: String, private var cnic: String, private var displayAvatar: String,
                 private var userRecord: UserRecord): Serializable {
     fun getEmail(): String {
         return this.email
@@ -17,10 +17,10 @@ data class User(private var email: String, private var name: String, private var
         return this.password
     }
 
-    fun getPhone(): Number{
+    fun getPhone(): String{
         return this.phone
     }
-    fun getCnic(): Number{
+    fun getCnic(): String{
         return this.cnic
     }
 
@@ -43,10 +43,10 @@ data class User(private var email: String, private var name: String, private var
         this.password = password
     }
 
-    fun setPhone(phone: Number){
+    fun setPhone(phone: String){
         this.phone = phone
     }
-    fun setCnic(cnic: Number){
+    fun setCnic(cnic: String){
         this.cnic = cnic
     }
 
