@@ -15,11 +15,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.maidan.android.client.LoginActivity
@@ -99,16 +101,26 @@ class VenueFragment : Fragment(), OnMapReadyCallback {
 
     //Getting all values according to recyclerview selected items
     private fun setMarkers(categoryName: String){
+        val boundsBuilder = LatLngBounds.builder()
+
         if (!venues.isEmpty()){
             for (venue: Venue in venues){
                 Log.d(TAG, venue.toString())
 
+                val latLng = LatLng(venue.getLocation().getLatitude(), venue.getLocation().getLongitude())
                 markerOptions = MarkerOptions()
-                        .position(LatLng(venue.getLocation().getLatitude(), venue.getLocation().getLongitude()))
+                        .position(latLng)
                         .title(venue.getName())
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
-
                 mMap.addMarker(markerOptions)
+
+                boundsBuilder.include(latLng)
+                val bounds = boundsBuilder.build()
+                try{
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+                }catch (e:Exception ){
+                    e.printStackTrace();
+                }
             }
         }
         else

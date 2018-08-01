@@ -77,8 +77,10 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
     //Google Maps
     private lateinit var myLastLocation: Location
     private var mMarker: Marker? = null
-    private lateinit var city: String
-    private lateinit var country: String
+    private lateinit var bounds: LatLngBounds
+    private lateinit var boundsBuilder: LatLngBounds.Builder
+    private var city: String = "Lahore"
+    private var country: String = "Pakistan"
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
@@ -195,6 +197,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
 
     //Getting all values according to recyclerview selected items
     private fun setMarkers(categoryName: String){
+        Log.d(TAG, "First")
         currentUser.getIdToken(true)
                 .addOnCompleteListener { task2 ->
                     if (task2.isSuccessful) {
@@ -229,14 +232,21 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
                                                 venue = gson.fromJson(jsonObject, Venue::class.java)
                                                 Log.d(TAG, venue.toString())
 
+                                                val latLng = LatLng(venue!!.getLocation().getLatitude(), venue.getLocation().getLongitude())
                                                 markerOptions = MarkerOptions()
-                                                        .position(LatLng(venue!!.getLocation().getLatitude(), venue.getLocation().getLongitude()))
+                                                        .position(latLng)
                                                         .title(venue.getName())
                                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
                                                 mMap.addMarker(markerOptions)
-
+                                                boundsBuilder.include(latLng)
                                                 venues.add(venue)
                                             }
+                                            bounds = boundsBuilder.build()
+                                             try{
+                                                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+                                             }catch (e:Exception ){
+                                                 e.printStackTrace();
+                                             }
                                         }
 
                                     }else {
@@ -254,6 +264,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun buildLocationCallback() {
+        Log.d(TAG, "Second")
         locationCallback = object : LocationCallback(){
             override fun onLocationResult(p0: LocationResult?) {
                 myLastLocation = p0!!.locations[p0.locations.size-1]
@@ -277,13 +288,17 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
 
                 val latLng = LatLng(latitude,longitude)
                 Log.d("LatLng", latLng.toString())
+
                 val markerOptions = MarkerOptions()
                         .position(latLng)
                         .title("Your position")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
                 mMarker = mMap.addMarker(markerOptions)
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(11f))
+                boundsBuilder.include(latLng)
+
+//                setMarkers("Cricket")
+//                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+//                mMap.animateCamera(CameraUpdateFactory.zoomTo(11f))
             }
         }
     }
@@ -362,10 +377,10 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        boundsBuilder = LatLngBounds.builder()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
                 Log.d(TAG, "IDhr aya hai")
                 setMarkers("Cricket")
             }
