@@ -153,8 +153,7 @@ class SignupActivity : AppCompatActivity() {
     //Facebook sign in
     private fun signInWithFacebook(){
         // Callback registration
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("user_photos", "email", "public_profile", "user_posts"));
-        LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
 
         LoginManager.getInstance().registerCallback(callbackManager,
                 object: FacebookCallback<LoginResult> {

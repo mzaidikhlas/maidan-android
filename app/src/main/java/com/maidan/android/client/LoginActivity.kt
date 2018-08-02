@@ -61,8 +61,8 @@ class LoginActivity : AppCompatActivity() {
         loginBtnGoogle = findViewById(R.id.google);
         loginBtnEmail = findViewById(R.id.login_btn)
         signupTxt = findViewById(R.id.signup)
-        userEmailTxt = findViewById(R.id.userEmail)
-        passwordTxt = findViewById(R.id.password)
+        userEmailTxt = findViewById(R.id.signupUserEmail)
+        passwordTxt = findViewById(R.id.signupPassword)
 
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser

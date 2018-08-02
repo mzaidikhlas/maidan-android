@@ -40,14 +40,14 @@
             android:text="@string/maidan"
             android:textColor="@color/white"
             android:textSize="102sp"
-            app:layout_constraintBottom_toTopOf="@+id/userEmail"
+            app:layout_constraintBottom_toTopOf="@+id/signupUserEmail"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/loginTitle" />
 
 
         <EditText
-            android:id="@+id/userEmail"
+            android:id="@+id/signupUserEmail"
             style="@style/email_password_login"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -55,13 +55,13 @@
             android:layout_marginStart="27dp"
             android:hint="@string/email"
             android:inputType="textEmailSubject|textWebEmailAddress"
-            app:layout_constraintBottom_toTopOf="@+id/password"
+            app:layout_constraintBottom_toTopOf="@+id/signupPassword"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/loginMaidanLogo" />
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/signupPassword"
             style="@style/email_password_login"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -72,7 +72,7 @@
             app:layout_constraintBottom_toTopOf="@+id/login_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userEmail" />
+            app:layout_constraintTop_toBottomOf="@+id/signupUserEmail" />
 
         <Button
             android:id="@+id/login_btn"
@@ -87,7 +87,7 @@
             app:layout_constraintBottom_toTopOf="@+id/loginOr"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password" />
+            app:layout_constraintTop_toBottomOf="@+id/signupPassword" />
 
         <TextView
             android:id="@+id/loginOr"

@@ -47,7 +47,7 @@
 
 
         <EditText
-            android:id="@+id/userName"
+            android:id="@+id/signupUserName"
             style="@style/email_password_login"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -55,13 +55,13 @@
             android:layout_marginStart="36dp"
             android:layout_marginTop="42dp"
             android:hint="@string/name"
-            app:layout_constraintBottom_toTopOf="@+id/userEmail"
+            app:layout_constraintBottom_toTopOf="@+id/signupUserEmail"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
         <EditText
-            android:id="@+id/userEmail"
+            android:id="@+id/signupUserEmail"
             style="@style/email_password_login"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -70,39 +70,74 @@
             android:layout_marginTop="8dp"
             android:hint="@string/email"
             android:inputType="textPassword"
-            app:layout_constraintBottom_toTopOf="@+id/password"
+            app:layout_constraintBottom_toTopOf="@+id/signupPasswordLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userName" />
+            app:layout_constraintTop_toBottomOf="@+id/signupUserName" />
 
-        <EditText
-            android:id="@+id/password"
-            style="@style/email_password_login"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/signupPasswordLayout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginEnd="36dp"
             android:layout_marginStart="36dp"
             android:layout_marginTop="8dp"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            app:layout_constraintBottom_toTopOf="@+id/confirmPassword"
+            android:background="@drawable/radius"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/grey"
+            app:layout_constraintBottom_toTopOf="@+id/signupConfirmPassword"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userEmail" />
+            app:layout_constraintTop_toBottomOf="@+id/signupUserEmail">
 
-        <EditText
-            android:id="@+id/confirmPassword"
-            style="@style/email_password_login"
+            <EditText
+                style="@style/email_password_login"
+                android:id="@+id/signupPassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/signupConfirmPasswordLayout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginEnd="36dp"
             android:layout_marginStart="36dp"
             android:layout_marginTop="8dp"
-            android:hint="@string/passwordConfirm"
-            android:inputType="textPassword"
+            android:background="@drawable/radius"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password" />
+            app:layout_constraintTop_toBottomOf="@+id/signupPasswordLayout">
+
+            <EditText
+                style="@style/email_password_login"
+                android:id="@+id/signupConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/passwordConfirm"
+                android:inputType="textPassword" />
+
+        </android.support.design.widget.TextInputLayout>
+
+
+        <!--<EditText-->
+            <!--android:id="@+id/signupConfirmPassword"-->
+            <!--style="@style/email_password_login"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_marginEnd="36dp"-->
+            <!--android:layout_marginStart="36dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:hint="@string/passwordConfirm"-->
+            <!--android:inputType="textPassword"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/signupPasswordLayout" />-->
 
         <Button
             android:id="@+id/signup_btn"
@@ -121,7 +156,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.51"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/confirmPassword" />
+            app:layout_constraintTop_toBottomOf="@+id/signupConfirmPasswordLayout" />
     </android.support.constraint.ConstraintLayout>
 
 

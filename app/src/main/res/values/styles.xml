@@ -78,4 +78,9 @@
         <item name="android:background">@drawable/radius</item>
     </style>
 
+    <style name="password_login">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:background">@drawable/radius</item>
+    </style>
 </resources>
