@@ -18,7 +18,8 @@ interface ApiInterface {
         fun getUserById(@Path("id") id: Int): Call<ApiResponse>
 
     @POST("user")
-        fun createUser(@Body user: User): Call<ApiResponse>
+        fun createUser(@Header("Authorization") idToken: String,
+            @Body user: User): Call<ApiResponse>
 
     @DELETE("user/{id}")
         fun deleteUser(@Path("id") id: Int): Call<ApiResponse>

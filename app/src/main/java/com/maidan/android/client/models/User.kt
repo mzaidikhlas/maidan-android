@@ -4,7 +4,7 @@ import java.io.Serializable
 
 data class User(private var email: String, private var name: String, private var password: String,
                 private var phone: String, private var cnic: String, private var displayAvatar: String,
-                private var userRecord: UserRecord): Serializable {
+                private var userRecord: UserRecord?): Serializable {
     fun getEmail(): String {
         return this.email
     }
@@ -27,7 +27,7 @@ data class User(private var email: String, private var name: String, private var
     fun getDisplayAvatar(): String {
         return this.displayAvatar
     }
-    fun getUserRecord(): UserRecord {
+    fun getUserRecord(): UserRecord? {
         return this.userRecord
     }
 

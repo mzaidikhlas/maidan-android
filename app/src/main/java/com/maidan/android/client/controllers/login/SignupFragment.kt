@@ -1,9 +1,12 @@
-package com.maidan.android.client
+package com.maidan.android.client.controllers.login
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import com.facebook.AccessToken
@@ -19,15 +22,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
-import com.maidan.android.client.retrofit.ApiInterface
-import com.maidan.android.client.retrofit.ApiResponse
-import com.maidan.android.client.retrofit.RetrofitClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.maidan.android.client.MainActivity
+import com.maidan.android.client.R
+
 import java.util.*
 
-class SignupActivity : AppCompatActivity() {
+class SignupFragment : Fragment() {
 
     private var TAG = "Signup"
 
@@ -45,14 +45,12 @@ class SignupActivity : AppCompatActivity() {
     //facebook
     private var callbackManager: CallbackManager? = null
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_signup)
-
-        googleBtn = findViewById(R.id.google_btn)
-        facebookBtn = findViewById(R.id.facebook_btn)
-        signupBtn = findViewById(R.id.signup_btn)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        val view =  inflater.inflate(R.layout.fragment_signup, container, false)
+        googleBtn = view.findViewById(R.id.google_btn)
+        facebookBtn = view.findViewById(R.id.facebook_btn)
+        signupBtn = view.findViewById(R.id.signup_btn)
 
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
@@ -65,7 +63,7 @@ class SignupActivity : AppCompatActivity() {
                         .requestIdToken(getString(R.string.default_web_client_id))
                         .requestEmail()
                         .build();
-                mGoogleSignInClient = GoogleSignIn.getClient(this,gso)
+                mGoogleSignInClient = GoogleSignIn.getClient(context!!,gso)
                 signInWithGoogle()
             }
 
@@ -76,13 +74,13 @@ class SignupActivity : AppCompatActivity() {
                 signInWithFacebook()
             };
             signupBtn.setOnClickListener {
-               val signupEmailActivity = Intent(this,SignupEmailActivity::class.java)
-               this.startActivity(signupEmailActivity)
+                fragmentManager!!.beginTransaction().replace(R.id.login_layout, SignupFormFragment()).commit()
             }
         }
         else {
             mAuth.signOut()
         }
+        return view
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -125,7 +123,7 @@ class SignupActivity : AppCompatActivity() {
 
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task ->
+                .addOnCompleteListener(activity!!) { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredentialGoogle:success")
@@ -145,7 +143,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun updateUI(user: FirebaseUser) {
-        val mainActivity = Intent(this,MainActivity::class.java)
+        val mainActivity = Intent(context, MainActivity::class.java)
         mainActivity.putExtra("loginUser", user)
         this.startActivity(mainActivity)
     }
@@ -176,7 +174,7 @@ class SignupActivity : AppCompatActivity() {
 
         val credential = FacebookAuthProvider.getCredential(accessToken!!.token)
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this) {task: Task<AuthResult> ->
+                .addOnCompleteListener(activity!!) {task: Task<AuthResult> ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
@@ -187,7 +185,7 @@ class SignupActivity : AppCompatActivity() {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception);
-                        Toast.makeText(applicationContext, "Authentication failed.",
+                        Toast.makeText(context, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show();
                         //updateUI(null);
                     }
