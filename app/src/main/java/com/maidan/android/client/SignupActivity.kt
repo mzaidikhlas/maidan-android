@@ -170,7 +170,6 @@ class SignupActivity : AppCompatActivity() {
                         Log.d(TAG, "facebook:onError", error);
                     }
                 });
-//        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
     }
     private fun handleFacebookAccessToken(accessToken: AccessToken?) {
         Log.d(TAG, "handleFacebookAccessToken:$accessToken")
@@ -184,7 +183,7 @@ class SignupActivity : AppCompatActivity() {
                         val user = mAuth.currentUser;
                         Log.d(TAG, user!!.email)
 
-                        //updateUI(user);
+                        updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception);

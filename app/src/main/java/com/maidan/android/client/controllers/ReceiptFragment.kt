@@ -7,9 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthActionCodeException
+import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
 
 import com.maidan.android.client.R
@@ -17,6 +20,7 @@ import com.maidan.android.client.models.Booking
 import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
 import com.maidan.android.client.retrofit.RetrofitClient
+import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,6 +31,7 @@ class ReceiptFragment : Fragment() {
     private val TAG = "VenueReceiptFragment"
 
     //Layout
+    private lateinit var maidanIcon: ImageView
     private lateinit var invoiceIdTxt: TextView
     private lateinit var customerNameTxt: TextView
     private lateinit var receiptDateTxt: TextView
@@ -41,6 +46,7 @@ class ReceiptFragment : Fragment() {
 
     //Firebase
     private lateinit var mAuth: FirebaseAuth
+    private lateinit var currentUser: FirebaseUser
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -55,8 +61,10 @@ class ReceiptFragment : Fragment() {
             Log.d(TAG, "Empty")
 
         mAuth = FirebaseAuth.getInstance()
+        currentUser = mAuth.currentUser!!
 
         //Layout init
+        maidanIcon = view.findViewById(R.id.receiptMaidanIcon)
         invoiceIdTxt = view.findViewById(R.id.invoiceId)
         customerNameTxt = view.findViewById(R.id.receiptCustomerName)
         receiptDateTxt = view.findViewById(R.id.receiptDate)
@@ -70,6 +78,7 @@ class ReceiptFragment : Fragment() {
         payBtn = view.findViewById(R.id.pay_btn)
 
         //Layout populating
+        Picasso.get().load(currentUser.photoUrl).into(maidanIcon)
         invoiceIdTxt.text = "#001"
         customerNameTxt.text = booking.getUser().getName()
         venueNameTxt.text = booking.getVenue().getName()

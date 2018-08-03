@@ -4,7 +4,9 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.facebook.*
 import com.maidan.android.client.retrofit.ApiInterface
@@ -39,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginBtnGoogle: Button
     private lateinit var loginBtnEmail: Button
     private lateinit var signupTxt: TextView
+    private lateinit var progressBar: ProgressBar
 
     private lateinit var userEmailTxt: TextView
     private lateinit var passwordTxt: TextView
@@ -63,6 +66,7 @@ class LoginActivity : AppCompatActivity() {
         signupTxt = findViewById(R.id.signup)
         userEmailTxt = findViewById(R.id.signupUserEmail)
         passwordTxt = findViewById(R.id.signupPassword)
+        progressBar = findViewById(R.id.progress_loader)
 
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
@@ -135,6 +139,8 @@ class LoginActivity : AppCompatActivity() {
     //Sign in through email and password
     private fun signInWithEmailPassword(email: String, password: String) {
         try {
+            progressBar.visibility = View.VISIBLE
+
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         Log.d("UserException", "NotCompleted")
@@ -160,6 +166,7 @@ class LoginActivity : AppCompatActivity() {
                                                 override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
                                                     if (response!!.isSuccessful){
                                                         Log.d("UserApiSuccess", response.body().toString())
+                                                        progressBar.visibility = View.INVISIBLE
                                                         updateUI(user)
                                                     }
                                                 }
@@ -170,9 +177,21 @@ class LoginActivity : AppCompatActivity() {
                                         }
                                     }
                         }
-
                         else{
-                            Log.d("UserTokenError", "Error")
+                            try {
+                                throw task.exception!!;
+                            }
+                            // if user enters wrong email.
+                            catch (invalidEmail: FirebaseAuthInvalidUserException ) {
+                                Log.d(TAG, "onComplete: invalid_email");
+                            }
+                            // if user enters wrong password.
+                            catch (wrongPassword: FirebaseAuthInvalidCredentialsException ) {
+                                Log.d(TAG, "onComplete: wrong_password");
+                            }
+                            catch (e: Exception ) {
+                                Log.d(TAG, "onComplete: " + e.message);
+                            }
                         }
                     }
 
@@ -185,6 +204,7 @@ class LoginActivity : AppCompatActivity() {
     //Google
     private fun signInWithGoogle(){
         try {
+            progressBar.visibility = View.VISIBLE
             Log.d(TAG, "Try")
             val signInIntent = mGoogleSignInClient.signInIntent
             startActivityForResult(signInIntent, 101)
@@ -204,6 +224,10 @@ class LoginActivity : AppCompatActivity() {
                         Log.d(TAG, "signInWithCredentialGoogle:success")
                         val user = mAuth.currentUser
                         Log.d(TAG, user!!.email)
+                        Log.d(TAG, "Display name ${user.displayName}")
+                        Log.d(TAG, "Email ${user.isEmailVerified.toString()}")
+                        Log.d(TAG, "Picture ${user.photoUrl.toString()}")
+                        progressBar.visibility = View.INVISIBLE
                         updateUI(user)
                     } else {
                         // If sign in fails, display a message to the user.
@@ -255,6 +279,10 @@ class LoginActivity : AppCompatActivity() {
                         Log.d(TAG, "signInWithCredential:success");
                         val user = mAuth.currentUser;
                         Log.d(TAG, user!!.email)
+                        Log.d(TAG, "Display name ${user.displayName}")
+                        Log.d(TAG, "Display name ${user.phoneNumber}")
+                        Log.d(TAG, "Email ${user.isEmailVerified.toString()}")
+                        Log.d(TAG, "Picture ${user.photoUrl.toString()}")
 
                         updateUI(user);
                     } else {

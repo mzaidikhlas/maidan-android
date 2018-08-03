@@ -1,6 +1,7 @@
 package com.maidan.android.client.retrofit
 
 import com.maidan.android.client.models.Booking
+import com.maidan.android.client.models.User
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.http.*
@@ -17,7 +18,7 @@ interface ApiInterface {
         fun getUserById(@Path("id") id: Int): Call<ApiResponse>
 
     @POST("user")
-        fun createUser(@Body id: Int): Call<ApiResponse>
+        fun createUser(@Body user: User): Call<ApiResponse>
 
     @DELETE("user/{id}")
         fun deleteUser(@Path("id") id: Int): Call<ApiResponse>
