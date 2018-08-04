@@ -27,6 +27,12 @@
         <item>5 overs</item>
     </string-array>
 
+    <!--Gender Spinner-->
+    <string-array name="gender">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
 
     <string name="Book">BOOK</string>
     <string name="logintoyour">LOGIN TO YOUR</string>

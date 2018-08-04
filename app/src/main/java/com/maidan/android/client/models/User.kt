@@ -2,9 +2,16 @@ package com.maidan.android.client.models
 
 import java.io.Serializable
 
-data class User(private var email: String, private var name: String, private var password: String,
-                private var phone: String, private var cnic: String, private var displayAvatar: String,
-                private var userRecord: UserRecord?): Serializable {
+data class User(private var email: String, private var name: String, private var password: String?,
+                private var phone: String, private var cnic: String, private var displayAvatar: String?,
+                private var dob: String, private var gender: String, private var isClient: Boolean,
+                private var isOwner: Boolean, private var userRecord: UserRecord?): Serializable {
+
+    //Getters
+    fun getIsClient():Boolean{return this.isClient}
+
+    fun getIsOwner():Boolean{return this.isOwner}
+
     fun getEmail(): String {
         return this.email
     }
@@ -13,7 +20,7 @@ data class User(private var email: String, private var name: String, private var
         return this.name
     }
 
-    fun getPassword(): String {
+    fun getPassword(): String? {
         return this.password
     }
 
@@ -24,11 +31,34 @@ data class User(private var email: String, private var name: String, private var
         return this.cnic
     }
 
-    fun getDisplayAvatar(): String {
-        return this.displayAvatar
-    }
     fun getUserRecord(): UserRecord? {
         return this.userRecord
+    }
+
+    fun getDob(): String {
+        return this.dob
+    }
+
+    fun getGender(): String {
+        return this.gender
+    }
+
+    fun getDisplayAvatar(): String? {
+        return this.displayAvatar
+    }
+
+
+    //Setters
+    fun setIsClient(isClient: Boolean){this.isClient = isClient}
+
+    fun setIsOwner(isOwner: Boolean){this.isOwner = isOwner}
+
+    fun setDob(dob: String){
+        this.dob = dob
+    }
+
+    fun setGender(gender: String){
+        this.gender = gender
     }
 
     fun setEmail(email: String){

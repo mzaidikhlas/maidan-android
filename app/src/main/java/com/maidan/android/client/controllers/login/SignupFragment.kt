@@ -129,7 +129,16 @@ class SignupFragment : Fragment() {
                         Log.d(TAG, "signInWithCredentialGoogle:success")
                         val user = mAuth.currentUser
                         Log.d(TAG, user!!.email)
-                        updateUI(user)
+
+                        val signupDetailsFragment = SignupDetailsFragment()
+                        val bundle = Bundle()
+                        bundle.putString("name", user.displayName)
+                        bundle.putString("email", user.email)
+                        bundle.putString("password", null)
+                        signupDetailsFragment.arguments = bundle
+                        fragmentManager!!.beginTransaction().replace(R.id.login_layout, signupDetailsFragment).commit()
+
+//                        updateUI(user)
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredentialGoogle:failure", task.exception)
@@ -181,7 +190,15 @@ class SignupFragment : Fragment() {
                         val user = mAuth.currentUser;
                         Log.d(TAG, user!!.email)
 
-                        updateUI(user);
+                        val signupDetailsFragment = SignupDetailsFragment()
+                        val bundle = Bundle()
+                        bundle.putString("name", user.displayName)
+                        bundle.putString("email", user.email)
+                        bundle.putString("password", null)
+                        signupDetailsFragment.arguments = bundle
+                        fragmentManager!!.beginTransaction().replace(R.id.login_layout, signupDetailsFragment).commit()
+
+//                        updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception);
