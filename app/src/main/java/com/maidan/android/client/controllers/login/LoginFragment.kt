@@ -3,6 +3,7 @@ package com.maidan.android.client.controllers.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
@@ -101,17 +102,11 @@ class LoginFragment : Fragment() {
             //Google
             loginBtnGoogle.setOnClickListener {
                 Log.d(TAG, "Google listener")
-                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(getString(R.string.default_web_client_id))
-                        .requestEmail()
-                        .build();
-                mGoogleSignInClient = GoogleSignIn.getClient(context!!,gso)
                 signInWithGoogle()
             }
             //Facebook
             loginBtnFB.setOnClickListener {
                 Log.d(TAG, "Facebook listener")
-                callbackManager = CallbackManager.Factory.create();
                 signInWithFacebook()
             };
             signupTxt.setOnClickListener {
@@ -172,26 +167,28 @@ class LoginFragment : Fragment() {
 
                                             call.enqueue(object: Callback<ApiResponse> {
                                                 override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
-                                                    progressBar.visibility = View.INVISIBLE
                                                     Log.d("UserApiError", t.toString())
                                                 }
 
                                                 override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
                                                     if (response!!.isSuccessful){
                                                         Log.d("UserApiSuccess", response.body().toString())
+
                                                         progressBar.visibility = View.INVISIBLE
                                                         updateUI(user)
                                                     }
                                                 }
                                             })
                                         } else {
-                                            // Handle error -> task.getException();
-                                            Log.d("UserTokenError1", "Error")
+                                            // If sign in fails, display a message to the user.
+                                            Log.w(TAG, "signInWithEmailAndPasswordToken:failure", task.exception)
+                                            Toast.makeText(context, "Authentication Failed.", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                         }
                         else{
                             try {
+                                progressBar.visibility = View.INVISIBLE
                                 throw task.exception!!;
                             }
                             // if user enters wrong email.
@@ -207,15 +204,22 @@ class LoginFragment : Fragment() {
                             }
                         }
                     }
-
+            progressBar.visibility = View.INVISIBLE
         }
         catch (e: Exception){
+
             Log.d("UserException", "Yeh hai")
         }
     }
 
     //Google
     private fun signInWithGoogle(){
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(context!!,gso)
+
         try {
             progressBar.visibility = View.VISIBLE
             Log.d(TAG, "Try")
@@ -240,20 +244,20 @@ class LoginFragment : Fragment() {
                         Log.d(TAG, "Display name ${user.displayName}")
                         Log.d(TAG, "Email ${user.isEmailVerified.toString()}")
                         Log.d(TAG, "Picture ${user.photoUrl.toString()}")
-                        progressBar.visibility = View.INVISIBLE
+
                         updateUI(user)
                     } else {
+                        progressBar.visibility = View.INVISIBLE
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredentialGoogle:failure", task.exception)
-//                        Snackbar.make(this, "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Authentication Failed.", Toast.LENGTH_SHORT).show()
 //                        updateUI(null)
                     }
-
-                    // ...
                 }
     }
 
     private fun updateUI(user: FirebaseUser) {
+        progressBar.visibility = View.INVISIBLE
         val mainActivity = Intent(context, MainActivity::class.java)
         mainActivity.putExtra("loginUser", user)
         this.startActivity(mainActivity)
@@ -262,6 +266,8 @@ class LoginFragment : Fragment() {
     //Facebook sign in
     private fun signInWithFacebook(){
         // Callback registration
+        progressBar.visibility = View.VISIBLE
+        callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
 
         LoginManager.getInstance().registerCallback(callbackManager,
@@ -279,6 +285,7 @@ class LoginFragment : Fragment() {
                         Log.d(TAG, "facebook:onError", error);
                     }
                 });
+        progressBar.visibility = View.INVISIBLE
 //        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
     }
     private fun handleFacebookAccessToken(accessToken: AccessToken?) {
@@ -299,10 +306,12 @@ class LoginFragment : Fragment() {
 
                         updateUI(user);
                     } else {
+                        progressBar.visibility = View.INVISIBLE
                         // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCredential:failure", task.exception);
-                        Toast.makeText(context!!, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
+                        Log.w(TAG, "signInWithCredential:failure", task.exception)
+                        Toast.makeText(context!!, "User exist with google provider.",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context!!, "Signing in with google provider.",Toast.LENGTH_SHORT).show()
+                        signInWithGoogle()
                         //updateUI(null);
                     }
 

@@ -6,10 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthActionCodeException
 import com.google.firebase.auth.FirebaseUser
@@ -43,6 +40,7 @@ class ReceiptFragment : Fragment() {
     private lateinit var totalConveniencePriceTxt: TextView
     private lateinit var totalPriceTxt: TextView
     private lateinit var payBtn: Button
+    private lateinit var progressBar: ProgressBar
 
     //Firebase
     private lateinit var mAuth: FirebaseAuth
@@ -76,6 +74,7 @@ class ReceiptFragment : Fragment() {
         totalConveniencePriceTxt = view.findViewById(R.id.totalConvenienceFee)
         totalPriceTxt = view.findViewById(R.id.total)
         payBtn = view.findViewById(R.id.pay_btn)
+        progressBar = view.findViewById(R.id.receiptProgressBar)
 
         //Layout populating
         Picasso.get().load(currentUser.photoUrl).into(maidanIcon)
@@ -118,6 +117,8 @@ class ReceiptFragment : Fragment() {
 
         payBtn.setOnClickListener{
             if (mAuth.currentUser != null){
+                progressBar.visibility = View.VISIBLE
+
                 mAuth.currentUser!!.getIdToken(true).addOnCompleteListener {task ->
                     if (task.isSuccessful){
                         val idToken = task.result.token
@@ -139,21 +140,22 @@ class ReceiptFragment : Fragment() {
 
                             override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
                                 if (response!!.isSuccessful){
-                                    if (response.body()!!.getStatusCode() == 200){
+                                    if (response.body()!!.getStatusCode() == 201){
                                         Log.d(TAG, "Booking Created")
                                         Toast.makeText(context, "New booking created", Toast.LENGTH_LONG).show()
+                                        progressBar.visibility = View.INVISIBLE
+                                        fragmentManager!!.beginTransaction().replace(R.id.fragment_layout, BookingFragment()).commit()
                                     }else{
                                         Log.d(TAG, "Bad Request")
                                     }
                                 }
                             }
-
                         })
                     }
                 }
             }
+            progressBar.visibility = View.INVISIBLE
         }
-
         return view
     }
 

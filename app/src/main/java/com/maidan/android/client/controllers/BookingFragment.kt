@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import com.maidan.android.client.R
 import com.maidan.android.client.adapter.CategoryRecyclerviewAdapter
 import com.maidan.android.client.models.Category
@@ -23,13 +22,12 @@ import android.os.Build
 import android.os.Looper
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import android.widget.Toast
 import com.google.android.gms.location.*
 import android.location.LocationManager
+import android.net.Uri
 import android.provider.Settings
 import android.support.v7.app.AlertDialog
-import android.widget.Button
-import android.widget.FrameLayout
+import android.widget.*
 import com.google.android.gms.maps.model.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -40,12 +38,13 @@ import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
 import com.maidan.android.client.retrofit.PayloadFormat
 import com.maidan.android.client.retrofit.RetrofitClient
+import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
-class BookingFragment : Fragment(), OnMapReadyCallback {
+class BookingFragment : Fragment(), OnMapReadyCallback{
 
     //Google Maps
     private lateinit var mMap: GoogleMap
@@ -130,6 +129,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
                 Log.d("P2", p2.toString());
                 Log.d("P3", p3.toString());
             }, year, month, day)
+            datePicker.datePicker.minDate = c.timeInMillis
             datePicker.show()
         }
 
@@ -236,6 +236,9 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
                                                 markerOptions = MarkerOptions()
                                                         .position(latLng)
                                                         .title(venue.getName())
+                                                        .snippet("${venue.getLocation().getCountry()}," +
+                                                                        "${venue.getLocation().getCity()}," +
+                                                                        "${venue.getRate().getPerHrRate()}")
                                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
                                                 mMap.addMarker(markerOptions)
                                                 boundsBuilder.include(latLng)
@@ -383,6 +386,45 @@ class BookingFragment : Fragment(), OnMapReadyCallback {
             if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG, "IDhr aya hai")
                 setMarkers("Cricket")
+
+                mMap.setInfoWindowAdapter(object: GoogleMap.InfoWindowAdapter{
+                    override fun getInfoContents(p0: Marker?): View {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun getInfoWindow(p0: Marker?): View {
+                        val v: View = View.inflate(context,R.layout.map_info_window, null)
+
+                        val image: ImageView = v.findViewById(R.id.infoWindowImageview)
+                        val venueName: TextView = v.findViewById(R.id.infoWindowName)
+                        val country: TextView = v.findViewById(R.id.infoWindowCountry)
+                        val city: TextView = v.findViewById(R.id.infoWindowCity)
+                        val price: TextView = v.findViewById(R.id.infoWindowPrice)
+
+                        val data: List<String> = p0!!.snippet.split(",")
+
+                        venueName.text = p0.title
+                        country.text = data[0]
+                        city.text = data[1]
+                        price.text = data[2]
+
+                        return v
+                    }
+
+                })
+                mMap.setOnInfoWindowClickListener {p0: Marker? ->
+                    Log.d(TAG, "geo:$latitude,$longitude?q=${p0!!.position.latitude},${p0.position.longitude}")
+                    val gmmIntentUri = Uri.parse("geo:0,0?q=${p0.position.latitude},${p0.position.longitude}")
+                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                    if (mapIntent.resolveActivity(context!!.packageManager) != null){
+                        Log.d(TAG, "map intent")
+                        startActivity(mapIntent)
+                    }else{
+                        Log.d(TAG, "map intent else")
+                    }
+                }
+
+
             }
         }
 

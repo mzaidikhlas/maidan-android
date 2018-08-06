@@ -45,6 +45,7 @@ class SignupDetailsFragment : Fragment() {
     private lateinit var dobTxt: EditText
     private lateinit var genderSpinner: Spinner
     private lateinit var submitBtn: Button
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -69,6 +70,7 @@ class SignupDetailsFragment : Fragment() {
         dobTxt = view.findViewById(R.id.DOB)
         genderSpinner = view.findViewById(R.id.gender)
         submitBtn = view.findViewById(R.id.signup_submit_btn)
+        progressBar = view.findViewById(R.id.signupProgressBar)
 
         var displayAvatar: String? = null
 
@@ -83,8 +85,9 @@ class SignupDetailsFragment : Fragment() {
         submitBtn.setOnClickListener {
             Log.d(TAG, "AYA hai")
 
-            if (phoneNumberTxt.text.isNotEmpty() && cnicTxt.text.isNotEmpty() && dobTxt.text.isNotEmpty()){
+            progressBar.visibility = View.VISIBLE
 
+            if (phoneNumberTxt.text.isNotEmpty() && cnicTxt.text.isNotEmpty() && dobTxt.text.isNotEmpty()){
                 user = User(email, name, password, phoneNumberTxt.text.toString(), cnicTxt.text.toString(), displayAvatar,
                         dobTxt.text.toString(), gender.selectedItem.toString(), true, false, null)
 
@@ -97,7 +100,8 @@ class SignupDetailsFragment : Fragment() {
                     val call: Call<ApiResponse> = apiService.createUser(idToken!!, user)
                     call.enqueue(object: Callback<ApiResponse>{
                         override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
-                            Log.d(TAG, t!!.message)
+                            Log.d(TAG, t.toString())
+                            throw t!!
                         }
 
                         override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
@@ -109,10 +113,12 @@ class SignupDetailsFragment : Fragment() {
             }else{
                 Toast.makeText(context, "All Fields are required", Toast.LENGTH_LONG).show()
             }
+            progressBar.visibility = View.INVISIBLE
         }
         return view
     }
     private fun updateUI(user: FirebaseUser) {
+        progressBar.visibility = View.INVISIBLE
         val mainActivity = Intent(context, MainActivity::class.java)
         mainActivity.putExtra("loginUser", user)
         this.startActivity(mainActivity)

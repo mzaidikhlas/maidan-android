@@ -190,6 +190,7 @@ class DetailedVenueFragment : Fragment() {
                         Log.d(TAG, "Year: $yr, Month $monthOfYear, Day: $dayOfMonth")
                         dateString = "$dayOfMonth/$monthOfYear/$yr"
                     },year,month,day)
+            datePicker.datePicker.minDate = c.timeInMillis
             datePicker.show()
             Log.d(TAG,dateString)
         };
@@ -207,6 +208,7 @@ class DetailedVenueFragment : Fragment() {
                         Log.d(TAG, "Hour: $hr, Min: $min")
                         timeString = "$hr:$min"
                     }, hourOfDay, minute, false)
+
             timePickerDialog.show()
             Log.d(TAG, timeString)
         };

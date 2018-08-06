@@ -6,10 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.google.firebase.auth.*
 import com.maidan.android.client.R
 import com.maidan.android.client.models.User
@@ -22,6 +19,7 @@ class SignupFormFragment : Fragment() {
     private lateinit var signupPasswordTxt: EditText
     private lateinit var signupConfirmPasswordTxt: EditText
     private lateinit var signupBtn: Button
+    private lateinit var progressBar: ProgressBar
 
     //Model object
     private lateinit var user: User
@@ -44,9 +42,12 @@ class SignupFormFragment : Fragment() {
         signupPasswordTxt = view.findViewById(R.id.signupPassword)
         signupConfirmPasswordTxt = view.findViewById(R.id.signupConfirmPassword)
         signupBtn = view.findViewById(R.id.signup_btn)
+        progressBar = view.findViewById(R.id.signupFormProgressBar)
 
         signupBtn.setOnClickListener {
             Log.d(TAG, "Signup click lisenter")
+
+            progressBar.visibility = View.VISIBLE
 
             val username = signupUsernameTxt.text.toString()
             val email = signupUseremailTxt.text.toString()
@@ -72,6 +73,7 @@ class SignupFormFragment : Fragment() {
                                     bundle.putString("password", signupPasswordTxt.text.toString())
 
                                     signupDetailsFragment.arguments = bundle
+                                    progressBar.visibility = View.INVISIBLE
                                     fragmentManager!!.beginTransaction().replace(R.id.login_layout, signupDetailsFragment).commit()
                                 }else{
                                     Log.e(TAG, "sendEmailVerification", task.exception);
@@ -83,6 +85,7 @@ class SignupFormFragment : Fragment() {
                         }
                         else{
                             try {
+                                progressBar.visibility = View.INVISIBLE
                                 throw task.exception!!
                             } catch (weakPassword: FirebaseAuthWeakPasswordException) {
                                 Log.d(TAG, "onComplete: weak_password")
@@ -107,7 +110,7 @@ class SignupFormFragment : Fragment() {
             }else{
                 Toast.makeText(context,"All fields are required", Toast.LENGTH_LONG).show()
             }
-
+            progressBar.visibility = View.INVISIBLE
         }
         return view
     }
