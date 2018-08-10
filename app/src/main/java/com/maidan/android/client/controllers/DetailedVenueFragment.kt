@@ -28,8 +28,6 @@ import com.synnapps.carouselview.ImageListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 class DetailedVenueFragment : Fragment() {
@@ -37,14 +35,14 @@ class DetailedVenueFragment : Fragment() {
     //Layout
     private lateinit var carouselView: CarouselView
     private lateinit var datePicker: DatePickerDialog
-    private lateinit var timePicker: Button
+    private lateinit var timePicker: TextView
     private lateinit var overSpinner: Spinner
     private lateinit var venueNameTxt: TextView
     private lateinit var addressTxt: TextView
-    private lateinit var perHourTxt: TextView
+    private lateinit var price: TextView
     private lateinit var minPlayTimeTxt: TextView
-    private lateinit var dateBtn: Button
-    private lateinit var timeBtn: Button
+    private lateinit var dateBtn: TextView
+    private lateinit var timeBtn: TextView
     private lateinit var clockImage: ImageView
     private lateinit var bookBtn: Button
 
@@ -137,7 +135,7 @@ class DetailedVenueFragment : Fragment() {
         overSpinner = view.findViewById(R.id.over_spinner)
         venueNameTxt = view.findViewById(R.id.venueName)
         addressTxt = view.findViewById(R.id.address)
-        perHourTxt = view.findViewById(R.id.perhour)
+        price = view.findViewById(R.id.price)
         minPlayTimeTxt = view.findViewById(R.id.min_playtime)
         dateBtn = view.findViewById(R.id.selectDate)
         timeBtn = view.findViewById(R.id.selectTime)
@@ -149,8 +147,8 @@ class DetailedVenueFragment : Fragment() {
 
         venueNameTxt.text = venue.getName()
         addressTxt.text = venue.getLocation().getArea()
-        perHourTxt.text = venue.getRate().getPerHrRate().toString()
-        minPlayTimeTxt.text = hr
+        price.text = venue.getRate().getPerHrRate().toString()
+    //    minPlayTimeTxt.text = hr
 
         // Image Slider
         carouselView.pageCount = sampleImages.size
@@ -189,6 +187,7 @@ class DetailedVenueFragment : Fragment() {
                     DatePickerDialog.OnDateSetListener { view, yr, monthOfYear, dayOfMonth ->
                         Log.d(TAG, "Year: $yr, Month $monthOfYear, Day: $dayOfMonth")
                         dateString = "$dayOfMonth/$monthOfYear/$yr"
+                        dateBtn.setText(dateString)
                     },year,month,day)
             datePicker.datePicker.minDate = c.timeInMillis
             datePicker.show()
@@ -207,6 +206,7 @@ class DetailedVenueFragment : Fragment() {
                     TimePickerDialog.OnTimeSetListener { view, hr, min ->
                         Log.d(TAG, "Hour: $hr, Min: $min")
                         timeString = "$hr:$min"
+                        timePicker.setText(timeString)
                     }, hourOfDay, minute, false)
 
             timePickerDialog.show()

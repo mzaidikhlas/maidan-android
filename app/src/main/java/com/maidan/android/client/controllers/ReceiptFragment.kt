@@ -87,24 +87,9 @@ class ReceiptFragment : Fragment() {
         //Calculating rate
         val perhr: Int = booking.getVenue().getRate().getPerHrRate()
         val serviceFeePercent = booking.getVenue().getRate().getVendorServiceFee()
-        var playhrs: Int? = null
+        val playhrs: Int = booking.getDurationOfBooking()[0].toInt()
 
-        when(booking.getDurationOfBooking()){
-            "5 overs" -> {
-                playhrs = 1
-            }
-            "10 overs" -> {
-                playhrs = 2
-            }
-            "20 overs" -> {
-                playhrs = 4
-            }
-            "30 overs" -> {
-                playhrs = 6
-            }
-        }
-
-        val actualPrice = playhrs!! * perhr
+        val actualPrice = playhrs * perhr
         var serviceFee = serviceFeePercent/ 100.toFloat()
 
         serviceFee *= actualPrice

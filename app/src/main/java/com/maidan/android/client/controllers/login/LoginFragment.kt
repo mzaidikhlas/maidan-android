@@ -16,7 +16,6 @@ import com.facebook.CallbackManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.facebook.*
 import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
@@ -31,8 +30,6 @@ import com.facebook.FacebookCallback
 import com.google.firebase.auth.*
 import android.widget.Toast
 import com.facebook.login.LoginManager
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.AuthResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FacebookAuthProvider
@@ -189,22 +186,23 @@ class LoginFragment : Fragment() {
                         else{
                             try {
                                 progressBar.visibility = View.INVISIBLE
-                                throw task.exception!!;
+                                Log.d(TAG, "onComplete: something")
+                                throw task.exception!!
                             }
                             // if user enters wrong email.
                             catch (invalidEmail: FirebaseAuthInvalidUserException ) {
-                                Log.d(TAG, "onComplete: invalid_email");
+                                Log.d(TAG, "onComplete: invalid_email")
                             }
                             // if user enters wrong password.
                             catch (wrongPassword: FirebaseAuthInvalidCredentialsException ) {
-                                Log.d(TAG, "onComplete: wrong_password");
+                                Log.d(TAG, "onComplete: wrong_password")
                             }
                             catch (e: Exception ) {
-                                Log.d(TAG, "onComplete: " + e.message);
+                                Log.d(TAG, "onComplete: " + e.message)
                             }
                         }
+                        progressBar.visibility = View.INVISIBLE
                     }
-            progressBar.visibility = View.INVISIBLE
         }
         catch (e: Exception){
 

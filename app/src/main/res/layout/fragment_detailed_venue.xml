@@ -28,14 +28,15 @@
         <TextView
             android:id="@+id/venueName"
             android:layout_width="0dp"
-            android:layout_height="43dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="Raleway"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/raleway_medium"
             android:text="MODEL TOWN WHITES"
             android:textColor="@color/black"
             android:textSize="42sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/address"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carouselView" />
@@ -44,11 +45,13 @@
             android:id="@+id/address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:fontFamily="Monteserrat"
             android:text="C-BLOCK MARKET"
             android:textColor="@color/grey"
             android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/selectDate"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/venueName" />
 
@@ -56,21 +59,25 @@
             android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="29dp"
+            android:layout_marginStart="60dp"
             android:text="Rs 1500"
             android:textColor="@color/grey"
             android:textSize="24sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/min_playtime"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/venueName" />
+            app:layout_constraintHorizontal_bias="0.448"
+            app:layout_constraintStart_toEndOf="@+id/address"
+            app:layout_constraintTop_toBottomOf="@+id/venueName"
+            app:layout_constraintVertical_bias="0.0" />
 
 
         <TextView
             android:id="@+id/perhour"
             android:layout_width="wrap_content"
             android:layout_height="23dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="6dp"
-            android:fontFamily="Raleway"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/raleway_regular"
             android:text="/hrs"
             android:textColor="@color/grey"
             android:textSize="20sp"
@@ -85,16 +92,21 @@
             android:id="@+id/min_playtime"
             android:layout_width="94dp"
             android:layout_height="21dp"
-            android:layout_marginEnd="8dp"
-            android:fontFamily="Ralewa"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="60dp"
+            android:fontFamily="@font/raleway_regular"
             android:text="min. 3 hrs"
             android:textColor="@color/grey"
             android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/over_spinner"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/address"
             app:layout_constraintTop_toBottomOf="@+id/perhour" />
 
 
-        <Button
+        <TextView
             android:id="@+id/selectDate"
             android:layout_width="120dp"
             android:layout_height="33dp"
@@ -103,7 +115,7 @@
             android:autoSizeTextType="uniform"
             android:background="@null"
             android:drawableStart="@drawable/calendar"
-            android:fontFamily="Raleway"
+            android:fontFamily="@font/raleway_regular"
             android:padding="8dp"
             android:text="@string/SelectDate"
             android:textAlignment="center"
@@ -113,16 +125,15 @@
             app:layout_constraintTop_toBottomOf="@+id/address" />
 
 
-        <Button
+        <TextView
             android:id="@+id/selectTime"
             android:layout_width="121dp"
             android:layout_height="33dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="17dp"
-            android:autoSizeTextType="uniform"
             android:background="@null"
             android:drawableStart="@drawable/clock_1"
-            android:fontFamily="Raleway"
+            android:fontFamily="@font/raleway_regular"
             android:padding="8dp"
             android:text="SELECT TIME"
             android:textAlignment="center"
@@ -136,9 +147,13 @@
             android:id="@+id/clock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginBottom="22dp"
+            android:layout_marginStart="78dp"
+            android:layout_marginTop="26dp"
             android:src="@drawable/clock_1"
+            app:layout_constraintBottom_toTopOf="@+id/listOfAmenities"
             app:layout_constraintEnd_toStartOf="@+id/over_spinner"
+            app:layout_constraintStart_toEndOf="@+id/selectDate"
             app:layout_constraintTop_toBottomOf="@+id/address" />
 
 
@@ -198,37 +213,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
-        <TextView
-            android:id="@+id/boundry"
-            android:layout_width="wrap_content"
+        <ListView
+            android:id="@+id/listOfAmenities"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:drawableLeft="@drawable/clock_1"
-            android:fontFamily="Monteserrat"
-            android:paddingTop="4dp"
-            android:text="70m Boundry"
-            android:textAlignment="center"
-            android:textColor="@color/grey"
-            android:textSize="18sp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/amenities" />
+            app:layout_constraintTop_toBottomOf="@+id/amenities">
 
-        <TextView
-            android:id="@+id/cooler"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:drawableLeft="@drawable/clock_1"
-            android:fontFamily="Monteserrat"
-            android:paddingTop="4dp"
-            android:text="Water Cooler"
-            android:textAlignment="center"
-            android:textColor="@color/grey"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/boundry" />
+
+        </ListView>
 
         <View
             android:id="@+id/divider2"
@@ -241,7 +239,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cooler"
+            app:layout_constraintTop_toBottomOf="@+id/listOfAmenities"
             app:layout_constraintVertical_bias="0.0" />
 
 

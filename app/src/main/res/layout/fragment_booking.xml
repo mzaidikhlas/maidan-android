@@ -24,77 +24,44 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/bookingHeader"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/date_btn"
+        <Spinner
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="40dp"
-            android:autoSizeTextType="uniform"
+            android:layout_height="49dp"
+            android:layout_marginBottom="485dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/radius"
-            android:drawableRight="@drawable/calendar"
-            android:fontFamily="Raleway"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/pick_date"
-            android:textAlignment="textStart"
-            android:textColor="@color/dateColor"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </android.support.constraint.ConstraintLayout>
-
-    <!--Footer-->
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/bookingFooter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:entries="@array/Categories"
             app:layout_constraintBottom_toTopOf="@+id/search_btn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/book_btn"
-            app:layout_constraintVertical_bias="0.973">
+            app:layout_constraintTop_toTopOf="parent"/>
 
-        </android.support.v7.widget.RecyclerView>
 
         <Button
             android:id="@+id/search_btn"
             style="@style/button"
-            android:layout_width="0dp"
-            android:layout_height="59dp"
-            android:layout_marginBottom="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:autoSizeTextType="uniform"
             android:drawableRight="@drawable/left_arrow"
+            android:fontFamily="@font/raleway_regular"
             android:paddingRight="20dp"
             android:text="SEARCH"
+            android:textSize="28sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.52"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent" />
 
 

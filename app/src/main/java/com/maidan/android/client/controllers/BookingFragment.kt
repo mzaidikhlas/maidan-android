@@ -59,6 +59,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchBtn: Button
     private lateinit var datePicker: DatePickerDialog
+    private lateinit var category:Spinner
 
     private lateinit var myDataSet: ArrayList<Category>
     private lateinit var venues: ArrayList<Venue>
@@ -76,7 +77,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     //Google Maps
     private lateinit var myLastLocation: Location
     private var mMarker: Marker? = null
-    private lateinit var bounds: LatLngBounds
+    private var bounds: LatLngBounds? = null
     private lateinit var boundsBuilder: LatLngBounds.Builder
     private var city: String = "Lahore"
     private var country: String = "Pakistan"
@@ -112,44 +113,44 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         val view = inflater.inflate(R.layout.fragment_booking, container, false)
 
         mapView = view.findViewById(R.id.mapBooking)
-        date = view.findViewById(R.id.date_btn)
+    //    date = view.findViewById(R.id.date_btn)
         searchBtn = view.findViewById(R.id.search_btn)
-        recyclerView = view.findViewById(R.id.category);
+  //      recyclerView = view.findViewById(R.id.category);
 
         //calender code
-        date.setOnClickListener {
-            val c = Calendar.getInstance()
-            val year = c.get(Calendar.YEAR)
-            val month = c.get(Calendar.MONTH)
-            val day = c.get(Calendar.DAY_OF_MONTH)
+//        date.setOnClickListener {
+//            val c = Calendar.getInstance()
+//            val year = c.get(Calendar.YEAR)
+//            val month = c.get(Calendar.MONTH)
+//            val day = c.get(Calendar.DAY_OF_MONTH)
+//
+//            datePicker = DatePickerDialog(context, R.style.DatePickerTheme, DatePickerDialog.OnDateSetListener { p0, p1, p2, p3 ->
+//                Log.d("P0", p0.toString());
+//                Log.d("P1", p1.toString());
+//                Log.d("P2", p2.toString());
+//                Log.d("P3", p3.toString());
+//            }, year, month, day)
+//            datePicker.datePicker.minDate = c.timeInMillis
+//            datePicker.show()
+//        }
 
-            datePicker = DatePickerDialog(context, R.style.DatePickerTheme, DatePickerDialog.OnDateSetListener { p0, p1, p2, p3 ->
-                Log.d("P0", p0.toString());
-                Log.d("P1", p1.toString());
-                Log.d("P2", p2.toString());
-                Log.d("P3", p3.toString());
-            }, year, month, day)
-            datePicker.datePicker.minDate = c.timeInMillis
-            datePicker.show()
-        }
-
-        myDataSet = ArrayList();
-
-        myDataSet.add(Category(null, "FootBall"))
-        myDataSet.add(Category(null, "Hockey"))
-        myDataSet.add(Category(null, "Cricket"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-
-        recyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayout.HORIZONTAL, false);
-        recyclerView.adapter = CategoryRecyclerviewAdapter(myDataSet);
+//        myDataSet = ArrayList();
+//
+//        myDataSet.add(Category(null, "FootBall"))
+//        myDataSet.add(Category(null, "Hockey"))
+//        myDataSet.add(Category(null, "Cricket"))
+//        myDataSet.add(Category(null, "Something"))
+//        myDataSet.add(Category(null, "Something"))
+//        myDataSet.add(Category(null, "Something"))
+//        myDataSet.add(Category(null, "Something"))
+//        myDataSet.add(Category(null, "Something"))
+//        myDataSet.add(Category(null, "Something"))
+//        myDataSet.add(Category(null, "Something"))
+//        myDataSet.add(Category(null, "Something"))
+//        myDataSet.add(Category(null, "Something"))
+//
+//        recyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayout.HORIZONTAL, false);
+//        recyclerView.adapter = CategoryRecyclerviewAdapter(myDataSet);
 
        if  (checkLocation()) {
            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -170,10 +171,14 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         //Search Button click listner
         searchBtn.setOnClickListener {
             Log.d(TAG, "search btn")
-            onSearchClick()
+            if (payload!!.isNotEmpty()) {
+                onSearchClick()
+            }
+            else
+                Toast.makeText(context, "No Venues found", Toast.LENGTH_LONG).show()
         }
 
-        return view;
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -223,33 +228,29 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                             val gson = Gson()
                                             payload = response.body()!!.getPayload()
 
-                                            var venue: Venue? = null
-                                            Log.d(TAG, "Payload$payload")
+                                            if (payload != null){
+                                                var venue: Venue? = null
+                                                Log.d(TAG, "Payload$payload")
 
-                                            for (item: PayloadFormat in payload!!){
-                                                val jsonObject = gson.toJsonTree(item.getData()).asJsonObject
-                                                Log.d(TAG, "Json$jsonObject")
-                                                venue = gson.fromJson(jsonObject, Venue::class.java)
-                                                Log.d(TAG, venue.toString())
+                                                for (item: PayloadFormat in payload!!){
+                                                    val jsonObject = gson.toJsonTree(item.getData()).asJsonObject
+                                                    Log.d(TAG, "Json$jsonObject")
+                                                    venue = gson.fromJson(jsonObject, Venue::class.java)
+                                                    Log.d(TAG, venue.toString())
 
-                                                val latLng = LatLng(venue!!.getLocation().getLatitude(), venue.getLocation().getLongitude())
-                                                markerOptions = MarkerOptions()
-                                                        .position(latLng)
-                                                        .title(venue.getName())
-                                                        .snippet("${venue.getLocation().getCountry()}," +
-                                                                        "${venue.getLocation().getCity()}," +
-                                                                        "${venue.getRate().getPerHrRate()}")
-                                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
-                                                mMap.addMarker(markerOptions)
-                                                boundsBuilder.include(latLng)
-                                                venues.add(venue)
+                                                    val latLng = LatLng(venue!!.getLocation().getLatitude(), venue.getLocation().getLongitude())
+                                                    markerOptions = MarkerOptions()
+                                                            .position(latLng)
+                                                            .title(venue.getName())
+                                                            .snippet("${venue.getLocation().getCountry()}," +
+                                                                    "${venue.getLocation().getCity()}," +
+                                                                    "${venue.getRate().getPerHrRate()}")
+                                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
+                                                    mMap.addMarker(markerOptions)
+                                                    boundsBuilder.include(latLng)
+                                                    venues.add(venue)
+                                                }
                                             }
-                                            bounds = boundsBuilder.build()
-                                             try{
-                                                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
-                                             }catch (e:Exception ){
-                                                 e.printStackTrace();
-                                             }
                                         }
 
                                     }else {
@@ -424,6 +425,14 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                     }
                 }
 
+                if (bounds != null){
+                    bounds = boundsBuilder.build()
+                    try{
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+                    }catch (e:Exception ){
+                        e.printStackTrace();
+                    }
+                }
 
             }
         }
