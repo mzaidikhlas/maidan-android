@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.maidan.android.client.MainActivity
 import com.maidan.android.client.R
+import com.maidan.android.client.WelcomeActivity
 import com.maidan.android.client.models.User
 import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
@@ -119,8 +120,8 @@ class SignupDetailsFragment : Fragment() {
     }
     private fun updateUI(user: FirebaseUser) {
         progressBar.visibility = View.INVISIBLE
-        val mainActivity = Intent(context, MainActivity::class.java)
-        mainActivity.putExtra("loginUser", user)
-        this.startActivity(mainActivity)
+        val welcomeActivity = Intent(context, WelcomeActivity::class.java)
+        welcomeActivity.putExtra("loginUser", user)
+        this.startActivity(welcomeActivity)
     }
 }
