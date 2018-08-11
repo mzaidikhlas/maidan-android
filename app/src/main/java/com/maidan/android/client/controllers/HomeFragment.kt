@@ -26,53 +26,6 @@ class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.fragment_home, container, false)
-           // apiCall()
-        return view
-    }
-    private fun apiCall (){
-
-        val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
-
-        val call: Call<ApiResponse> = apiService.getAllUsers()
-
-        call.enqueue(object : Callback<ApiResponse>{
-            override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
-                Log.d("Error", t!!.toString())
-                throw error(t.message!!)
-            }
-
-            override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
-
-                if (response!!.isSuccessful) {
-                    if (response.body()!!.getStatusCode() == 200) {
-                        payload = response.body()!!.getPayload()
-                        Log.d("ApiResponsePayload", payload!!.toString())
-
-                        if (response.body()!!.getType() == "User" ) {
-                            val gson = Gson()
-
-                            payloadData = response.body()!!.getPayload()[0].getData()
-
-                            val jsonObject = gson.toJsonTree(payloadData).asJsonObject
-                            payloadData = gson.fromJson(jsonObject, User::class.java)
-
-                            Log.d("ApiResponsePayloadData", (payloadData as User).getName())
-                        }
-                        else throw error("The requested data is not compatible with this fragment")
-
-                    } else {
-                        Log.d("ApiResponse", "Nahe aya")
-                        throw error(response.body()!!.getMessage())
-                    }
-                }
-            }
-        });
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 }
-//var a: Any? = null
-//val u: Any = User("null","Yoo","null",3131212,3213212,"null", UserRecord("null"))
-//
-//a = u as User
-//Log.d("ApiTesting",a.getName())
-////                            Log.d("ApiTestingPayload", name)

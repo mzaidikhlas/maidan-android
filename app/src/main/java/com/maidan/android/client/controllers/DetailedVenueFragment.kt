@@ -72,54 +72,50 @@ class DetailedVenueFragment : Fragment() {
         val view =  inflater.inflate(R.layout.fragment_detailed_venue, container, false)
 
         mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth.currentUser
+        currentUser = mAuth.currentUser!!
 
-        //If not logged in
-        if (currentUser == null){
-            val loginIntent  = Intent(activity, LoginActivity::class.java)
-            activity!!.startActivity(loginIntent)
-        }else {
-            currentUser.getIdToken(true)
-                    .addOnCompleteListener { task2 ->
-                        if (task2.isSuccessful) {
-                            val idToken = task2.result.token
-                            Log.d("User", idToken)
+        currentUser.getIdToken(true)
+                .addOnCompleteListener { task2 ->
+                    if (task2.isSuccessful) {
+                        val idToken = task2.result.token
+                        Log.d("User", idToken)
 
-                            val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
+                        val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
 
-                            val call: Call<ApiResponse> = apiService.getUserInfoByEmail(idToken!!)
+                        val call: Call<ApiResponse> = apiService.getUserInfoByEmail(idToken!!)
 
-                            call.enqueue(object : Callback<ApiResponse> {
-                                override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
-                                    Log.d("UserApiError", t.toString())
-                                }
+                        call.enqueue(object : Callback<ApiResponse> {
+                            override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
+                                Log.d("UserApiError", t.toString())
+                            }
 
-                                override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
-                                    if (response!!.isSuccessful) {
-                                        Log.d("UserApiSuccess", response.body().toString())
-                                        if (response.body()!!.getStatusCode() == 200){
-                                            if (response.body()!!.getType() == "User") {
-                                                payload = response.body()!!.getPayload()
+                            override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
+                                if (response!!.isSuccessful) {
+                                    Log.d("UserApiSuccess", response.body().toString())
+                                    if (response.body()!!.getStatusCode() == 200){
+                                        if (response.body()!!.getType() == "User") {
+                                            payload = response.body()!!.getPayload()
 
-                                                val gson = Gson()
-                                                val jsonObject = gson.toJsonTree(payload!![0].getData()).asJsonObject
-                                                Log.d(TAG, "Json$jsonObject")
-                                                user = gson.fromJson(jsonObject, User::class.java)
-                                            }else{
-                                                Log.d(TAG, "Expected Data is user and we get ${response.body()!!.getType()}")
-                                            }
+                                            val gson = Gson()
+                                            val jsonObject = gson.toJsonTree(payload!![0].getData()).asJsonObject
+                                            Log.d(TAG, "Json$jsonObject")
+                                            user = gson.fromJson(jsonObject, User::class.java)
                                         }else{
-                                            Log.d(TAG, response.body()!!.getMessage())
+                                            Log.d(TAG, "Expected Data is user and we get ${response.body()!!.getType()}")
                                         }
+                                    }else{
+                                        Log.d(TAG, response.body()!!.getMessage())
                                     }
                                 }
-                            })
-                        } else {
-                            // Handle error -> task.getException();
-                            Log.d("UserTokenError1", "Error")
-                        }
+                            }
+                        })
+                    } else {
+                        // Handle error -> task.getException();
+                        Log.d("UserTokenError1", "Error")
                     }
-        }
+                }
+        ;
+
         // Getting Data from bundle
         if (!arguments!!.isEmpty){
             venue = arguments!!.getSerializable("venue") as Venue
@@ -157,21 +153,28 @@ class DetailedVenueFragment : Fragment() {
         //book
         bookBtn.setOnClickListener {
 
-            val bookingDuration = overSpinner.selectedItem.toString()
-            Log.d(TAG, "Duration $bookingDuration")
-            //Populate Booking object and pass it to receipt fragment
-            booking = Booking(venue, null, user, bookingDuration, timeString!!, dateString!!)
+            if (timeString.isNullOrEmpty() || dateString.isNullOrEmpty()){
+                Log.d(TAG, "aa")
+                Toast.makeText(context, "Please set time and date for booking", Toast.LENGTH_LONG).show()
+            }else{
+                val bookingDuration = overSpinner.selectedItem.toString()
+                Log.d(TAG, "Duration $bookingDuration")
+                //Populate Booking object and pass it to receipt fragment
+                booking = Booking(venue, null, user, bookingDuration, timeString!!, dateString!!)
 
-            Log.d(TAG, "Booking ${booking.toString()}")
+                Log.d(TAG, "Booking $booking")
 
-            Log.d(TAG, "BookBtn")
-            val receiptFragment = ReceiptFragment()
-            val args = Bundle()
-            args.putSerializable("booking", booking)
+                Log.d(TAG, "BookBtn")
+                val receiptFragment = ReceiptFragment()
+                val args = Bundle()
+                args.putSerializable("booking", booking)
 
-            receiptFragment.arguments = args
+                receiptFragment.arguments = args
 
-            fragmentManager!!.beginTransaction().addToBackStack("detailed venue fragment").replace(R.id.fragment_layout, receiptFragment).commit()
+                fragmentManager!!.beginTransaction().addToBackStack("detailed venue fragment").replace(R.id.fragment_layout, receiptFragment).commit()
+            }
+
+
         }
 
         // Date Selector
@@ -187,7 +190,7 @@ class DetailedVenueFragment : Fragment() {
                     DatePickerDialog.OnDateSetListener { view, yr, monthOfYear, dayOfMonth ->
                         Log.d(TAG, "Year: $yr, Month $monthOfYear, Day: $dayOfMonth")
                         dateString = "$dayOfMonth/$monthOfYear/$yr"
-                        dateBtn.setText(dateString)
+                        dateBtn.text = dateString
                     },year,month,day)
             datePicker.datePicker.minDate = c.timeInMillis
             datePicker.show()
@@ -206,7 +209,7 @@ class DetailedVenueFragment : Fragment() {
                     TimePickerDialog.OnTimeSetListener { view, hr, min ->
                         Log.d(TAG, "Hour: $hr, Min: $min")
                         timeString = "$hr:$min"
-                        timePicker.setText(timeString)
+                        timePicker.text = timeString
                     }, hourOfDay, minute, false)
 
             timePickerDialog.show()
@@ -217,8 +220,8 @@ class DetailedVenueFragment : Fragment() {
         val adapter = ArrayAdapter.createFromResource(context,
                 R.array.match_overs, android.R.layout.simple_spinner_item)
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        overSpinner.adapter = adapter;
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        overSpinner.adapter = adapter
 
         return view
     }

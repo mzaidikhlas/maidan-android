@@ -1,5 +1,6 @@
 package com.maidan.android.client.controllers.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.google.firebase.auth.*
+import com.maidan.android.client.MainActivity
 import com.maidan.android.client.R
 import com.maidan.android.client.models.User
 
@@ -65,21 +67,24 @@ class SignupFormFragment : Fragment() {
                                     Toast.makeText(context,
                                             "Verification email sent to " + user.email,
                                             Toast.LENGTH_SHORT).show()
-                                    val signupDetailsFragment = SignupDetailsFragment()
-
-                                    val bundle = Bundle()
-                                    bundle.putString("name", signupUsernameTxt.text.toString())
-                                    bundle.putString("email", signupUseremailTxt.text.toString())
-                                    bundle.putString("password", signupPasswordTxt.text.toString())
-
-                                    signupDetailsFragment.arguments = bundle
-                                    progressBar.visibility = View.INVISIBLE
-                                    fragmentManager!!.beginTransaction().replace(R.id.login_layout, signupDetailsFragment).commit()
+//                                    val signupDetailsFragment = SignupDetailsFragment()
+//
+//                                    val bundle = Bundle()
+//                                    bundle.putString("name", signupUsernameTxt.text.toString())
+//                                    bundle.putString("email", signupUseremailTxt.text.toString())
+//                                    bundle.putString("password", signupPasswordTxt.text.toString())
+//
+//                                    signupDetailsFragment.arguments = bundle
+//                                    progressBar.visibility = View.INVISIBLE
+                                    //fragmentManager!!.beginTransaction().replace(R.id.login_layout, signupDetailsFragment).commit()
+                                    updateUI(user)
                                 }else{
+                                    progressBar.visibility = View.INVISIBLE
                                     Log.e(TAG, "sendEmailVerification", task.exception);
                                     Toast.makeText(context,
                                             "Failed to send verification email.",
-                                            Toast.LENGTH_SHORT).show();
+                                            Toast.LENGTH_SHORT).show()
+                                    throw task.exception!!
                                 }
                             }
                         }
@@ -105,13 +110,20 @@ class SignupFormFragment : Fragment() {
                         }
                     }
                 }else{
+                    progressBar.visibility = View.INVISIBLE
                     Toast.makeText(context,"Password and confirm password is not same", Toast.LENGTH_LONG).show()
                 }
             }else{
+                progressBar.visibility = View.INVISIBLE
                 Toast.makeText(context,"All fields are required", Toast.LENGTH_LONG).show()
             }
-            progressBar.visibility = View.INVISIBLE
         }
         return view
+    }
+    private fun updateUI(user: FirebaseUser) {
+        progressBar.visibility = View.INVISIBLE
+        val mainActivity = Intent(context, MainActivity::class.java)
+        mainActivity.putExtra("loginUser", user)
+        this.startActivity(mainActivity)
     }
 }

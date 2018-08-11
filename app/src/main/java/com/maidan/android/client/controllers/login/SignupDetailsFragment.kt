@@ -13,7 +13,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.maidan.android.client.MainActivity
 import com.maidan.android.client.R
-import com.maidan.android.client.WelcomeActivity
 import com.maidan.android.client.models.User
 import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
@@ -37,7 +36,6 @@ class SignupDetailsFragment : Fragment() {
     private var password: String? = null
 
     //layout
-    private lateinit var signupBackBtn: Button
     private lateinit var userImage: ImageButton
     private lateinit var nameTxt: TextView
     private lateinit var emailTxt: TextView
@@ -50,7 +48,7 @@ class SignupDetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        if (!arguments!!.isEmpty){
+        if (arguments != null){
             name = arguments!!.getString("name")
             email = arguments!!.getString("email")
 
@@ -62,7 +60,6 @@ class SignupDetailsFragment : Fragment() {
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth.currentUser
 
-        signupBackBtn = view.findViewById(R.id.signupBack)
         userImage = view.findViewById(R.id.uploadPicture)
         nameTxt = view.findViewById(R.id.name)
         emailTxt = view.findViewById(R.id.email)
@@ -120,8 +117,8 @@ class SignupDetailsFragment : Fragment() {
     }
     private fun updateUI(user: FirebaseUser) {
         progressBar.visibility = View.INVISIBLE
-        val welcomeActivity = Intent(context, WelcomeActivity::class.java)
-        welcomeActivity.putExtra("loginUser", user)
-        this.startActivity(welcomeActivity)
+        val mainActivity = Intent(context, MainActivity::class.java)
+        mainActivity.putExtra("loginUser", user)
+        this.startActivity(mainActivity)
     }
 }

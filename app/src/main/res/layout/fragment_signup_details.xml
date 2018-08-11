@@ -25,37 +25,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="59dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/light_green_to_dark_green_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <Button
-            android:id="@+id/signupBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:background="@null"
-            android:drawableStart="@drawable/right_arrow"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </android.support.constraint.ConstraintLayout>
-
-    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/name"
@@ -108,6 +85,7 @@
             android:layout_marginStart="36dp"
             android:layout_marginTop="22dp"
             android:hint="Date of Birth"
+            android:inputType="date"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -119,14 +97,14 @@
             style="@style/email_password_login"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:entries="@array/gender"
             android:layout_marginEnd="36dp"
             android:layout_marginStart="36dp"
             android:layout_marginTop="16dp"
+            android:entries="@array/gender"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/DOB"/>
+            app:layout_constraintTop_toBottomOf="@+id/DOB" />
 
         <EditText
             android:id="@+id/phonenumber"
@@ -137,6 +115,7 @@
             android:layout_marginStart="36dp"
             android:layout_marginTop="16dp"
             android:hint="Phone Number"
+            android:inputType="phone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gender" />
@@ -150,6 +129,7 @@
             android:layout_marginStart="36dp"
             android:layout_marginTop="16dp"
             android:hint="CNIC"
+            android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/phonenumber" />

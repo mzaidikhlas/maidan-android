@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthActionCodeException
 import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
 
@@ -46,6 +45,7 @@ class ReceiptFragment : Fragment() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -62,7 +62,7 @@ class ReceiptFragment : Fragment() {
         currentUser = mAuth.currentUser!!
 
         //Layout init
-        maidanIcon = view.findViewById(R.id.receiptMaidanIcon)
+        maidanIcon = view.findViewById(R.id.receiptUserImage)
         invoiceIdTxt = view.findViewById(R.id.invoiceId)
         customerNameTxt = view.findViewById(R.id.receiptCustomerName)
         receiptDateTxt = view.findViewById(R.id.receiptDate)
@@ -88,6 +88,8 @@ class ReceiptFragment : Fragment() {
         val perhr: Int = booking.getVenue().getRate().getPerHrRate()
         val serviceFeePercent = booking.getVenue().getRate().getVendorServiceFee()
         val playhrs: Int = booking.getDurationOfBooking()[0].toInt()
+
+        Log.d(TAG, "Play hrs $playhrs")
 
         val actualPrice = playhrs * perhr
         var serviceFee = serviceFeePercent/ 100.toFloat()
@@ -120,7 +122,9 @@ class ReceiptFragment : Fragment() {
 
                         call.enqueue(object: Callback<ApiResponse>{
                             override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
+                                progressBar.visibility = View.INVISIBLE
                                 Log.d(TAG, "Receipt Error $t")
+                                throw t!!
                             }
 
                             override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
@@ -131,15 +135,18 @@ class ReceiptFragment : Fragment() {
                                         progressBar.visibility = View.INVISIBLE
                                         fragmentManager!!.beginTransaction().replace(R.id.fragment_layout, BookingFragment()).commit()
                                     }else{
+                                        progressBar.visibility = View.INVISIBLE
                                         Log.d(TAG, "Bad Request")
                                     }
+                                }else{
+                                    progressBar.visibility = View.INVISIBLE
+                                    Log.d(TAG, "Exception ${response.errorBody()}")
                                 }
                             }
                         })
                     }
                 }
             }
-            progressBar.visibility = View.INVISIBLE
         }
         return view
     }

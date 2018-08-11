@@ -63,6 +63,16 @@ class LoginFragment : Fragment() {
     private var callbackManager: CallbackManager? = null
 
 
+    override fun onStart() {
+        super.onStart()
+        val user = mAuth.currentUser
+        if (user != null) {
+            Log.d(TAG, user.displayName)
+            updateUI(user)
+        }else
+            Log.d(TAG, "No user login")
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -78,40 +88,38 @@ class LoginFragment : Fragment() {
         progressBar = view.findViewById(R.id.progress_loader)
 
         mAuth = FirebaseAuth.getInstance()
-        val user = mAuth.currentUser
 
-        if (user == null){
-            //Login through email password
-            loginBtnEmail.setOnClickListener {
-                if (userEmailTxt.text.isNotEmpty()){
-                    if (passwordTxt.text.isNotEmpty()){
-                        val email = userEmailTxt.text.toString()
-                        val password = passwordTxt.text.toString()
-                        Log.d(TAG, "Email: $email, Password: $password")
-                        signInWithEmailPassword(email, password)
-                    }
-                    else
-                        Log.d(TAG, "Password field is required")
+
+        //Login through email password
+        loginBtnEmail.setOnClickListener {
+            if (userEmailTxt.text.isNotEmpty()){
+                if (passwordTxt.text.isNotEmpty()){
+                    val email = userEmailTxt.text.toString()
+                    val password = passwordTxt.text.toString()
+                    Log.d(TAG, "Email: $email, Password: $password")
+                    signInWithEmailPassword(email, password)
                 }
                 else
-                    Log.d(TAG, "Both fields are required")
+                    Log.d(TAG, "Password field is required")
             }
-            //Google
-            loginBtnGoogle.setOnClickListener {
-                Log.d(TAG, "Google listener")
-                signInWithGoogle()
-            }
-            //Facebook
-            loginBtnFB.setOnClickListener {
-                Log.d(TAG, "Facebook listener")
-                signInWithFacebook()
-            };
-            signupTxt.setOnClickListener {
-                fragmentManager!!.beginTransaction().replace(R.id.login_layout,SignupFragment()).commit()
-            }
+            else
+                Log.d(TAG, "Both fields are required")
         }
-        else
-            updateUI(user)
+        //Google
+        loginBtnGoogle.setOnClickListener {
+            Log.d(TAG, "Google listener")
+            signInWithGoogle()
+        }
+        //Facebook
+        loginBtnFB.setOnClickListener {
+            Log.d(TAG, "Facebook listener")
+            signInWithFacebook()
+        };
+        signupTxt.setOnClickListener {
+            fragmentManager!!.beginTransaction().replace(R.id.login_layout,SignupFragment()).commit()
+        }
+
+
 
         return view
     }
@@ -126,12 +134,13 @@ class LoginFragment : Fragment() {
         //Google
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == 101){
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 // Google Sign In was successful, authenticate with Firebase
+                val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
+                progressBar.visibility = View.INVISIBLE
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e)
                 // ...
@@ -171,7 +180,6 @@ class LoginFragment : Fragment() {
                                                     if (response!!.isSuccessful){
                                                         Log.d("UserApiSuccess", response.body().toString())
 
-                                                        progressBar.visibility = View.INVISIBLE
                                                         updateUI(user)
                                                     }
                                                 }
@@ -200,13 +208,14 @@ class LoginFragment : Fragment() {
                             catch (e: Exception ) {
                                 Log.d(TAG, "onComplete: " + e.message)
                             }
+                            progressBar.visibility = View.INVISIBLE
                         }
-                        progressBar.visibility = View.INVISIBLE
                     }
         }
         catch (e: Exception){
-
-            Log.d("UserException", "Yeh hai")
+            progressBar.visibility = View.INVISIBLE
+            Log.d(TAG, "Exception ${e.message}")
+            throw e
         }
     }
 
@@ -225,7 +234,9 @@ class LoginFragment : Fragment() {
             startActivityForResult(signInIntent, 101)
         }
         catch (e: Exception){
-            Log.d(TAG, e.toString())
+            progressBar.visibility = View.INVISIBLE
+            Log.d(TAG, "Exception ${e.message}")
+            throw e
         }
     }
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount?) {
@@ -242,13 +253,21 @@ class LoginFragment : Fragment() {
                         Log.d(TAG, "Display name ${user.displayName}")
                         Log.d(TAG, "Email ${user.isEmailVerified.toString()}")
                         Log.d(TAG, "Picture ${user.photoUrl.toString()}")
+                        mGoogleSignInClient.revokeAccess().addOnCompleteListener { task2 ->
+                            if (task2.isSuccessful){
+                                Log.d(TAG,"yo")
+                                updateUI(user)
+                            }else{
+                                Log.d(TAG,"yo yo")
+                            }
+                        }
 
-                        updateUI(user)
                     } else {
                         progressBar.visibility = View.INVISIBLE
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredentialGoogle:failure", task.exception)
                         Toast.makeText(context, "Authentication Failed.", Toast.LENGTH_SHORT).show()
+                        throw task.exception!!
 //                        updateUI(null)
                     }
                 }
@@ -276,15 +295,14 @@ class LoginFragment : Fragment() {
                     }
 
                     override fun onCancel() {
-                        Log.d(TAG, "facebook:onCancel");
+                        Log.d(TAG, "facebook:onCancel")
                     }
 
                     override fun onError(error: FacebookException?) {
-                        Log.d(TAG, "facebook:onError", error);
+                        Log.d(TAG, "facebook:onError", error)
                     }
-                });
+                })
         progressBar.visibility = View.INVISIBLE
-//        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
     }
     private fun handleFacebookAccessToken(accessToken: AccessToken?) {
         Log.d(TAG, "handleFacebookAccessToken:$accessToken")
@@ -299,10 +317,10 @@ class LoginFragment : Fragment() {
                         Log.d(TAG, user!!.email)
                         Log.d(TAG, "Display name ${user.displayName}")
                         Log.d(TAG, "Display name ${user.phoneNumber}")
-                        Log.d(TAG, "Email ${user.isEmailVerified.toString()}")
+                        Log.d(TAG, "Email ${user.isEmailVerified}")
                         Log.d(TAG, "Picture ${user.photoUrl.toString()}")
-
-                        updateUI(user);
+                        LoginManager.getInstance().logOut()
+                        updateUI(user)
                     } else {
                         progressBar.visibility = View.INVISIBLE
                         // If sign in fails, display a message to the user.
@@ -314,6 +332,5 @@ class LoginFragment : Fragment() {
                     }
 
                 }
-        ;
     }
 }

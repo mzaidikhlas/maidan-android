@@ -69,7 +69,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     private lateinit var currentUser: FirebaseUser
 
     //Api Call Response
-    private var payload: ArrayList<PayloadFormat>? = null
+    private lateinit var payload: ArrayList<PayloadFormat>
 
     private var latitude: Double = 0.toDouble();
     private var longitude: Double = 0.toDouble();
@@ -102,19 +102,14 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                               savedInstanceState:    Bundle?): View? {
         // Inflate the layout for this fragment
         mAuth = FirebaseAuth.getInstance()
-        if (mAuth.currentUser != null){
-            currentUser = mAuth.currentUser!!
-        }
-        else{
-            Log.d(TAG, "Booking Fragment Auth null")
-            val loginIntent = Intent(activity, LoginActivity::class.java)
-            activity!!.startActivity(loginIntent)
-        }
+        currentUser = mAuth.currentUser!!
+
         val view = inflater.inflate(R.layout.fragment_booking, container, false)
 
         mapView = view.findViewById(R.id.mapBooking)
     //    date = view.findViewById(R.id.date_btn)
         searchBtn = view.findViewById(R.id.search_btn)
+        category = view.findViewById(R.id.bookingCategory)
   //      recyclerView = view.findViewById(R.id.category);
 
         //calender code
@@ -155,7 +150,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
        if  (checkLocation()) {
            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                if (checkLocationPermission()) {
-                   buildLocationRequest();
+                   buildLocationRequest()
                    buildLocationCallback()
                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
@@ -171,11 +166,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         //Search Button click listner
         searchBtn.setOnClickListener {
             Log.d(TAG, "search btn")
-            if (payload!!.isNotEmpty()) {
                 onSearchClick()
-            }
-            else
-                Toast.makeText(context, "No Venues found", Toast.LENGTH_LONG).show()
         }
 
         return view
@@ -191,22 +182,26 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     private fun onSearchClick(){
         //val fragment = childFragmentManager.findFragmentById(R.id.bookingFooter) as SupportMapFragment
         Log.d(TAG, "search btn click liestner")
-        val venueFragment = VenueFragment()
-        val args = Bundle()
-        args.putSerializable("venues", venues)
+        if (venues.isEmpty()){
+            Toast.makeText(context, "No Venues found", Toast.LENGTH_LONG).show()
+        }else {
+            val venueFragment = VenueFragment()
+            val args = Bundle()
+            args.putSerializable("venues", venues)
 
-        venueFragment.arguments = args
+            venueFragment.arguments = args
 
-        fragmentManager!!.beginTransaction().addToBackStack("booking fragment").replace(R.id.fragment_layout, venueFragment).commit()
+            fragmentManager!!.beginTransaction().addToBackStack("booking fragment").replace(R.id.fragment_layout, venueFragment).commit()
+        }
     }
 
     //Getting all values according to recyclerview selected items
     private fun setMarkers(categoryName: String){
         Log.d(TAG, "First")
         currentUser.getIdToken(true)
-                .addOnCompleteListener { task2 ->
-                    if (task2.isSuccessful) {
-                        val idToken = task2.result.token
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val idToken = task.result.token
                         Log.d("User", idToken)
 
                         val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
@@ -228,11 +223,11 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                             val gson = Gson()
                                             payload = response.body()!!.getPayload()
 
-                                            if (payload != null){
+                                            if (payload.isNotEmpty()){
                                                 var venue: Venue? = null
                                                 Log.d(TAG, "Payload$payload")
 
-                                                for (item: PayloadFormat in payload!!){
+                                                for (item: PayloadFormat in payload){
                                                     val jsonObject = gson.toJsonTree(item.getData()).asJsonObject
                                                     Log.d(TAG, "Json$jsonObject")
                                                     venue = gson.fromJson(jsonObject, Venue::class.java)
@@ -259,10 +254,11 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                     }
                                 }
                             }
-                        });
+                        })
                     } else {
                         // Handle error -> task.getException();
-                        Log.d("UserTokenError1", "Error")
+                        Log.d(TAG, "Task Exception ${task.exception}")
+                        throw task.exception!!
                     }
                 }
     }
@@ -386,7 +382,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG, "IDhr aya hai")
-                setMarkers("Cricket")
+                setMarkers(category.selectedItem as String)
 
                 mMap.setInfoWindowAdapter(object: GoogleMap.InfoWindowAdapter{
                     override fun getInfoContents(p0: Marker?): View {
@@ -430,7 +426,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                     try{
                         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
                     }catch (e:Exception ){
-                        e.printStackTrace();
+                        e.printStackTrace()
                     }
                 }
 

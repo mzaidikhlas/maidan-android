@@ -40,12 +40,13 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/receiptMaidanIcon"
+            android:id="@+id/receiptUserImage"
             android:layout_width="82dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:contentDescription="Maidan Logo"
+            android:background="@drawable/radius"
             android:src="@android:color/darker_gray"
             app:layout_constraintBottom_toTopOf="@+id/receiptVenueName"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +63,7 @@
             android:textSize="15sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptCustomerName"
             app:layout_constraintEnd_toStartOf="@+id/receiptDate"
-            app:layout_constraintStart_toEndOf="@+id/receiptMaidanIcon"
+            app:layout_constraintStart_toEndOf="@+id/receiptUserImage"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -76,7 +77,7 @@
             android:textSize="15sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptVenueName"
             app:layout_constraintEnd_toStartOf="@+id/receiptTime"
-            app:layout_constraintStart_toEndOf="@+id/receiptMaidanIcon"
+            app:layout_constraintStart_toEndOf="@+id/receiptUserImage"
             app:layout_constraintTop_toBottomOf="@+id/invoiceId" />
 
         <TextView
@@ -123,7 +124,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/receiptMaidanIcon" />
+            app:layout_constraintTop_toBottomOf="@+id/receiptUserImage" />
 
         <TextView
             android:id="@+id/receiptBookingDate"

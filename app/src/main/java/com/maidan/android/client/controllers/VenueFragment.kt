@@ -2,6 +2,7 @@ package com.maidan.android.client.controllers
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -15,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -40,29 +42,22 @@ class VenueFragment : Fragment(), OnMapReadyCallback {
 
     private var TAG = "VenuePage"
 
-    //Firebase
-    private lateinit var mAuth: FirebaseAuth
-
     //Google Maps
     private lateinit var mMap: GoogleMap
     private lateinit var markerOptions: MarkerOptions
     private lateinit var mapView: FrameLayout
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth.currentUser
-        if (currentUser == null ){
-            val loginIntent =  Intent(activity,  LoginActivity::class.java)
-            activity!!.startActivity(loginIntent)
-        }
-
         val view = inflater.inflate(R.layout.fragment_venue, container, false)
 
-        venues = arguments!!.getSerializable("venues") as ArrayList<Venue>
-        Log.d(TAG, venues.toString())
+        if (arguments != null){
+            venues = arguments!!.getSerializable("venues") as ArrayList<Venue>
+            Log.d(TAG, venues.toString())
+        }else{
+            Toast.makeText(context, "No venues found", Toast.LENGTH_LONG).show()
+        }
 
         venueCard = view.findViewById(R.id.groundCards)
         mapView = view.findViewById(R.id.mapVenue)
@@ -76,14 +71,14 @@ class VenueFragment : Fragment(), OnMapReadyCallback {
         back.setOnClickListener{fragmentManager!!.popBackStack()}
         filter.setOnClickListener{Log.d(TAG, "filter")}
 
-        return view;
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fragment = childFragmentManager.findFragmentById(R.id.mapVenue) as SupportMapFragment;
-        fragment.getMapAsync(this);
+        val fragment = childFragmentManager.findFragmentById(R.id.mapVenue) as SupportMapFragment
+        fragment.getMapAsync(this)
 
     }
 
@@ -92,15 +87,16 @@ class VenueFragment : Fragment(), OnMapReadyCallback {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Log.d("VenuePage", "IDhr aya hai")
-                setMarkers("Cricket")
-            }
+                setMarkers()
+            }else
+                Toast.makeText(context, "Venue permissions issue", Toast.LENGTH_LONG).show()
         }
         else
-            setMarkers("Cricket")
+            Toast.makeText(context, "Venue versions issue", Toast.LENGTH_LONG).show()
     }
 
     //Getting all values according to recyclerview selected items
-    private fun setMarkers(categoryName: String){
+    private fun setMarkers(){
         val boundsBuilder = LatLngBounds.builder()
 
         if (!venues.isEmpty()){

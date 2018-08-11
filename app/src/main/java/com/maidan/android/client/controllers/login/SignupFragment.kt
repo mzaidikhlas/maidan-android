@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.maidan.android.client.MainActivity
@@ -47,6 +48,13 @@ class SignupFragment : Fragment() {
     //facebook
     private var callbackManager: CallbackManager? = null
 
+    override fun onStart() {
+        super.onStart()
+        val user = mAuth.currentUser
+        if (user != null)
+            updateUI(user)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view =  inflater.inflate(R.layout.fragment_signup, container, false)
@@ -56,28 +64,23 @@ class SignupFragment : Fragment() {
         progressBar = view.findViewById(R.id.signupProgressBar2)
 
         mAuth = FirebaseAuth.getInstance()
-        val user = mAuth.currentUser
 
-        if (user == null){
-            //Google
-            googleBtn.setOnClickListener {
-                Log.d(TAG, "Google listener")
-                signInWithGoogle()
-            }
+        //Google
+        googleBtn.setOnClickListener {
+            Log.d(TAG, "Google listener")
+            signInWithGoogle()
+        }
 
-            //Facebook
-            facebookBtn.setOnClickListener {
-                Log.d(TAG, "Facebook listener")
-                callbackManager = CallbackManager.Factory.create();
-                signInWithFacebook()
-            };
-            signupBtn.setOnClickListener {
-                fragmentManager!!.beginTransaction().replace(R.id.login_layout, SignupFormFragment()).commit()
-            }
+        //Facebook
+        facebookBtn.setOnClickListener {
+            Log.d(TAG, "Facebook listener")
+            callbackManager = CallbackManager.Factory.create();
+            signInWithFacebook()
+        };
+        signupBtn.setOnClickListener {
+            fragmentManager!!.beginTransaction().replace(R.id.login_layout, SignupFormFragment()).commit()
         }
-        else {
-            mAuth.signOut()
-        }
+
         return view
     }
 
@@ -92,15 +95,17 @@ class SignupFragment : Fragment() {
         //Google
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == 101){
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 // Google Sign In was successful, authenticate with Firebase
+                val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
+                progressBar.visibility = View.INVISIBLE
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e)
-                // ...
+                Toast.makeText(context, "Google sign in failed", Toast.LENGTH_LONG).show()
+                throw e
             }
         }
     }
@@ -136,25 +141,30 @@ class SignupFragment : Fragment() {
                         val user = mAuth.currentUser
                         Log.d(TAG, user!!.email)
 
-                        val signupDetailsFragment = SignupDetailsFragment()
-                        val bundle = Bundle()
-                        bundle.putString("name", user.displayName)
-                        bundle.putString("email", user.email)
-                        bundle.putString("password", null)
-                        signupDetailsFragment.arguments = bundle
-                        progressBar.visibility = View.INVISIBLE
-                        fragmentManager!!.beginTransaction().replace(R.id.login_layout, signupDetailsFragment).commit()
+//                        val signupDetailsFragment = SignupDetailsFragment()
+//                        val bundle = Bundle()
+//                        bundle.putString("name", user.displayName)
+//                        bundle.putString("email", user.email)
+//                        bundle.putString("password", null)
+//                        signupDetailsFragment.arguments = bundle
+//                        progressBar.visibility = View.INVISIBLE
+//                        fragmentManager!!.beginTransaction().replace(R.id.login_layout, signupDetailsFragment).commit()
 
-//                        updateUI(user)
+                        mGoogleSignInClient.revokeAccess().addOnCompleteListener { task2 ->
+                            if (task2.isSuccessful){
+                                Log.d(TAG,"yo")
+                                updateUI(user)
+                            }else{
+                                Log.d(TAG,"yo yo")
+                            }
+                        }
                     } else {
                         progressBar.visibility = View.INVISIBLE
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredentialGoogle:failure", task.exception)
-//                        Snackbar.make(this, "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
-//                        updateUI(null)
+                        Toast.makeText(context,"signInWithCredentialGoogle:failure", Toast.LENGTH_LONG).show()
+                        throw task.exception!!
                     }
-
-                    // ...
                 }
 
     }
@@ -173,11 +183,12 @@ class SignupFragment : Fragment() {
                     }
 
                     override fun onCancel() {
-                        Log.d(TAG, "facebook:onCancel");
+                        Log.d(TAG, "facebook:onCancel")
                     }
 
                     override fun onError(error: FacebookException?) {
-                        Log.d(TAG, "facebook:onError", error);
+                        Log.d(TAG, "facebook:onError", error)
+                        throw error!!
                     }
                 })
 
@@ -192,28 +203,35 @@ class SignupFragment : Fragment() {
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
-                        val user = mAuth.currentUser;
+                        val user = mAuth.currentUser
                         Log.d(TAG, user!!.email)
 
-                        val signupDetailsFragment = SignupDetailsFragment()
-                        val bundle = Bundle()
-                        bundle.putString("name", user.displayName)
-                        bundle.putString("email", user.email)
-                        bundle.putString("password", null)
-                        signupDetailsFragment.arguments = bundle
-                        progressBar.visibility = View.INVISIBLE
-                        fragmentManager!!.beginTransaction().replace(R.id.login_layout, signupDetailsFragment).commit()
+//                        val signupDetailsFragment = SignupDetailsFragment()
+//                        val bundle = Bundle()
+//                        bundle.putString("name", user.displayName)
+//                        bundle.putString("email", user.email)
+//                        bundle.putString("password", null)
+//                        signupDetailsFragment.arguments = bundle
+//                        progressBar.visibility = View.INVISIBLE
+                  //      fragmentManager!!.beginTransaction().replace(R.id.login_layout, signupDetailsFragment).commit()
 
-//                        updateUI(user);
+                       updateUI(user)
+
                     } else {
                         progressBar.visibility = View.INVISIBLE
                         // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCredential:failure", task.exception);
-                        Toast.makeText(context, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
-                        //updateUI(null);
+                        Log.w(TAG, "signInWithCredential:failure", task.exception)
+                        Toast.makeText(context!!, "User exist with google provider.",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context!!, "Signing in with google provider.",Toast.LENGTH_SHORT).show()
+                        signInWithGoogle()
                     }
 
                 }
+    }
+    private fun updateUI(user: FirebaseUser) {
+        progressBar.visibility = View.INVISIBLE
+        val mainActivity = Intent(context, MainActivity::class.java)
+        mainActivity.putExtra("loginUser", user)
+        this.startActivity(mainActivity)
     }
 }
