@@ -245,6 +245,12 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                                     boundsBuilder.include(latLng)
                                                     venues.add(venue)
                                                 }
+                                                bounds = boundsBuilder.build()
+                                                try{
+                                                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+                                                }catch (e:Exception ){
+                                                    e.printStackTrace()
+                                                }
                                             }
                                         }
 
@@ -295,10 +301,6 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
                 mMarker = mMap.addMarker(markerOptions)
                 boundsBuilder.include(latLng)
-
-//                setMarkers("Cricket")
-//                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-//                mMap.animateCamera(CameraUpdateFactory.zoomTo(11f))
             }
         }
     }
@@ -420,16 +422,6 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                         Log.d(TAG, "map intent else")
                     }
                 }
-
-                if (bounds != null){
-                    bounds = boundsBuilder.build()
-                    try{
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
-                    }catch (e:Exception ){
-                        e.printStackTrace()
-                    }
-                }
-
             }
         }
 

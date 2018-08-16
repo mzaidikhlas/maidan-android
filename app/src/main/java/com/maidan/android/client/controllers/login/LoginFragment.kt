@@ -119,8 +119,6 @@ class LoginFragment : Fragment() {
             fragmentManager!!.beginTransaction().replace(R.id.login_layout,SignupFragment()).commit()
         }
 
-
-
         return view
     }
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -135,15 +133,17 @@ class LoginFragment : Fragment() {
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == 101){
             try {
+                Toast.makeText(context,"Activity result google task", Toast.LENGTH_LONG).show()
                 // Google Sign In was successful, authenticate with Firebase
                 val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
                 progressBar.visibility = View.INVISIBLE
+                Toast.makeText(context,"Activity result catch $e", Toast.LENGTH_LONG).show()
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e)
-                // ...
+                throw e
             }
         }
     }
@@ -246,13 +246,15 @@ class LoginFragment : Fragment() {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(activity!!) { task ->
                     if (task.isSuccessful) {
+                        Toast.makeText(context,"Google sign in ", Toast.LENGTH_SHORT).show()
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredentialGoogle:success")
                         val user = mAuth.currentUser
                         Log.d(TAG, user!!.email)
                         Log.d(TAG, "Display name ${user.displayName}")
-                        Log.d(TAG, "Email ${user.isEmailVerified.toString()}")
+                        Log.d(TAG, "Email ${user.isEmailVerified}")
                         Log.d(TAG, "Picture ${user.photoUrl.toString()}")
+                        Toast.makeText(context,"Google sign in user $user", Toast.LENGTH_LONG).show()
                         mGoogleSignInClient.revokeAccess().addOnCompleteListener { task2 ->
                             if (task2.isSuccessful){
                                 Log.d(TAG,"yo")

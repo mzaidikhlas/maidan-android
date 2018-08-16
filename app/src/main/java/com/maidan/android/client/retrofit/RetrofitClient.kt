@@ -10,7 +10,7 @@ object RetrofitClient {
         get(){
             if (retrofit == null){
                 retrofit = Retrofit.Builder()
-                        .baseUrl("http://192.168.0.108:3000/api/")
+                        .baseUrl("https://maidan-d79d9.firebaseapp.com/api/")
                         .addConverterFactory(GsonConverterFactory.create())
                         .build()
             }

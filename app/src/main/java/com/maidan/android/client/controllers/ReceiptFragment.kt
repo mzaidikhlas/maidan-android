@@ -87,9 +87,7 @@ class ReceiptFragment : Fragment() {
         //Calculating rate
         val perhr: Int = booking.getVenue().getRate().getPerHrRate()
         val serviceFeePercent = booking.getVenue().getRate().getVendorServiceFee()
-        val playhrs: Int = booking.getDurationOfBooking()[0].toInt()
-
-        Log.d(TAG, "Play hrs $playhrs")
+        val playhrs: Int = booking.getDurationOfBooking()[0] - '0'
 
         val actualPrice = playhrs * perhr
         var serviceFee = serviceFeePercent/ 100.toFloat()

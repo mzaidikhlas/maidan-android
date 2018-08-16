@@ -12,7 +12,6 @@ import com.maidan.android.client.controllers.FavoritesFragment
 import com.maidan.android.client.controllers.HomeFragment
 import com.maidan.android.client.controllers.SettingsFragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.maidan.android.client.controllers.login.SignupDetailsFragment
 import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
