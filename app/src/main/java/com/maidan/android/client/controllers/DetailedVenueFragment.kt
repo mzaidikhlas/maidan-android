@@ -4,6 +4,7 @@ package com.maidan.android.client.controllers
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -46,6 +47,7 @@ class DetailedVenueFragment : Fragment() {
     private lateinit var clockImage: ImageView
     private lateinit var bookBtn: Button
 
+
     //Model objects
     private lateinit var venue: Venue
     private lateinit var booking: Booking
@@ -62,9 +64,15 @@ class DetailedVenueFragment : Fragment() {
     private var payload: ArrayList<PayloadFormat>? = null
     private lateinit var user: User
 
-    private var sampleImages = intArrayOf(R.drawable.sample, R.drawable.sample, R.drawable.sample, R.drawable.sample, R.drawable.sample)
+    private var sampleImages = emptyArray<Int>()
 
-    private var imageListener: ImageListener = ImageListener { position, imageView -> imageView.setImageResource(sampleImages[position]) }
+    private var imageListener: ImageListener = ImageListener { position, imageView ->
+        if(sampleImages != null) {
+        imageView.setImageResource(sampleImages[position])}
+        else {
+            imageView.setImageResource(R.drawable.google_logo)
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -137,6 +145,7 @@ class DetailedVenueFragment : Fragment() {
         timeBtn = view.findViewById(R.id.selectTime)
         clockImage = view.findViewById(R.id.clock)
         bookBtn = view.findViewById(R.id.book_btn)
+
 
         //Populating layout
         val hr = venue.getMinBookingHour().toString()

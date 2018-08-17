@@ -1,8 +1,13 @@
 package com.maidan.android.client.controllers.login
 
 
+import android.app.Activity.RESULT_OK
+import android.app.DatePickerDialog
+import android.app.DialogFragment
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,6 +27,7 @@ import kotlinx.android.synthetic.main.fragment_signup_details.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class SignupDetailsFragment : Fragment() {
 
@@ -29,6 +35,10 @@ class SignupDetailsFragment : Fragment() {
 
     private lateinit var user: User
     private val TAG = "SignupDetails"
+
+    // Upload Image
+    private var PICK_IMAGE = 100
+    private lateinit var imageUri : Uri
 
     //Temp variables
     private lateinit var name: String
@@ -41,7 +51,7 @@ class SignupDetailsFragment : Fragment() {
     private lateinit var emailTxt: TextView
     private lateinit var phoneNumberTxt: EditText
     private lateinit var cnicTxt: EditText
-    private lateinit var dobTxt: EditText
+    private lateinit var dobTxt: TextView
     private lateinit var genderSpinner: Spinner
     private lateinit var submitBtn: Button
     private lateinit var progressBar: ProgressBar
@@ -75,15 +85,49 @@ class SignupDetailsFragment : Fragment() {
         //populating layout
         nameTxt.text = name
         emailTxt.text = email
+
+        dobTxt.setOnClickListener {
+            val c = Calendar.getInstance()
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
+
+            var dateString = "$day/$month/$year"
+
+            val datePicker = DatePickerDialog(context,R.style.DatePickerThemeSignup,
+                    DatePickerDialog.OnDateSetListener { view, yr, monthOfYear, dayOfMonth ->
+                        Log.d(TAG, "Year: $yr, Month $monthOfYear, Day: $dayOfMonth")
+                        dateString = "$dayOfMonth/$monthOfYear/$yr"
+                        dobTxt.text = dateString
+                    },year,month,day)
+
+            datePicker.datePicker.minDate = c.timeInMillis
+            datePicker.show()
+            Log.d(TAG,dateString)
+        }
+
         //Upload image using picasso
         if (currentUser!!.photoUrl != null) {
-            Picasso.get().load(currentUser.photoUrl).into(userImage)
+            Picasso.get().load(currentUser.photoUrl)
+                    .fit()
+                    .centerInside()
+                    .into(userImage)
             displayAvatar = currentUser.photoUrl.toString()
+        }
+        else
+        {
+            // Upload Picture
+            userImage.setOnClickListener {
+
+                openGallery()
+            }
+
         }
         submitBtn.setOnClickListener {
             Log.d(TAG, "AYA hai")
 
             progressBar.visibility = View.VISIBLE
+            submitBtn.isEnabled = false
 
             if (phoneNumberTxt.text.isNotEmpty() && cnicTxt.text.isNotEmpty() && dobTxt.text.isNotEmpty()){
                 user = User(email, name, password, phoneNumberTxt.text.toString(), cnicTxt.text.toString(), displayAvatar,
@@ -99,6 +143,8 @@ class SignupDetailsFragment : Fragment() {
                     call.enqueue(object: Callback<ApiResponse>{
                         override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
                             Log.d(TAG, t.toString())
+                            progressBar.visibility = View.INVISIBLE
+                            submitBtn.isEnabled = true
                             throw t!!
                         }
 
@@ -109,12 +155,31 @@ class SignupDetailsFragment : Fragment() {
                     })
                 }
             }else{
+                progressBar.visibility = View.INVISIBLE
+                submitBtn.isEnabled = true
                 Toast.makeText(context, "All Fields are required", Toast.LENGTH_LONG).show()
             }
-            progressBar.visibility = View.INVISIBLE
         }
         return view
     }
+
+    private fun openGallery() {
+
+        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        startActivityForResult(gallery,PICK_IMAGE)
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(resultCode == RESULT_OK && requestCode == PICK_IMAGE)
+        {
+            imageUri = data!!.data
+            userImage.setImageURI(imageUri)
+        }
+    }
+
     private fun updateUI(user: FirebaseUser) {
         progressBar.visibility = View.INVISIBLE
         val mainActivity = Intent(context, MainActivity::class.java)

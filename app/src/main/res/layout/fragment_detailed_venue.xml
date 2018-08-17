@@ -16,12 +16,12 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             app:fillColor="#FFFFFFFF"
+            android:background="@color/grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:pageColor="#00000000"
             app:radius="6dp"
-            app:slideInterval="3000"
             app:strokeColor="#FF777777"
             app:strokeWidth="1dp" />
 
@@ -108,7 +108,7 @@
 
         <TextView
             android:id="@+id/selectDate"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="33dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
@@ -119,15 +119,15 @@
             android:padding="8dp"
             android:text="@string/SelectDate"
             android:textAlignment="center"
-            android:textColor="@color/dateColor"
-            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/address" />
 
 
         <TextView
             android:id="@+id/selectTime"
-            android:layout_width="121dp"
+            android:layout_width="wrap_content"
             android:layout_height="33dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="17dp"
@@ -137,8 +137,8 @@
             android:padding="8dp"
             android:text="SELECT TIME"
             android:textAlignment="center"
-            android:textColor="@color/dateColor"
-            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/selectDate" />
 

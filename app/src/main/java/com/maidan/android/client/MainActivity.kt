@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
                                 if (response.body()!!.getStatusCode() == 200) {
                                     if (response.body()!!.getPayload().isEmpty()) {
                                         navigation.visibility = View.INVISIBLE
+                                        navigation.setBackgroundResource(R.drawable.light_green_to_dark_green_1)
                                         val signupDetailsFragment = SignupDetailsFragment()
 
                                         val bundle = Bundle()

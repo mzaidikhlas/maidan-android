@@ -1,6 +1,7 @@
 package com.maidan.android.client.controllers.login
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -25,6 +26,7 @@ class SignupFormFragment : Fragment() {
 
     //Model object
     private lateinit var user: User
+
 
     //TAG
     private val TAG = "SignupEmail"

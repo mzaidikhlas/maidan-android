@@ -40,10 +40,11 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="75dp"
             android:layout_marginStart="75dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="12dp"
             android:text="JOHN APPLESEED"
             android:textColor="@color/white"
             android:textSize="28sp"
+            app:layout_constraintBottom_toTopOf="@+id/email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/uploadPicture" />
@@ -65,8 +66,9 @@
 
         <ImageButton
             android:id="@+id/uploadPicture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="139dp"
+            android:background="@drawable/upload_image_charc"
+            android:layout_height="101dp"
             android:layout_marginEnd="140dp"
             android:layout_marginStart="140dp"
             android:paddingStart="45dp"
@@ -76,7 +78,7 @@
         <!--android:background="@drawable/upload_btn_charac"-->
         <!--android:drawableStart="@drawable/photo"-->
 
-        <EditText
+        <TextView
             android:id="@+id/DOB"
             style="@style/email_password_login"
             android:layout_width="match_parent"
@@ -139,9 +141,10 @@
             style="@style/radius"
             android:layout_width="107dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="73dp"
+            android:layout_marginBottom="44dp"
             android:layout_marginEnd="148dp"
             android:layout_marginStart="148dp"
+            android:layout_marginTop="8dp"
             android:text="SUBMIT"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

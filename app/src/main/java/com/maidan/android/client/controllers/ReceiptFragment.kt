@@ -103,6 +103,7 @@ class ReceiptFragment : Fragment() {
         payBtn.setOnClickListener{
             if (mAuth.currentUser != null){
                 progressBar.visibility = View.VISIBLE
+                payBtn.isEnabled = false
 
                 mAuth.currentUser!!.getIdToken(true).addOnCompleteListener {task ->
                     if (task.isSuccessful){
@@ -121,6 +122,7 @@ class ReceiptFragment : Fragment() {
                         call.enqueue(object: Callback<ApiResponse>{
                             override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
                                 progressBar.visibility = View.INVISIBLE
+                                payBtn.isEnabled = true
                                 Log.d(TAG, "Receipt Error $t")
                                 throw t!!
                             }
@@ -134,10 +136,12 @@ class ReceiptFragment : Fragment() {
                                         fragmentManager!!.beginTransaction().replace(R.id.fragment_layout, BookingFragment()).commit()
                                     }else{
                                         progressBar.visibility = View.INVISIBLE
+                                        payBtn.isEnabled = true
                                         Log.d(TAG, "Bad Request")
                                     }
                                 }else{
                                     progressBar.visibility = View.INVISIBLE
+                                    payBtn.isEnabled = true
                                     Log.d(TAG, "Exception ${response.errorBody()}")
                                 }
                             }
