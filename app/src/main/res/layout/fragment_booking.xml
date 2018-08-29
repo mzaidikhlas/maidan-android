@@ -40,42 +40,42 @@
         android:id="@+id/bookingHeader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Spinner
-            android:id="@+id/bookingCategory"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/my_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="49dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/radius"
-            android:entries="@array/Categories"
+            android:layout_height="106dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toTopOf="@+id/search_btn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
         <Button
             android:id="@+id/search_btn"
             style="@style/button"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="54dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
             android:drawableRight="@drawable/left_arrow"
             android:fontFamily="@font/raleway_regular"
-            android:paddingRight="20dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="10dp"
             android:text="SEARCH"
-            android:textSize="28sp"
+            android:textAlignment="center"
+            android:textSize="32sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent" />
 
 

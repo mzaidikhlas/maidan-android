@@ -1,5 +1,6 @@
 package com.maidan.android.client
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.nfc.Tag
 import android.os.Bundle
@@ -28,20 +29,16 @@ class MainActivity : AppCompatActivity() {
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
-            R.id.navigation_home -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, HomeFragment()).commit();
-                return@OnNavigationItemSelectedListener true
-            }
             R.id.navigation_book-> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, BookingFragment()).commit();
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, BookingFragment()).commit()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_favorites -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, FavoritesFragment()).commit();
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, FavoritesFragment()).commit()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_settings-> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, SettingsFragment()).commit();
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, SettingsFragment()).commit()
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -84,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                                         supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, signupDetailsFragment).commit()
                                     } else {
                                         navigation.visibility = View.VISIBLE
-                                        supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, HomeFragment()).commit()
+                                        supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, BookingFragment()).commit()
                                     }
                                 }
                             }
@@ -99,7 +96,6 @@ class MainActivity : AppCompatActivity() {
         val loginActivity = Intent(this, LoginActivity::class.java)
         startActivity(loginActivity)
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -79,8 +79,8 @@ class LoginFragment : Fragment() {
         val view =  inflater.inflate(R.layout.fragment_login, container, false)
 
         //layout
-        loginBtnFB = view.findViewById(R.id.facebook);
-        loginBtnGoogle = view.findViewById(R.id.google);
+        loginBtnFB = view.findViewById(R.id.facebook)
+        loginBtnGoogle = view.findViewById(R.id.google)
         loginBtnEmail = view.findViewById(R.id.login_btn)
         signupTxt = view.findViewById(R.id.signup)
         userEmailTxt = view.findViewById(R.id.signupUserEmail)
@@ -89,7 +89,6 @@ class LoginFragment : Fragment() {
 
         mAuth = FirebaseAuth.getInstance()
 
-
         //Login through email password
         loginBtnEmail.setOnClickListener {
             if (userEmailTxt.text.isNotEmpty()){
@@ -97,6 +96,10 @@ class LoginFragment : Fragment() {
                     val email = userEmailTxt.text.toString()
                     val password = passwordTxt.text.toString()
                     Log.d(TAG, "Email: $email, Password: $password")
+                    progressBar.visibility = View.VISIBLE
+                    loginBtnEmail.isEnabled = false
+                    loginBtnFB.isEnabled = false
+                    loginBtnGoogle.isEnabled = false
                     signInWithEmailPassword(email, password)
                 }
                 else
@@ -108,26 +111,34 @@ class LoginFragment : Fragment() {
         //Google
         loginBtnGoogle.setOnClickListener {
             Log.d(TAG, "Google listener")
+            progressBar.visibility = View.VISIBLE
+            loginBtnEmail.isEnabled = false
+            loginBtnFB.isEnabled = false
+            loginBtnGoogle.isEnabled = false
             signInWithGoogle()
         }
         //Facebook
         loginBtnFB.setOnClickListener {
             Log.d(TAG, "Facebook listener")
+            progressBar.visibility = View.VISIBLE
+            loginBtnEmail.isEnabled = false
+            loginBtnFB.isEnabled = false
+            loginBtnGoogle.isEnabled = false
             signInWithFacebook()
-        };
+        }
         signupTxt.setOnClickListener {
             fragmentManager!!.beginTransaction().replace(R.id.login_layout,SignupFragment()).commit()
         }
 
         return view
     }
-        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         //Facebook
         // Pass the activity result back to the Facebook SDK
         if (callbackManager != null)
-            callbackManager!!.onActivityResult(requestCode, resultCode, data);
+            callbackManager!!.onActivityResult(requestCode, resultCode, data)
 
         //Google
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
@@ -140,6 +151,9 @@ class LoginFragment : Fragment() {
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
                 progressBar.visibility = View.INVISIBLE
+                loginBtnEmail.isEnabled = true
+                loginBtnFB.isEnabled = true
+                loginBtnGoogle.isEnabled = true
                 Toast.makeText(context,"Activity result catch $e", Toast.LENGTH_LONG).show()
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e)
@@ -152,8 +166,6 @@ class LoginFragment : Fragment() {
     //Sign in through email and password
     private fun signInWithEmailPassword(email: String, password: String) {
         try {
-            progressBar.visibility = View.VISIBLE
-
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         Log.d("UserException", "NotCompleted")
@@ -173,7 +185,15 @@ class LoginFragment : Fragment() {
 
                                             call.enqueue(object: Callback<ApiResponse> {
                                                 override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
+                                                    progressBar.visibility = View.INVISIBLE
+                                                    loginBtnEmail.isEnabled = true
+                                                    loginBtnFB.isEnabled = true
+                                                    loginBtnGoogle.isEnabled = true
+
                                                     Log.d("UserApiError", t.toString())
+                                                    Toast.makeText(context,"${t!!.message}", Toast.LENGTH_SHORT).show()
+
+                                                    throw t
                                                 }
 
                                                 override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
@@ -186,35 +206,50 @@ class LoginFragment : Fragment() {
                                             })
                                         } else {
                                             // If sign in fails, display a message to the user.
+                                            progressBar.visibility = View.INVISIBLE
+                                            loginBtnEmail.isEnabled = true
+                                            loginBtnFB.isEnabled = true
+                                            loginBtnGoogle.isEnabled = true
+
                                             Log.w(TAG, "signInWithEmailAndPasswordToken:failure", task.exception)
                                             Toast.makeText(context, "Authentication Failed.", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                         }
                         else{
+                            progressBar.visibility = View.INVISIBLE
+                            loginBtnEmail.isEnabled = true
+                            loginBtnFB.isEnabled = true
+                            loginBtnGoogle.isEnabled = true
                             try {
-                                progressBar.visibility = View.INVISIBLE
                                 Log.d(TAG, "onComplete: something")
                                 throw task.exception!!
                             }
                             // if user enters wrong email.
                             catch (invalidEmail: FirebaseAuthInvalidUserException ) {
                                 Log.d(TAG, "onComplete: invalid_email")
+                                Toast.makeText(context, "Invalid email", Toast.LENGTH_SHORT).show()
                             }
                             // if user enters wrong password.
                             catch (wrongPassword: FirebaseAuthInvalidCredentialsException ) {
                                 Log.d(TAG, "onComplete: wrong_password")
+                                Toast.makeText(context, "Wrong Password", Toast.LENGTH_SHORT).show()
                             }
                             catch (e: Exception ) {
                                 Log.d(TAG, "onComplete: " + e.message)
+                                Toast.makeText(context, "${e.message}", Toast.LENGTH_SHORT).show()
                             }
-                            progressBar.visibility = View.INVISIBLE
                         }
                     }
         }
         catch (e: Exception){
             progressBar.visibility = View.INVISIBLE
+            loginBtnEmail.isEnabled = true
+            loginBtnFB.isEnabled = true
+            loginBtnGoogle.isEnabled = true
+
             Log.d(TAG, "Exception ${e.message}")
+            Toast.makeText(context, "Exception ${e.message}", Toast.LENGTH_SHORT).show()
             throw e
         }
     }
@@ -224,17 +259,20 @@ class LoginFragment : Fragment() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
-                .build();
+                .build()
         mGoogleSignInClient = GoogleSignIn.getClient(context!!,gso)
 
         try {
-            progressBar.visibility = View.VISIBLE
             Log.d(TAG, "Try")
             val signInIntent = mGoogleSignInClient.signInIntent
             startActivityForResult(signInIntent, 101)
         }
         catch (e: Exception){
             progressBar.visibility = View.INVISIBLE
+            loginBtnEmail.isEnabled = true
+            loginBtnFB.isEnabled = true
+            loginBtnGoogle.isEnabled = true
+
             Log.d(TAG, "Exception ${e.message}")
             throw e
         }
@@ -256,16 +294,15 @@ class LoginFragment : Fragment() {
                         Log.d(TAG, "Picture ${user.photoUrl.toString()}")
                         Toast.makeText(context,"Google sign in user $user", Toast.LENGTH_LONG).show()
                         mGoogleSignInClient.revokeAccess().addOnCompleteListener { task2 ->
-                            if (task2.isSuccessful){
-                                Log.d(TAG,"yo")
+                            if (task2.isSuccessful)
                                 updateUI(user)
-                            }else{
-                                Log.d(TAG,"yo yo")
-                            }
                         }
 
                     } else {
                         progressBar.visibility = View.INVISIBLE
+                        loginBtnEmail.isEnabled = true
+                        loginBtnFB.isEnabled = true
+                        loginBtnGoogle.isEnabled = true
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredentialGoogle:failure", task.exception)
                         Toast.makeText(context, "Authentication Failed.", Toast.LENGTH_SHORT).show()
@@ -285,9 +322,8 @@ class LoginFragment : Fragment() {
     //Facebook sign in
     private fun signInWithFacebook(){
         // Callback registration
-        progressBar.visibility = View.VISIBLE
-        callbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
+        callbackManager = CallbackManager.Factory.create()
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"))
 
         LoginManager.getInstance().registerCallback(callbackManager,
                 object: FacebookCallback<LoginResult> {
@@ -298,13 +334,22 @@ class LoginFragment : Fragment() {
 
                     override fun onCancel() {
                         Log.d(TAG, "facebook:onCancel")
+                        progressBar.visibility = View.INVISIBLE
+                        loginBtnEmail.isEnabled = true
+                        loginBtnFB.isEnabled = true
+                        loginBtnGoogle.isEnabled = true
+                        Toast.makeText(context, "Facebook:onCancel", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onError(error: FacebookException?) {
                         Log.d(TAG, "facebook:onError", error)
+                        progressBar.visibility = View.INVISIBLE
+                        loginBtnEmail.isEnabled = true
+                        loginBtnFB.isEnabled = true
+                        loginBtnGoogle.isEnabled = true
+                        Toast.makeText(context, "Facebook:onError", Toast.LENGTH_SHORT).show()
                     }
                 })
-        progressBar.visibility = View.INVISIBLE
     }
     private fun handleFacebookAccessToken(accessToken: AccessToken?) {
         Log.d(TAG, "handleFacebookAccessToken:$accessToken")
@@ -314,23 +359,20 @@ class LoginFragment : Fragment() {
                 .addOnCompleteListener(activity!!) { task: Task<AuthResult> ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithCredential:success");
-                        val user = mAuth.currentUser;
-                        Log.d(TAG, user!!.email)
-                        Log.d(TAG, "Display name ${user.displayName}")
-                        Log.d(TAG, "Display name ${user.phoneNumber}")
-                        Log.d(TAG, "Email ${user.isEmailVerified}")
-                        Log.d(TAG, "Picture ${user.photoUrl.toString()}")
+                        Log.d(TAG, "signInWithCredential:success")
+                        val user = mAuth.currentUser
                         LoginManager.getInstance().logOut()
-                        updateUI(user)
+                        updateUI(user!!)
                     } else {
                         progressBar.visibility = View.INVISIBLE
+                        loginBtnEmail.isEnabled = true
+                        loginBtnFB.isEnabled = true
+                        loginBtnGoogle.isEnabled = true
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
                         Toast.makeText(context!!, "User exist with google provider.",Toast.LENGTH_SHORT).show()
                         Toast.makeText(context!!, "Signing in with google provider.",Toast.LENGTH_SHORT).show()
                         signInWithGoogle()
-                        //updateUI(null);
                     }
 
                 }

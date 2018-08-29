@@ -19,7 +19,7 @@ class VenueCardAdaptor(private val venues: ArrayList<Venue>, private val fragmen
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.venue_card, parent, false)
-        return ViewHolder(view);
+        return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
@@ -27,12 +27,12 @@ class VenueCardAdaptor(private val venues: ArrayList<Venue>, private val fragmen
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val venue: Venue = venues[position];
-        holder.type.text = venue.getActivityType();
+        val venue: Venue = venues[position]
+        holder.type.text = venue.getActivityType()
         holder.name.text = venue.getName()
         holder.address.text = venue.getLocation().getArea()
         holder.price.text = venue.getRate().getPerHrRate().toString()
-      //  Picasso.get().load(R.drawable.google_logo).into(holder.imageViewIcon)
+        Picasso.get().load(venue.getPictures()[0]).into(holder.imageViewIcon)
 
         holder.itemView.setOnClickListener {
             Log.d("VenueCardAdapter", venue.toString())
@@ -49,10 +49,10 @@ class VenueCardAdaptor(private val venues: ArrayList<Venue>, private val fragmen
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val type = itemView.findViewById(R.id.type) as TextView;
-        val imageViewIcon = itemView.findViewById(R.id.ground) as ImageView;
-        val name = itemView.findViewById(R.id.groundname) as TextView;
-        val address = itemView.findViewById(R.id.address) as TextView;
+        val type = itemView.findViewById(R.id.type) as TextView
+        val imageViewIcon = itemView.findViewById(R.id.ground) as ImageView
+        val name = itemView.findViewById(R.id.groundname) as TextView
+        val address = itemView.findViewById(R.id.address) as TextView
         val price = itemView.findViewById(R.id.price) as TextView
 
     }

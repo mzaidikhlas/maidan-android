@@ -59,7 +59,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchBtn: Button
     private lateinit var datePicker: DatePickerDialog
-    private lateinit var category:Spinner
+ //   private lateinit var category:Spinner
 
     private lateinit var myDataSet: ArrayList<Category>
     private lateinit var venues: ArrayList<Venue>
@@ -71,8 +71,8 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     //Api Call Response
     private lateinit var payload: ArrayList<PayloadFormat>
 
-    private var latitude: Double = 0.toDouble();
-    private var longitude: Double = 0.toDouble();
+    private var latitude: Double = 0.toDouble()
+    private var longitude: Double = 0.toDouble()
 
     //Google Maps
     private lateinit var myLastLocation: Location
@@ -109,8 +109,10 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         mapView = view.findViewById(R.id.mapBooking)
     //    date = view.findViewById(R.id.date_btn)
         searchBtn = view.findViewById(R.id.search_btn)
-        category = view.findViewById(R.id.bookingCategory)
-  //      recyclerView = view.findViewById(R.id.category);
+    //    category = view.findViewById(R.id.bookingCategory)
+
+        searchBtn.letterSpacing = 0.3F
+        recyclerView = view.findViewById(R.id.my_recycler_view)
 
         //calender code
 //        date.setOnClickListener {
@@ -129,23 +131,23 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
 //            datePicker.show()
 //        }
 
-//        myDataSet = ArrayList();
-//
-//        myDataSet.add(Category(null, "FootBall"))
-//        myDataSet.add(Category(null, "Hockey"))
-//        myDataSet.add(Category(null, "Cricket"))
-//        myDataSet.add(Category(null, "Something"))
-//        myDataSet.add(Category(null, "Something"))
-//        myDataSet.add(Category(null, "Something"))
-//        myDataSet.add(Category(null, "Something"))
-//        myDataSet.add(Category(null, "Something"))
-//        myDataSet.add(Category(null, "Something"))
-//        myDataSet.add(Category(null, "Something"))
-//        myDataSet.add(Category(null, "Something"))
-//        myDataSet.add(Category(null, "Something"))
-//
-//        recyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayout.HORIZONTAL, false);
-//        recyclerView.adapter = CategoryRecyclerviewAdapter(myDataSet);
+        myDataSet = ArrayList()
+
+        myDataSet.add(Category(null, "FootBall"))
+        myDataSet.add(Category(null, "Hockey"))
+        myDataSet.add(Category(null, "Cricket"))
+        myDataSet.add(Category(null, "Something"))
+        myDataSet.add(Category(null, "Something"))
+        myDataSet.add(Category(null, "Something"))
+        myDataSet.add(Category(null, "Something"))
+        myDataSet.add(Category(null, "Something"))
+        myDataSet.add(Category(null, "Something"))
+        myDataSet.add(Category(null, "Something"))
+        myDataSet.add(Category(null, "Something"))
+        myDataSet.add(Category(null, "Something"))
+
+        recyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayout.HORIZONTAL, false)
+        recyclerView.adapter = CategoryRecyclerviewAdapter(myDataSet)
 
        if  (checkLocation()) {
            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -155,7 +157,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
                } else {
-                   buildLocationRequest();
+                   buildLocationRequest()
                    buildLocationCallback()
                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
@@ -175,8 +177,8 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fragment = childFragmentManager.findFragmentById(R.id.mapBooking) as SupportMapFragment ;
-        fragment.getMapAsync(this);
+        val fragment = childFragmentManager.findFragmentById(R.id.mapBooking) as SupportMapFragment
+        fragment.getMapAsync(this)
     }
 
     private fun onSearchClick(){
@@ -247,7 +249,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                                 }
                                                 bounds = boundsBuilder.build()
                                                 try{
-                                                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+                                                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150))
                                                 }catch (e:Exception ){
                                                     e.printStackTrace()
                                                 }
@@ -384,7 +386,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG, "IDhr aya hai")
-                setMarkers(category.selectedItem as String)
+                setMarkers("Cricket")
 
                 mMap.setInfoWindowAdapter(object: GoogleMap.InfoWindowAdapter{
                     override fun getInfoContents(p0: Marker?): View {

@@ -57,12 +57,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="11dp"
-            android:layout_marginStart="22dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="24dp"
-            android:text="Invoice #001"
-            android:textSize="15sp"
+            android:text="#001"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptCustomerName"
-            app:layout_constraintEnd_toStartOf="@+id/receiptDate"
             app:layout_constraintStart_toEndOf="@+id/receiptUserImage"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -72,11 +71,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="63dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="0dp"
             android:text="John Doe"
-            android:textSize="15sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptVenueName"
-            app:layout_constraintEnd_toStartOf="@+id/receiptTime"
             app:layout_constraintStart_toEndOf="@+id/receiptUserImage"
             app:layout_constraintTop_toBottomOf="@+id/invoiceId" />
 
@@ -85,14 +82,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="99dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginTop="24dp"
             android:text="11 July, 2018"
-            android:textSize="15sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptTime"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/invoiceId"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -100,14 +95,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="63dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="77dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:text="12:51 PM"
-            android:textSize="15sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptVenueName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/receiptCustomerName"
             app:layout_constraintTop_toBottomOf="@+id/receiptDate" />
 
         <TextView
@@ -118,7 +110,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="50dp"
             android:text="Model Town Greens"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/receiptBookingDate"
             app:layout_constraintEnd_toEndOf="parent"
@@ -132,7 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="11 July, 2018"
-            android:textSize="15sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptBookingHours"
             app:layout_constraintEnd_toStartOf="@+id/textView21"
             app:layout_constraintStart_toStartOf="parent"
@@ -142,13 +134,11 @@
             android:id="@+id/receiptBookingHours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="120dp"
-            android:layout_marginStart="45dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="50dp"
             android:text="4 hours"
-            android:textSize="15sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/textView14"
-            app:layout_constraintEnd_toStartOf="@+id/totalPerHourPrice"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/receiptBookingDate" />
 
@@ -156,11 +146,9 @@
             android:id="@+id/textView14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="147dp"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="16dp"
             android:text="Convenience Fee"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toStartOf="@+id/totalConvenienceFee"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/receiptBookingHours" />
 
@@ -168,24 +156,21 @@
             android:id="@+id/totalPerHourPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="48dp"
-            android:layout_marginStart="100dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="68dp"
             android:text="Rs. 15,000/-"
-            android:textSize="15sp"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/receiptBookingHours"
             app:layout_constraintTop_toBottomOf="@+id/receiptVenueName" />
 
         <TextView
             android:id="@+id/totalConvenienceFee"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
-            android:layout_marginEnd="22dp"
+            android:layout_marginEnd="16dp"
             android:text="Rs. 150/-"
-            android:textSize="15sp"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView14"
             app:layout_constraintTop_toBottomOf="@+id/totalPerHourPrice" />
 
         <Button
@@ -193,23 +178,22 @@
             style="@style/book_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="28dp"
             android:layout_marginEnd="32dp"
             android:layout_marginStart="32dp"
             android:text="PAY"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView20" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/textView18"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="172dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="Total"
-            app:layout_constraintEnd_toStartOf="@+id/total"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
@@ -221,7 +205,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="Rs, 15,150/-"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -234,7 +218,7 @@
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="82dp"
+            android:layout_marginTop="32dp"
             app:layout_constraintBottom_toTopOf="@+id/textView18"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -248,15 +232,15 @@
             android:layout_marginBottom="24dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="32dp"
             android:text="Would you like some extras?"
             android:textAlignment="center"
-            android:textSize="15sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/pay_btn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.038"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView18" />
+            app:layout_constraintTop_toBottomOf="@+id/textView18"
+            app:layout_constraintVertical_bias="0.77" />
 
 
         <TextView
@@ -264,7 +248,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="50dp"
-            android:layout_marginEnd="130dp"
+            android:layout_marginEnd="110dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
             android:text="8AM - 12PM"
             android:textSize="15sp"
             app:layout_constraintBottom_toTopOf="@+id/totalPerHourPrice"

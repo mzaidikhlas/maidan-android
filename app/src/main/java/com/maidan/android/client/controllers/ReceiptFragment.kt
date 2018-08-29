@@ -1,7 +1,9 @@
 package com.maidan.android.client.controllers
 
+import android.graphics.drawable.shapes.RoundRectShape
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -76,8 +78,13 @@ class ReceiptFragment : Fragment() {
         payBtn = view.findViewById(R.id.pay_btn)
         progressBar = view.findViewById(R.id.receiptProgressBar)
 
+        payBtn.letterSpacing = 0.3F
+
         //Layout populating
-        Picasso.get().load(currentUser.photoUrl).into(maidanIcon)
+        Picasso.get()
+                .load(R.drawable.maidan_playstore_icon)
+                .into(maidanIcon)
+
         invoiceIdTxt.text = "#001"
         customerNameTxt.text = booking.getUser().getName()
         venueNameTxt.text = booking.getVenue().getName()
@@ -133,7 +140,7 @@ class ReceiptFragment : Fragment() {
                                         Log.d(TAG, "Booking Created")
                                         Toast.makeText(context, "New booking created", Toast.LENGTH_LONG).show()
                                         progressBar.visibility = View.INVISIBLE
-                                        fragmentManager!!.beginTransaction().replace(R.id.fragment_layout, BookingFragment()).commit()
+                                        fragmentManager!!.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                                     }else{
                                         progressBar.visibility = View.INVISIBLE
                                         payBtn.isEnabled = true

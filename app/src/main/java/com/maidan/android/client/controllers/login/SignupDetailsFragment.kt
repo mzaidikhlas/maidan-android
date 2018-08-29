@@ -59,7 +59,9 @@ class SignupDetailsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         if (arguments != null){
-            name = arguments!!.getString("name")
+            if (arguments!!.getString("name") != null)
+                name = arguments!!.getString("name")
+
             email = arguments!!.getString("email")
 
             if (arguments!!.getString("password") != null)

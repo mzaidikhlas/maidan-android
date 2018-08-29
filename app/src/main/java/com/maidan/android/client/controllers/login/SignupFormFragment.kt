@@ -52,6 +52,7 @@ class SignupFormFragment : Fragment() {
             Log.d(TAG, "Signup click lisenter")
 
             progressBar.visibility = View.VISIBLE
+            signupBtn.isEnabled = false
 
             val username = signupUsernameTxt.text.toString()
             val email = signupUseremailTxt.text.toString()
@@ -69,20 +70,11 @@ class SignupFormFragment : Fragment() {
                                     Toast.makeText(context,
                                             "Verification email sent to " + user.email,
                                             Toast.LENGTH_SHORT).show()
-//                                    val signupDetailsFragment = SignupDetailsFragment()
-//
-//                                    val bundle = Bundle()
-//                                    bundle.putString("name", signupUsernameTxt.text.toString())
-//                                    bundle.putString("email", signupUseremailTxt.text.toString())
-//                                    bundle.putString("password", signupPasswordTxt.text.toString())
-//
-//                                    signupDetailsFragment.arguments = bundle
-//                                    progressBar.visibility = View.INVISIBLE
-                                    //fragmentManager!!.beginTransaction().replace(R.id.login_layout, signupDetailsFragment).commit()
                                     updateUI(user)
                                 }else{
                                     progressBar.visibility = View.INVISIBLE
-                                    Log.e(TAG, "sendEmailVerification", task.exception);
+                                    signupBtn.isEnabled = true
+                                    Log.e(TAG, "sendEmailVerification", task.exception)
                                     Toast.makeText(context,
                                             "Failed to send verification email.",
                                             Toast.LENGTH_SHORT).show()
@@ -91,8 +83,9 @@ class SignupFormFragment : Fragment() {
                             }
                         }
                         else{
+                            progressBar.visibility = View.INVISIBLE
+                            signupBtn.isEnabled = true
                             try {
-                                progressBar.visibility = View.INVISIBLE
                                 throw task.exception!!
                             } catch (weakPassword: FirebaseAuthWeakPasswordException) {
                                 Log.d(TAG, "onComplete: weak_password")
@@ -113,10 +106,12 @@ class SignupFormFragment : Fragment() {
                     }
                 }else{
                     progressBar.visibility = View.INVISIBLE
+                    signupBtn.isEnabled = true
                     Toast.makeText(context,"Password and confirm password is not same", Toast.LENGTH_LONG).show()
                 }
             }else{
                 progressBar.visibility = View.INVISIBLE
+                signupBtn.isEnabled = true
                 Toast.makeText(context,"All fields are required", Toast.LENGTH_LONG).show()
             }
         }

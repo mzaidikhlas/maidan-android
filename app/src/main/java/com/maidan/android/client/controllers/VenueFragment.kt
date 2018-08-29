@@ -13,10 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -38,6 +35,7 @@ class VenueFragment : Fragment(), OnMapReadyCallback {
     private lateinit var venueCard: RecyclerView
     private lateinit var venues: ArrayList<Venue>
     private lateinit var back: Button
+    private lateinit var pickGround : TextView
     private lateinit var filter: Button
 
     private var TAG = "VenuePage"
@@ -63,6 +61,8 @@ class VenueFragment : Fragment(), OnMapReadyCallback {
         mapView = view.findViewById(R.id.mapVenue)
         back = view.findViewById(R.id.back)
         filter = view.findViewById(R.id.filter)
+        pickGround = view.findViewById(R.id.pickaground)
+        pickGround.letterSpacing = 0.3F
 
 //        activity!!.actionBar.setDisplayHomeAsUpEnabled(true)
         venueCard.layoutManager = LinearLayoutManager(context, LinearLayout.HORIZONTAL, false)
@@ -113,9 +113,9 @@ class VenueFragment : Fragment(), OnMapReadyCallback {
                 boundsBuilder.include(latLng)
                 val bounds = boundsBuilder.build()
                 try{
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150))
                 }catch (e:Exception ){
-                    e.printStackTrace();
+                    e.printStackTrace()
                 }
             }
         }

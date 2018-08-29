@@ -24,6 +24,7 @@ import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
 import com.maidan.android.client.retrofit.PayloadFormat
 import com.maidan.android.client.retrofit.RetrofitClient
+import com.squareup.picasso.Picasso
 import com.synnapps.carouselview.CarouselView
 import com.synnapps.carouselview.ImageListener
 import retrofit2.Call
@@ -64,14 +65,12 @@ class DetailedVenueFragment : Fragment() {
     private var payload: ArrayList<PayloadFormat>? = null
     private lateinit var user: User
 
-    private var sampleImages = emptyArray<Int>()
-
     private var imageListener: ImageListener = ImageListener { position, imageView ->
-        if(sampleImages != null) {
-        imageView.setImageResource(sampleImages[position])}
-        else {
+        if (venue.getPictures().isNotEmpty())
+            Picasso.get().load(venue.getPictures()[position]).into(imageView)
+
+        else
             imageView.setImageResource(R.drawable.google_logo)
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -122,12 +121,12 @@ class DetailedVenueFragment : Fragment() {
                         Log.d("UserTokenError1", "Error")
                     }
                 }
-        ;
 
         // Getting Data from bundle
         if (!arguments!!.isEmpty){
             venue = arguments!!.getSerializable("venue") as Venue
             Log.d(TAG, venue.toString())
+
         }
         else
             Log.d(TAG, "Empty")
@@ -146,6 +145,8 @@ class DetailedVenueFragment : Fragment() {
         clockImage = view.findViewById(R.id.clock)
         bookBtn = view.findViewById(R.id.book_btn)
 
+        bookBtn.letterSpacing = 0.3F
+
 
         //Populating layout
         val hr = venue.getMinBookingHour().toString()
@@ -156,7 +157,7 @@ class DetailedVenueFragment : Fragment() {
     //    minPlayTimeTxt.text = hr
 
         // Image Slider
-        carouselView.pageCount = sampleImages.size
+        carouselView.pageCount = venue.getPictures().size
         carouselView.setImageListener(imageListener)
 
         //book
@@ -182,8 +183,6 @@ class DetailedVenueFragment : Fragment() {
 
                 fragmentManager!!.beginTransaction().addToBackStack("detailed venue fragment").replace(R.id.fragment_layout, receiptFragment).commit()
             }
-
-
         }
 
         // Date Selector
@@ -204,7 +203,7 @@ class DetailedVenueFragment : Fragment() {
             datePicker.datePicker.minDate = c.timeInMillis
             datePicker.show()
             Log.d(TAG,dateString)
-        };
+        }
 
         // Time Selector
         timePicker.setOnClickListener {
@@ -223,7 +222,7 @@ class DetailedVenueFragment : Fragment() {
 
             timePickerDialog.show()
             Log.d(TAG, timeString)
-        };
+        }
 
         // Dropdown list for overs
         val adapter = ArrayAdapter.createFromResource(context,
