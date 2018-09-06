@@ -29,7 +29,7 @@
         <item name="android:background">@drawable/gradient</item>
         <item name="android:shadowColor">#000000</item>
         <item name="android:textSize">25sp</item>
-        <item name="android:fontFamily">Raleway</item>
+        <item name="android:fontFamily">@font/raleway_regular</item>
         <item name="android:textColor">@color/white</item>
 
     </style>
@@ -40,18 +40,24 @@
         <item name="android:textSize">25sp</item>
         <item name="android:fontFamily">Raleway</item>
         <item name="android:textColor">@color/white</item>
+    </style>
 
+    <style name="pay_btn" parent="Theme.AppCompat">
+        <item name="android:background">@drawable/book_gradient</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:fontFamily">Raleway</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="DatePickerTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">#42DE95</item>
-
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
 
-    <style name="DatePickerThemeSignup" parent="Theme.AppCompat.Light.Dialog">
+    <style name="DatePickerThemeSignup">
         <item name="colorAccent">#42DE95</item>
         <item name="android:datePickerMode">spinner</item>
         <item name="android:calendarViewShown">false</item>

@@ -15,6 +15,7 @@ import com.google.gson.Gson
 
 import com.maidan.android.client.R
 import com.maidan.android.client.models.Booking
+import com.maidan.android.client.models.Transaction
 import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
 import com.maidan.android.client.retrofit.RetrofitClient
@@ -111,6 +112,9 @@ class ReceiptFragment : Fragment() {
             if (mAuth.currentUser != null){
                 progressBar.visibility = View.VISIBLE
                 payBtn.isEnabled = false
+
+                booking.setTransaction(Transaction(serviceFee, playhrs.toFloat(), actualPrice.toFloat(), totalSum, 0.toFloat()
+                        , "maualCashReciving", "maidan_customer"))
 
                 mAuth.currentUser!!.getIdToken(true).addOnCompleteListener {task ->
                     if (task.isSuccessful){

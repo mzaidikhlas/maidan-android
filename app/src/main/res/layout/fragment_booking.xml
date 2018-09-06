@@ -45,6 +45,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/selectDateCalendar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/radius"
+            android:fontFamily="@font/montserrat_regular"
+            android:paddingRight="10dp"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:text="SELECT DATE"
+            android:textColor="#848484"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/my_recycler_view"
             android:layout_width="match_parent"

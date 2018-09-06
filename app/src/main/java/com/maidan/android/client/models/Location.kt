@@ -1,7 +1,9 @@
 package com.maidan.android.client.models
 
+import java.io.Serializable
+
 data class Location(private var latitude: Double, private var longitude: Double, private var country: String,
-                    private var city: String, private var area: String){
+                    private var city: String, private var area: String): Serializable{
 
     //Getters
     fun getLatitude(): Double{return this.latitude}

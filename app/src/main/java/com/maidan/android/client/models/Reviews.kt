@@ -1,5 +1,7 @@
 package com.maidan.android.client.models
 
-class Reviews {
+import java.io.Serializable
+
+class Reviews: Serializable {
 
 }

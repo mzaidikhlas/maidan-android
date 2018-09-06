@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,16 +13,18 @@
         android:layout_height="match_parent"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintHorizontal_bias="0.0"
         map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toTopOf="parent" />
+        map:layout_constraintTop_toTopOf="parent"
+        map:layout_constraintVertical_bias="0.0" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/upperbar"
         style="@style/button"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="45dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,22 +35,21 @@
             android:id="@+id/back"
             android:layout_width="38dp"
             android:layout_height="0dp"
+            android:layout_marginStart="8dp"
             android:background="@null"
             android:drawableStart="@drawable/right_arrow"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/filter"
-            app:layout_constraintHorizontal_bias="0.018"
+            app:layout_constraintEnd_toStartOf="@+id/pickaground"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
         <TextView
             android:id="@+id/pickaground"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginEnd="55dp"
+            android:layout_marginStart="55dp"
             android:fontFamily="@font/raleway_regular"
             android:letterSpacing=".20"
             android:text="@string/pickaground"
@@ -56,23 +58,19 @@
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/filter"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/back"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.153" />
+            app:layout_constraintVertical_bias="0.49" />
 
         <Button
             android:id="@+id/filter"
-            android:layout_width="42dp"
+            android:layout_width="0dp"
             android:layout_height="53dp"
-            android:layout_marginStart="8dp"
             android:background="@null"
             android:drawableStart="@drawable/filter_results_button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="351dp" />
 
     </android.support.constraint.ConstraintLayout>
 

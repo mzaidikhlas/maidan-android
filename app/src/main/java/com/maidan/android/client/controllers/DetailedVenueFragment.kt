@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
 import com.maidan.android.client.LoginActivity
+import com.maidan.android.client.MainActivity
 import com.maidan.android.client.R
 import com.maidan.android.client.models.Booking
 import com.maidan.android.client.models.User
@@ -73,54 +74,60 @@ class DetailedVenueFragment : Fragment() {
             imageView.setImageResource(R.drawable.google_logo)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        user = (activity as MainActivity).getLoggedInUser()!!
+
+        mAuth = FirebaseAuth.getInstance()
+        currentUser = mAuth.currentUser!!
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_detailed_venue, container, false)
 
-        mAuth = FirebaseAuth.getInstance()
-        currentUser = mAuth.currentUser!!
-
-        currentUser.getIdToken(true)
-                .addOnCompleteListener { task2 ->
-                    if (task2.isSuccessful) {
-                        val idToken = task2.result.token
-                        Log.d("User", idToken)
-
-                        val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
-
-                        val call: Call<ApiResponse> = apiService.getUserInfoByEmail(idToken!!)
-
-                        call.enqueue(object : Callback<ApiResponse> {
-                            override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
-                                Log.d("UserApiError", t.toString())
-                            }
-
-                            override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
-                                if (response!!.isSuccessful) {
-                                    Log.d("UserApiSuccess", response.body().toString())
-                                    if (response.body()!!.getStatusCode() == 200){
-                                        if (response.body()!!.getType() == "User") {
-                                            payload = response.body()!!.getPayload()
-
-                                            val gson = Gson()
-                                            val jsonObject = gson.toJsonTree(payload!![0].getData()).asJsonObject
-                                            Log.d(TAG, "Json$jsonObject")
-                                            user = gson.fromJson(jsonObject, User::class.java)
-                                        }else{
-                                            Log.d(TAG, "Expected Data is user and we get ${response.body()!!.getType()}")
-                                        }
-                                    }else{
-                                        Log.d(TAG, response.body()!!.getMessage())
-                                    }
-                                }
-                            }
-                        })
-                    } else {
-                        // Handle error -> task.getException();
-                        Log.d("UserTokenError1", "Error")
-                    }
-                }
+//        currentUser.getIdToken(true)
+//                .addOnCompleteListener { task2 ->
+//                    if (task2.isSuccessful) {
+//                        val idToken = task2.result.token
+//                        Log.d("User", idToken)
+//
+//                        val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
+//
+//                        val call: Call<ApiResponse> = apiService.getUserInfoByEmail(idToken!!)
+//
+//                        call.enqueue(object : Callback<ApiResponse> {
+//                            override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
+//                                Log.d("UserApiError", t.toString())
+//                            }
+//
+//                            override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
+//                                if (response!!.isSuccessful) {
+//                                    Log.d("UserApiSuccess", response.body().toString())
+//                                    if (response.body()!!.getStatusCode() == 200){
+//                                        if (response.body()!!.getType() == "User") {
+//                                            payload = response.body()!!.getPayload()
+//
+//                                            val gson = Gson()
+//                                            val jsonObject = gson.toJsonTree(payload!![0].getData()).asJsonObject
+//                                            Log.d(TAG, "Json$jsonObject")
+//                                            user = gson.fromJson(jsonObject, User::class.java)
+//                                        }else{
+//                                            Log.d(TAG, "Expected Data is user and we get ${response.body()!!.getType()}")
+//                                        }
+//                                    }else{
+//                                        Log.d(TAG, response.body()!!.getMessage())
+//                                    }
+//                                }
+//                            }
+//                        })
+//                    } else {
+//                        // Handle error -> task.getException();
+//                        Log.d("UserTokenError1", "Error")
+//                    }
+//                }
 
         // Getting Data from bundle
         if (!arguments!!.isEmpty){

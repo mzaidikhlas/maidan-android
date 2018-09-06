@@ -32,17 +32,16 @@ import com.google.android.gms.maps.model.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
-import com.maidan.android.client.LoginActivity
 import com.maidan.android.client.models.Venue
 import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
 import com.maidan.android.client.retrofit.PayloadFormat
 import com.maidan.android.client.retrofit.RetrofitClient
-import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+import kotlin.collections.ArrayList
 
 class BookingFragment : Fragment(), OnMapReadyCallback{
 
@@ -55,11 +54,13 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     private val TAG = "Venues"
 
     //layouts
-    private lateinit var date: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchBtn: Button
     private lateinit var datePicker: DatePickerDialog
- //   private lateinit var category:Spinner
+    private lateinit var selectDate : TextView
+    private lateinit var mapFragment: SupportMapFragment
+
+    //   private lateinit var category:Spinner
 
     private lateinit var myDataSet: ArrayList<Category>
     private lateinit var venues: ArrayList<Venue>
@@ -76,7 +77,6 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
 
     //Google Maps
     private lateinit var myLastLocation: Location
-    private var mMarker: Marker? = null
     private var bounds: LatLngBounds? = null
     private lateinit var boundsBuilder: LatLngBounds.Builder
     private var city: String = "Lahore"
@@ -107,68 +107,76 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         val view = inflater.inflate(R.layout.fragment_booking, container, false)
 
         mapView = view.findViewById(R.id.mapBooking)
-    //    date = view.findViewById(R.id.date_btn)
+        selectDate = view.findViewById(R.id.selectDateCalendar)
         searchBtn = view.findViewById(R.id.search_btn)
-    //    category = view.findViewById(R.id.bookingCategory)
+        //    category = view.findViewById(R.id.bookingCategory)
 
         searchBtn.letterSpacing = 0.3F
         recyclerView = view.findViewById(R.id.my_recycler_view)
+        val snapHelper = SnapHelperOneByOne()
+        snapHelper.attachToRecyclerView(recyclerView)
 
-        //calender code
-//        date.setOnClickListener {
-//            val c = Calendar.getInstance()
-//            val year = c.get(Calendar.YEAR)
-//            val month = c.get(Calendar.MONTH)
-//            val day = c.get(Calendar.DAY_OF_MONTH)
-//
-//            datePicker = DatePickerDialog(context, R.style.DatePickerTheme, DatePickerDialog.OnDateSetListener { p0, p1, p2, p3 ->
-//                Log.d("P0", p0.toString());
-//                Log.d("P1", p1.toString());
-//                Log.d("P2", p2.toString());
-//                Log.d("P3", p3.toString());
-//            }, year, month, day)
-//            datePicker.datePicker.minDate = c.timeInMillis
-//            datePicker.show()
-//        }
+        // calender code
+        selectDate.setOnClickListener {
+            val c = Calendar.getInstance()
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
 
+            datePicker = DatePickerDialog(context, R.style.DatePickerTheme, DatePickerDialog.OnDateSetListener { p0, p1, p2, p3 ->
+                Log.d("P0", p0.toString());
+                Log.d("P1", p1.toString());
+                Log.d("P2", p2.toString());
+                Log.d("P3", p3.toString());
+            }, year, month, day)
+            datePicker.datePicker.minDate = c.timeInMillis
+            datePicker.show()
+        }
         myDataSet = ArrayList()
 
-        myDataSet.add(Category(null, "FootBall"))
-        myDataSet.add(Category(null, "Hockey"))
-        myDataSet.add(Category(null, "Cricket"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
-        myDataSet.add(Category(null, "Something"))
+        myDataSet.add(Category(R.drawable.football, "FootBall"))
+        myDataSet.add(Category(R.drawable.hockey, "Hockey"))
+        myDataSet.add(Category(R.drawable.cricket, "Cricket"))
+        myDataSet.add(Category(R.drawable.swimming, "Swimming"))
+        myDataSet.add(Category(null, "Boxing"))
+        myDataSet.add(Category(null, "Rugby"))
+        myDataSet.add(Category(null, "Tennis"))
+        myDataSet.add(Category(null, "Squash"))
 
         recyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayout.HORIZONTAL, false)
         recyclerView.adapter = CategoryRecyclerviewAdapter(myDataSet)
+        val middleOfView = (myDataSet.size)/2
+        Log.d("POSITION", middleOfView.toString())
+        recyclerView.scrollToPosition(middleOfView)
 
-       if  (checkLocation()) {
-           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-               if (checkLocationPermission()) {
-                   buildLocationRequest()
-                   buildLocationCallback()
-                   fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
-                   fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
-               } else {
-                   buildLocationRequest()
-                   buildLocationCallback()
-                   fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
-                   fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
-               }
-           }
-       }
+        if  (checkLocation()) {
+            Log.d(TAG, "onCreateView: checklocation if")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Log.d(TAG, "onCreateView: version if")
+                if (checkLocationPermission()) {
+                    Log.d(TAG, "onCreateView: checklocationPermission if")
+                    buildLocationRequest()
+                    buildLocationCallback()
+                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
+                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+                } else {
+                    Log.d(TAG, "onCreateView: checklocationPermission else")
+                    buildLocationRequest()
+                    buildLocationCallback()
+                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
+                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+                }
+            }else{
+                Log.d(TAG, "onCreateView: version else")
+            }
+        }else{
+            Log.d(TAG, "onCreateView: checklocation else")
+        }
 
         //Search Button click listner
         searchBtn.setOnClickListener {
             Log.d(TAG, "search btn")
-                onSearchClick()
+            onSearchClick()
         }
 
         return view
@@ -177,8 +185,8 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fragment = childFragmentManager.findFragmentById(R.id.mapBooking) as SupportMapFragment
-        fragment.getMapAsync(this)
+        mapFragment = childFragmentManager.findFragmentById(R.id.mapBooking) as SupportMapFragment
+        mapFragment.getMapAsync(this)
     }
 
     private fun onSearchClick(){
@@ -244,6 +252,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                                                     "${venue.getRate().getPerHrRate()}")
                                                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
                                                     mMap.addMarker(markerOptions)
+                                                    Log.d(TAG, "Venues markers $latLng")
                                                     boundsBuilder.include(latLng)
                                                     venues.add(venue)
                                                 }
@@ -272,13 +281,13 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     }
 
     private fun buildLocationCallback() {
-        Log.d(TAG, "Second")
+        Log.d(TAG, "buildLocationCallback")
         locationCallback = object : LocationCallback(){
             override fun onLocationResult(p0: LocationResult?) {
                 myLastLocation = p0!!.locations[p0.locations.size-1]
 
-                if (mMarker != null)
-                    mMarker!!.remove()
+//                if (mMarker != null)
+//                    mMarker!!.remove()
 
                 latitude = myLastLocation.latitude
                 longitude = myLastLocation.longitude
@@ -300,14 +309,19 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                 val markerOptions = MarkerOptions()
                         .position(latLng)
                         .title("Your position")
+                        .snippet("$country," +
+                                "$city," +
+                                "0")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
-                mMarker = mMap.addMarker(markerOptions)
+                mMap.addMarker(markerOptions)
+                Log.d(TAG, "Current location marker $latLng")
                 boundsBuilder.include(latLng)
             }
         }
     }
 
     private fun buildLocationRequest() {
+        Log.d(TAG, "buildLocationRequest")
         locationRequest = LocationRequest()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 5000
@@ -318,36 +332,46 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     private fun checkLocationPermission(): Boolean {
         if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION)){
-                ActivityCompat.requestPermissions(activity!!, arrayOf(
+                requestPermissions(arrayOf(
                         android.Manifest.permission.ACCESS_FINE_LOCATION
                 ), MY_PERMISSION_CODE)
             }
             else{
-                ActivityCompat.requestPermissions(activity!!, arrayOf(
+                requestPermissions(arrayOf(
                         android.Manifest.permission.ACCESS_FINE_LOCATION
                 ), MY_PERMISSION_CODE)
             }
 
             return false
         }
-
         return true
     }
 
+    //Permission result check
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when(requestCode){
             MY_PERMISSION_CODE ->{
+                Log.d(TAG, "OnPermsissionResult")
                 if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Log.d(TAG, "onRequestPermissionResult grant permission if")
                     if(ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                        Log.d(TAG, "onRequestPermissionResult if")
                         if (checkLocationPermission()){
+                            Log.d(TAG, "onRequestPermissionResult checkLocationPermission if")
                             buildLocationRequest()
                             buildLocationCallback()
                             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
                             fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper())
                             mMap.isMyLocationEnabled = true
+                            mapFragment.getMapAsync(this)
+
+                        }else{
+                            Log.d(TAG, "onRequestPermissionResult checkLocationPermission else")
                         }
+                    }else{
+                        Log.d(TAG, "onRequestPermissionResult else")
                     }
                 }
                 else
@@ -361,12 +385,18 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         super.onStop()
     }
 
+    //User location enable check
     private fun checkLocation(): Boolean {
-        if (!isLocationEnabled)
+        if (!isLocationEnabled){
             showAlert()
+            Log.d(TAG, "checklocation if")
+        }else{
+            Log.d(TAG, "checklocation else")
+        }
         return isLocationEnabled
     }
 
+    //Mobile location permission ask dialog box
     private fun showAlert() {
         val dialog = AlertDialog.Builder(context!!)
         dialog.setTitle("Enable Location")
@@ -375,10 +405,13 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                     val myIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     startActivity(myIntent)
                 }
-                .setNegativeButton("Cancel") { paramDialogInterface, paramInt -> }
+                .setNegativeButton("Cancel") { paramDialogInterface, paramInt ->
+                    Log.d(TAG, "In show alert else")
+                }
         dialog.show()
     }
 
+    //Making maps ready
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         boundsBuilder = LatLngBounds.builder()
@@ -420,8 +453,6 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                     if (mapIntent.resolveActivity(context!!.packageManager) != null){
                         Log.d(TAG, "map intent")
                         startActivity(mapIntent)
-                    }else{
-                        Log.d(TAG, "map intent else")
                     }
                 }
             }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/light_green_to_dark_green_1"
+    android:background="@drawable/background_receipt_layout"
     android:paddingBottom="20dp"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
@@ -175,7 +175,7 @@
 
         <Button
             android:id="@+id/pay_btn"
-            style="@style/book_btn"
+            style="@style/pay_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="28dp"
