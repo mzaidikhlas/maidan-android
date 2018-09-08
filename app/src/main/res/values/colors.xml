@@ -8,4 +8,5 @@
     <color name="black">#000000</color>
     <color name="grey">#d3d3d3</color>
     <color name="unimpColor">#848484</color>
+    <color name="title_detailedvenue">#343434</color>
 </resources>

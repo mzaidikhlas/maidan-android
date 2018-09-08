@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                                             val gson = Gson()
                                             val jsonObject = gson.toJsonTree(payload[0].getData()).asJsonObject
                                             loggedInUser = gson.fromJson(jsonObject, User::class.java)
-                                            Log.d(TAG, loggedInUser.toString())
+                                            Log.d(TAG, "User $loggedInUser")
                                             supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, BookingFragment()).commit()
                                         }
                                     }
@@ -125,7 +125,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         mAuth = FirebaseAuth.getInstance()
 

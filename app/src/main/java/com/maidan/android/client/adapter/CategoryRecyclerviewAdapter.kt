@@ -61,8 +61,13 @@ class CategoryRecyclerviewAdapter(val categoryList: ArrayList<Category>) : Recyc
             holder.textViewName.setTextColor(Color.parseColor("#000000"))
             //  holder.textViewName.setTextColor(Color.parseColor("#FFFFFF"))
         }
-
-
+        if (ROW_INDEX == -1){
+            if ((categoryList.size/2) == holder.adapterPosition) {
+                Log.d("Adapter: Init", " ${(categoryList.size/2)} - ${holder.adapterPosition}")
+                holder.itemlayout.setBackgroundResource(R.drawable.gradient)
+                holder.textViewName.setTextColor(Color.parseColor("#FFFFFF"))
+            }
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
