@@ -23,6 +23,8 @@ import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.DateFormat
+import java.util.*
 
 class ReceiptFragment : Fragment() {
     private lateinit var booking: Booking
@@ -56,7 +58,6 @@ class ReceiptFragment : Fragment() {
 
         if (!arguments!!.isEmpty){
             booking = arguments!!.getSerializable("booking") as Booking
-            Log.d(TAG, booking.toString())
         }
         else
             Log.d(TAG, "Empty")
@@ -95,7 +96,9 @@ class ReceiptFragment : Fragment() {
         //Calculating rate
         val perhr: Int = booking.getVenue().getRate().getPerHrRate()
         val serviceFeePercent = booking.getVenue().getRate().getVendorServiceFee()
-        val playhrs: Int = booking.getDurationOfBooking()[0] - '0'
+
+        val temp = booking.getDurationOfBooking().split(" ")
+        val playhrs: Int = temp[0].toInt()
 
         val actualPrice = playhrs * perhr
         var serviceFee = serviceFeePercent/ 100.toFloat()
@@ -114,7 +117,42 @@ class ReceiptFragment : Fragment() {
                 payBtn.isEnabled = false
 
                 booking.setTransaction(Transaction(serviceFee, playhrs.toFloat(), actualPrice.toFloat(), totalSum, 0.toFloat()
-                        , "maualCashReciving", "maidan_customer"))
+                        , "maualCashReciving", "maidan-customer"))
+
+                val st = booking.getStartTime().split(":")
+
+                val stSecs = ((st[0].toInt()*3600) + (st[1].toInt()*60))
+
+                var toSecs = (stSecs + (playhrs*3600))
+                Log.d(TAG, "To seconds $toSecs")
+
+                val c = Calendar.getInstance()
+                c.time = DateFormat.getDateInstance(DateFormat.FULL).parse(booking.getBookingDate())
+
+                if (toSecs > 86400){
+                    toSecs -= 86400
+                    Log.d(TAG, "in here")
+
+                    toSecs /= 3600
+                    c.set(Calendar.HOUR_OF_DAY, toSecs)
+                    c.set(Calendar.MINUTE, 0)
+                    c.set(Calendar.SECOND, 0)
+
+                    c.add(Calendar.DATE, 1)
+
+                    val newDate = DateFormat.getDateInstance(DateFormat.FULL).format(c.time)
+                    Log.d(TAG, "New date $newDate")
+                    booking.setToBookingDate(newDate)
+                }else{
+                    toSecs /= 3600
+                    c.set(Calendar.HOUR_OF_DAY, toSecs)
+                    c.set(Calendar.MINUTE, 0)
+                    c.set(Calendar.SECOND, 0)
+                    booking.setToBookingDate(booking.getBookingDate())
+                }
+                val toTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(c.time)
+                Log.d(TAG, "New to time $toTime")
+                booking.setDurationOfBooking(toTime)
 
                 mAuth.currentUser!!.getIdToken(true).addOnCompleteListener {task ->
                     if (task.isSuccessful){

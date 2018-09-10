@@ -31,17 +31,15 @@ interface ApiInterface {
     @POST("booking")
         fun createBooking(@Header("Authorization") idToken: String,
                           @Body booking: Booking): Call<ApiResponse>
-
+    @GET("booking/getVenueBookings/{id}")
+    fun getVenueBookings(
+            @Path("id") id: String,
+            @Header("Authorization") idToken: String): Call<ApiResponse>
 
     //Venue Routes
     @GET("venue/selectedVenues")
         fun getVenues(
-            @Query("category") category: String,
-            @Query("country") countr: String,
+            @Query("country") country: String,
             @Query("city") city: String,
             @Header("Authorization") idToken: String): Call<ApiResponse>
-
-    //Transaction Routes
-
-
 }

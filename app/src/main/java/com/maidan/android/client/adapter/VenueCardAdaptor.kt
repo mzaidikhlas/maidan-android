@@ -32,7 +32,8 @@ class VenueCardAdaptor(private val venues: ArrayList<Venue>, private val fragmen
         holder.name.text = venue.getName()
         holder.address.text = venue.getLocation().getArea()
         holder.price.text = venue.getRate().getPerHrRate().toString()
-        Picasso.get().load(venue.getPictures()[0]).into(holder.imageViewIcon)
+        if (venue.getPictures() != null)
+            Picasso.get().load(venue.getPictures()!![0]).into(holder.imageViewIcon)
 
         holder.itemView.setOnClickListener {
             Log.d("VenueCardAdapter", venue.toString())

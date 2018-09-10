@@ -2,12 +2,13 @@ package com.maidan.android.client.models
 
 import java.io.Serializable
 
-data class User(private var email: String, private var name: String, private var password: String?,
+data class User(private var id: String?, private var email: String, private var name: String, private var password: String?,
                 private var phone: String, private var cnic: String, private var displayAvatar: String?,
                 private var dob: String, private var gender: String, private var isClient: Boolean,
                 private var isOwner: Boolean, private var userRecord: UserRecord?): Serializable {
 
     //Getters
+    fun getId(): String? {return this.id}
     fun getIsClient():Boolean{return this.isClient}
 
     fun getIsOwner():Boolean{return this.isOwner}
@@ -49,6 +50,7 @@ data class User(private var email: String, private var name: String, private var
 
 
     //Setters
+    fun setId(id: String){this.id = id}
     fun setIsClient(isClient: Boolean){this.isClient = isClient}
 
     fun setIsOwner(isOwner: Boolean){this.isOwner = isOwner}

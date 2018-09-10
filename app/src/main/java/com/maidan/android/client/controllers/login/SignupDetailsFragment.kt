@@ -3,7 +3,6 @@ package com.maidan.android.client.controllers.login
 
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
-import android.app.DialogFragment
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -30,8 +29,9 @@ import retrofit2.Response
 import java.util.*
 
 class SignupDetailsFragment : Fragment() {
-
+    //Firebase
     private lateinit var mAuth: FirebaseAuth
+    private lateinit var currentUser: FirebaseUser
 
     private lateinit var user: User
     private val TAG = "SignupDetails"
@@ -56,8 +56,9 @@ class SignupDetailsFragment : Fragment() {
     private lateinit var submitBtn: Button
     private lateinit var progressBar: ProgressBar
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         if (arguments != null){
             if (arguments!!.getString("name") != null)
                 name = arguments!!.getString("name")
@@ -67,10 +68,15 @@ class SignupDetailsFragment : Fragment() {
             if (arguments!!.getString("password") != null)
                 password = arguments!!.getString("password")
         }
-        val view =  inflater.inflate(R.layout.fragment_signup_details, container, false)
 
         mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth.currentUser
+        currentUser = mAuth.currentUser!!
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+
+        val view =  inflater.inflate(R.layout.fragment_signup_details, container, false)
 
         userImage = view.findViewById(R.id.uploadPicture)
         nameTxt = view.findViewById(R.id.name)
@@ -82,11 +88,11 @@ class SignupDetailsFragment : Fragment() {
         submitBtn = view.findViewById(R.id.signup_submit_btn)
         progressBar = view.findViewById(R.id.signupProgressBar)
 
-        var displayAvatar: String? = null
-
         //populating layout
         nameTxt.text = name
         emailTxt.text = email
+
+        var displayAvatar: String? = null
 
         dobTxt.setOnClickListener {
             val c = Calendar.getInstance()
@@ -109,7 +115,7 @@ class SignupDetailsFragment : Fragment() {
         }
 
         //Upload image using picasso
-        if (currentUser!!.photoUrl != null) {
+        if (currentUser.photoUrl != null) {
             Picasso.get().load(currentUser.photoUrl)
                     .fit()
                     .centerInside()
@@ -120,7 +126,6 @@ class SignupDetailsFragment : Fragment() {
         {
             // Upload Picture
             userImage.setOnClickListener {
-
                 openGallery()
             }
 
@@ -132,7 +137,7 @@ class SignupDetailsFragment : Fragment() {
             submitBtn.isEnabled = false
 
             if (phoneNumberTxt.text.isNotEmpty() && cnicTxt.text.isNotEmpty() && dobTxt.text.isNotEmpty()){
-                user = User(email, name, password, phoneNumberTxt.text.toString(), cnicTxt.text.toString(), displayAvatar,
+                user = User(null, email, name, password, phoneNumberTxt.text.toString(), cnicTxt.text.toString(), displayAvatar,
                         dobTxt.text.toString(), gender.selectedItem.toString(), true, false, null)
 
                 Log.d(TAG, currentUser.providerId)

@@ -98,12 +98,16 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
             return locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager!!.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
         }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        mAuth = FirebaseAuth.getInstance()
+        currentUser = mAuth.currentUser!!
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState:    Bundle?): View? {
         // Inflate the layout for this fragment
-        mAuth = FirebaseAuth.getInstance()
-        currentUser = mAuth.currentUser!!
-
         val view = inflater.inflate(R.layout.fragment_booking, container, false)
 
         mapView = view.findViewById(R.id.mapBooking)
@@ -208,6 +212,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     //Getting all values according to recyclerview selected items
     private fun setMarkers(categoryName: String){
         Log.d(TAG, "First")
+        venues = ArrayList()
         currentUser.getIdToken(true)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -215,10 +220,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                         Log.d("User", idToken)
 
                         val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
-                        val call: Call<ApiResponse> = apiService.getVenues(categoryName, country, city, idToken!!)
-
-                        venues = ArrayList()
-
+                        val call: Call<ApiResponse> = apiService.getVenues(country, city, idToken!!)
                         call.enqueue(object: Callback<ApiResponse>{
                             override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
                                 Log.d(TAG, t.toString())
@@ -236,11 +238,11 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                             if (payload.isNotEmpty()){
                                                 var venue: Venue? = null
                                                 Log.d(TAG, "Payload$payload")
-
                                                 for (item: PayloadFormat in payload){
                                                     val jsonObject = gson.toJsonTree(item.getData()).asJsonObject
                                                     Log.d(TAG, "Json$jsonObject")
                                                     venue = gson.fromJson(jsonObject, Venue::class.java)
+                                                    venue.setRef(item.getDocId())
                                                     Log.d(TAG, venue.toString())
 
                                                     val latLng = LatLng(venue!!.getLocation().getLatitude(), venue.getLocation().getLongitude())
@@ -278,6 +280,11 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                         throw task.exception!!
                     }
                 }
+    }
+
+    override fun onStop() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        super.onStop()
     }
 
     private fun buildLocationCallback() {
@@ -378,11 +385,6 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                     Toast.makeText(this.context!!, "Permission Denied", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    override fun onStop() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        super.onStop()
     }
 
     //User location enable check

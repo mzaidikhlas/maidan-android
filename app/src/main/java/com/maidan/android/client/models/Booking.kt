@@ -2,10 +2,14 @@ package com.maidan.android.client.models
 
 import java.io.Serializable
 
-data class Booking(private var venue: Venue, private var transaction: Transaction?, private var user: User,
-                   private var durationOfBooking: String, private var startTime: String, private var bookingDate: String): Serializable {
+data class Booking(private var ref: String?, private var venue: Venue, private var transaction: Transaction?, private var user: User,
+                   private var durationOfBooking: String, private var startTime: String, private var bookingDate: String,
+                   private var toBookingDate: String?, private var status: String): Serializable {
 
     //Getters
+    fun getStatus(): String {return this.status}
+    fun getToBookingDate():String?{return this.toBookingDate}
+    fun getRef(): String? {return this.ref}
     fun getVenue(): Venue {return this.venue}
     fun getTransaction(): Transaction? {return this.transaction}
     fun getUser(): User {return this.user}
@@ -14,10 +18,13 @@ data class Booking(private var venue: Venue, private var transaction: Transactio
     fun getBookingDate(): String {return this.bookingDate}
 
     //Setters
+    fun setToBookingDate(toBookingDate: String){this.toBookingDate = toBookingDate}
+    fun setRef(ref: String){this.ref = ref}
     fun setVenue(venue: Venue){this.venue = venue}
     fun setTransaction(transaction: Transaction) {this.transaction = transaction}
     fun setUser(user: User) {this.user = user}
     fun setDurationOfBooking(durationOfBooking: String) {this.durationOfBooking = durationOfBooking}
     fun setStartTime(startTime: String) {this.startTime = startTime}
     fun setBookingDate(bookingDate: String) {this.bookingDate = bookingDate}
+    fun setStatus(status: String) {this.status = status}
 }

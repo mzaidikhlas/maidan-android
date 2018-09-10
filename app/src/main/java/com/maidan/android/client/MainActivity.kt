@@ -74,9 +74,7 @@ class MainActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         val idToken = task.result.token
                         val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
-
                         val call: Call<ApiResponse> = apiService.getUserInfoByEmail(idToken!!)
-
                         call.enqueue(object : Callback<ApiResponse> {
                             override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
                                 Log.d("UserApiError", t.toString())
@@ -104,6 +102,7 @@ class MainActivity : AppCompatActivity() {
                                             val gson = Gson()
                                             val jsonObject = gson.toJsonTree(payload[0].getData()).asJsonObject
                                             loggedInUser = gson.fromJson(jsonObject, User::class.java)
+                                            (loggedInUser as User).setId(payload[0].getDocId())
                                             Log.d(TAG, "User $loggedInUser")
                                             supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, BookingFragment()).commit()
                                         }
@@ -129,14 +128,6 @@ class MainActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-    }
-
-    private fun redirect(){
-        val fragment = BookingFragment()
-        val bundle = Bundle()
-        bundle.putSerializable("loggedInUser", loggedInUser)
-        fragment.arguments = bundle
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, fragment).commit()
     }
 
     override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {

@@ -45,17 +45,20 @@ class VenueFragment : Fragment(), OnMapReadyCallback {
     private lateinit var markerOptions: MarkerOptions
     private lateinit var mapView: FrameLayout
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-
-        val view = inflater.inflate(R.layout.fragment_venue, container, false)
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         if (arguments != null){
             venues = arguments!!.getSerializable("venues") as ArrayList<Venue>
             Log.d(TAG, venues.toString())
         }else{
             Toast.makeText(context, "No venues found", Toast.LENGTH_LONG).show()
         }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+
+        val view = inflater.inflate(R.layout.fragment_venue, container, false)
 
         venueCard = view.findViewById(R.id.groundCards)
         mapView = view.findViewById(R.id.mapVenue)
