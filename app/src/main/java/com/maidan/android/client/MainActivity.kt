@@ -107,9 +107,13 @@ class MainActivity : AppCompatActivity() {
                                             supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, BookingFragment()).commit()
                                         }
                                     }
+                                }else{
+                                    Log.d(TAG, "Fetchning user response error ${response.errorBody()}")
                                 }
                             }
                         })
+                    }else{
+                        Log.d(TAG, "user token generation error ${task.exception}")
                     }
                 }
             }

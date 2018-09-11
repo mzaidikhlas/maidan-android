@@ -39,6 +39,7 @@ class ReceiptFragment : Fragment() {
     private lateinit var receiptTimeTxt: TextView
     private lateinit var venueNameTxt: TextView
     private lateinit var receiptBookingDateTxt: TextView
+    private lateinit var receiptBookingTimeTxt: TextView
     private lateinit var receiptBookingHoursTxt: TextView
     private lateinit var totalPerHourPriceTxt: TextView
     private lateinit var totalConveniencePriceTxt: TextView
@@ -73,6 +74,7 @@ class ReceiptFragment : Fragment() {
         receiptTimeTxt = view.findViewById(R.id.receiptTime)
         venueNameTxt = view.findViewById(R.id.receiptVenueName)
         receiptBookingDateTxt = view.findViewById(R.id.receiptBookingDate)
+        receiptBookingTimeTxt = view.findViewById(R.id.receiptBookingTime)
         receiptBookingHoursTxt = view.findViewById(R.id.receiptBookingHours)
         totalPerHourPriceTxt = view.findViewById(R.id.totalPerHourPrice)
         totalConveniencePriceTxt = view.findViewById(R.id.totalConvenienceFee)
@@ -82,16 +84,29 @@ class ReceiptFragment : Fragment() {
 
         payBtn.letterSpacing = 0.3F
 
-        //Layout populating
+        //Populating Layout
+        val rc = Calendar.getInstance()
         Picasso.get()
                 .load(R.drawable.maidan_playstore_icon)
                 .into(maidanIcon)
-
+        receiptDateTxt.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(rc.time)
+        receiptTimeTxt.text = DateFormat.getTimeInstance(DateFormat.SHORT).format(rc.time)
         invoiceIdTxt.text = "#001"
         customerNameTxt.text = booking.getUser().getName()
         venueNameTxt.text = booking.getVenue().getName()
-        receiptBookingDateTxt.text = booking.getBookingDate()
         receiptBookingHoursTxt.text = booking.getDurationOfBooking()
+
+        val date = DateFormat.getDateInstance(DateFormat.FULL).parse(booking.getBookingDate())
+        receiptBookingDateTxt.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date)
+
+        val hours = booking.getDurationOfBooking().split(" ")
+
+        rc.set(Calendar.HOUR_OF_DAY, hours[0].toInt())
+        rc.set(Calendar.MINUTE, 0)
+        rc.set(Calendar.SECOND, 0)
+
+        val newTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(rc.time)
+        receiptBookingTimeTxt.text = "${booking.getStartTime()} - $newTime"
 
         //Calculating rate
         val perhr: Int = booking.getVenue().getRate().getPerHrRate()

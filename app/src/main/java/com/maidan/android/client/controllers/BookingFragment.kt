@@ -40,6 +40,7 @@ import com.maidan.android.client.retrofit.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.DateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -51,7 +52,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     private lateinit var mapView: FrameLayout
 
     //Log Tag
-    private val TAG = "Venues"
+    private val TAG = "BookingFragment"
 
     //layouts
     private lateinit var recyclerView: RecyclerView
@@ -64,6 +65,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
 
     private lateinit var myDataSet: ArrayList<Category>
     private lateinit var venues: ArrayList<Venue>
+    private var dateString: String? = null
 
     //Firebase
     private lateinit var mAuth: FirebaseAuth
@@ -127,11 +129,16 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
             val month = c.get(Calendar.MONTH)
             val day = c.get(Calendar.DAY_OF_MONTH)
 
+            dateString = DateFormat.getDateInstance(DateFormat.FULL).format(c.time)
+
             datePicker = DatePickerDialog(context, R.style.DatePickerTheme, DatePickerDialog.OnDateSetListener { p0, p1, p2, p3 ->
                 Log.d("P0", p0.toString());
                 Log.d("P1", p1.toString());
                 Log.d("P2", p2.toString());
                 Log.d("P3", p3.toString());
+
+                selectDate.text = dateString
+
             }, year, month, day)
             datePicker.datePicker.minDate = c.timeInMillis
             datePicker.show()
@@ -236,7 +243,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                             payload = response.body()!!.getPayload()
 
                                             if (payload.isNotEmpty()){
-                                                var venue: Venue? = null
+                                                var venue: Venue?
                                                 Log.d(TAG, "Payload$payload")
                                                 for (item: PayloadFormat in payload){
                                                     val jsonObject = gson.toJsonTree(item.getData()).asJsonObject
@@ -403,11 +410,11 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         val dialog = AlertDialog.Builder(context!!)
         dialog.setTitle("Enable Location")
                 .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " + "use this app")
-                .setPositiveButton("Location Settings") { paramDialogInterface, paramInt ->
+                .setPositiveButton("Location Settings") { _, _ ->
                     val myIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     startActivity(myIntent)
                 }
-                .setNegativeButton("Cancel") { paramDialogInterface, paramInt ->
+                .setNegativeButton("Cancel") { _, _ ->
                     Log.d(TAG, "In show alert else")
                 }
         dialog.show()
@@ -431,7 +438,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                     override fun getInfoWindow(p0: Marker?): View {
                         val v: View = View.inflate(context,R.layout.map_info_window, null)
 
-                        val image: ImageView = v.findViewById(R.id.infoWindowImageview)
+                        //val image: ImageView = v.findViewById(R.id.infoWindowImageview)
                         val venueName: TextView = v.findViewById(R.id.infoWindowName)
                         val country: TextView = v.findViewById(R.id.infoWindowCountry)
                         val city: TextView = v.findViewById(R.id.infoWindowCity)

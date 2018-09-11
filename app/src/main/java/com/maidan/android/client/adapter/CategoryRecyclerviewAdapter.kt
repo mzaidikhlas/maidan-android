@@ -40,7 +40,7 @@ class CategoryRecyclerviewAdapter(val categoryList: ArrayList<Category>) : Recyc
 
         if (categoryItem.imageView != null)
         {
-            Picasso.get().load(categoryItem.imageView!!).into(holder.imageViewIcon)
+            Picasso.get().load(categoryItem.imageView).into(holder.imageViewIcon)
         } else
         {
             Picasso.get().load(R.drawable.like).into(holder.imageViewIcon)

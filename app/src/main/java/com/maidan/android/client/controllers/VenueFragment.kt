@@ -38,7 +38,7 @@ class VenueFragment : Fragment(), OnMapReadyCallback {
     private lateinit var pickGround : TextView
     private lateinit var filter: Button
 
-    private var TAG = "VenuePage"
+    private var TAG = "VenueFragment"
 
     //Google Maps
     private lateinit var mMap: GoogleMap

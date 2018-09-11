@@ -61,7 +61,7 @@ class DetailedVenueFragment : Fragment() {
     private var timeString: String? = null
     private var bookings: ArrayList<Booking>? = null
 
-    private val TAG = "VenueDetailedFragment"
+    private val TAG = "DetailedVenueFragment"
 
     //Firebase
     private lateinit var mAuth: FirebaseAuth
@@ -117,7 +117,7 @@ class DetailedVenueFragment : Fragment() {
         bookBtn.letterSpacing = 0.3F
 
         //Populating layout
-        val hr = venue.getMinBookingHour().toString()
+        //val hr = venue.getMinBookingHour().toString()
 
         venueNameTxt.text = venue.getName()
         addressTxt.text = venue.getLocation().getArea()
@@ -178,7 +178,7 @@ class DetailedVenueFragment : Fragment() {
             //dateString = "$day/$month/$year"
 
             datePicker = DatePickerDialog(context,R.style.DatePickerTheme,
-                    DatePickerDialog.OnDateSetListener { view, yr, monthOfYear, dayOfMonth ->
+                    DatePickerDialog.OnDateSetListener { _, yr, monthOfYear, dayOfMonth ->
                         Log.d(TAG, "Year: $yr, Month $monthOfYear, Day: $dayOfMonth")
                         c.set(yr, monthOfYear, dayOfMonth)
                         dateString = DateFormat.getDateInstance(DateFormat.FULL).format(c.time)
@@ -201,7 +201,7 @@ class DetailedVenueFragment : Fragment() {
             timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(c.time)
             // Launch Time Picker Dialog
             val timePickerDialog = TimePickerDialog(context,R.style.DatePickerTheme,
-                    TimePickerDialog.OnTimeSetListener { view, hr, min ->
+                    TimePickerDialog.OnTimeSetListener { _, hr, min ->
                         val cc = Calendar.getInstance()
                         cc.set(Calendar.HOUR_OF_DAY, hr)
                         cc.set(Calendar.MINUTE, min)
@@ -239,6 +239,28 @@ class DetailedVenueFragment : Fragment() {
         overSpinner.adapter = adapter
 
         return view
+    }
+
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        Log.d(TAG, "OnViewStateRestored")
+        if (savedInstanceState != null){
+            booking = savedInstanceState.getSerializable("booking") as Booking?
+            dateBtn.text = booking!!.getBookingDate()
+            timePicker.text = booking!!.getStartTime()
+        }else if (booking != null){
+            dateBtn.text = booking!!.getBookingDate()
+            timePicker.text = booking!!.getStartTime()
+        }else{
+            Toast.makeText(context, "No state have saved", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d(TAG, "OnSaveStateRestored")
+        outState.putSerializable("booking", booking)
     }
 
     private fun getAllBookingsOfThisVenue(){
@@ -349,6 +371,7 @@ class DetailedVenueFragment : Fragment() {
         }
         return flag
     }
+
     private fun availabiltyToCheck(to: Int): Boolean{
         var i = 0
         var flag = false

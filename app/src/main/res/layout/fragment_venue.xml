@@ -37,7 +37,6 @@
             android:background="@null"
             android:drawableStart="@drawable/right_arrow"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/pickaground"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -46,8 +45,8 @@
             android:id="@+id/pickaground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="55dp"
-            android:layout_marginStart="55dp"
+            android:layout_marginEnd="35dp"
+            android:layout_marginStart="35dp"
             android:fontFamily="@font/raleway_medium"
             android:letterSpacing=".20"
             android:text="@string/pickaground"
@@ -79,6 +78,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

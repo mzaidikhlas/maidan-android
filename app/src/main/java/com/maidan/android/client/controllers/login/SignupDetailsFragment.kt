@@ -102,14 +102,14 @@ class SignupDetailsFragment : Fragment() {
 
             var dateString = "$day/$month/$year"
 
-            val datePicker = DatePickerDialog(context,R.style.DatePickerThemeSignup,
-                    DatePickerDialog.OnDateSetListener { view, yr, monthOfYear, dayOfMonth ->
+            val datePicker = DatePickerDialog(context,android.R.style.Theme_Holo_Dialog,
+                    DatePickerDialog.OnDateSetListener { _, yr, monthOfYear, dayOfMonth ->
                         Log.d(TAG, "Year: $yr, Month $monthOfYear, Day: $dayOfMonth")
                         dateString = "$dayOfMonth/$monthOfYear/$yr"
                         dobTxt.text = dateString
                     },year,month,day)
 
-            datePicker.datePicker.minDate = c.timeInMillis
+            datePicker.datePicker.maxDate = c.timeInMillis
             datePicker.show()
             Log.d(TAG,dateString)
         }
