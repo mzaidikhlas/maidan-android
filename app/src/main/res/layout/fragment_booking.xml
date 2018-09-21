@@ -55,7 +55,7 @@
             android:background="@drawable/radius"
             android:drawablePadding="10dp"
             android:fontFamily="@font/montserrat_regular"
-            android:padding="10dp"
+            android:padding="15dp"
             android:paddingRight="10dp"
             android:text="SELECT DATE"
             android:textColor="#848484"

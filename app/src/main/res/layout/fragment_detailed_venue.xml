@@ -15,8 +15,9 @@
             android:id="@+id/carouselView"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            app:fillColor="#FFFFFFFF"
             android:background="@color/grey"
+            app:autoPlay="false"
+            app:fillColor="#FFFFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -45,7 +46,7 @@
             android:id="@+id/address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="22dp"
+            android:layout_marginStart="16dp"
             android:fontFamily="@font/montserrat_regular"
             android:text="C-BLOCK MARKET"
             android:textColor="@color/unimpColor"
@@ -57,30 +58,27 @@
             android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="29dp"
+            android:layout_marginTop="4dp"
             android:text="Rs 1500"
             android:textColor="@color/unimpColor"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/min_playtime"
             app:layout_constraintEnd_toStartOf="@+id/perhour"
-            app:layout_constraintTop_toBottomOf="@+id/venueName"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/venueName" />
 
 
         <TextView
             android:id="@+id/perhour"
             android:layout_width="wrap_content"
-            android:layout_height="23dp"
-            android:layout_marginEnd="47dp"
-            android:layout_marginTop="4dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:fontFamily="@font/raleway_regular"
             android:text="/hrs"
             android:textColor="@color/unimpColor"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/venueName"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/venueName" />
 
         <TextView
             android:id="@+id/min_playtime"
@@ -97,16 +95,15 @@
 
         <TextView
             android:id="@+id/selectDate"
-            android:layout_width="180dp"
+            android:layout_width="200dp"
             android:layout_height="42dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
-            android:autoSizeTextType="uniform"
             android:background="@null"
             android:drawableStart="@drawable/calendar"
             android:fontFamily="@font/montserrat_regular"
-            android:padding="8dp"
-            android:text= "SELECT DATE"
+            android:hint="Select Date"
+            android:padding="10dp"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="18sp"
@@ -116,15 +113,15 @@
 
         <TextView
             android:id="@+id/selectTime"
-            android:layout_width="180dp"
+            android:layout_width="200dp"
             android:layout_height="42dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:background="@null"
             android:drawableStart="@drawable/clock_1"
             android:fontFamily="@font/montserrat_regular"
-            android:padding="8dp"
-            android:text="SELECT TIME"
+            android:hint="Select Time"
+            android:padding="10dp"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="18sp"
@@ -148,10 +145,10 @@
 
         <Spinner
             android:id="@+id/over_spinner"
-            android:layout_width="128dp"
+            android:layout_width="0dp"
             android:layout_height="30dp"
-            android:layout_marginStart="42dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:dropDownWidth="match_parent"
             android:entries="@array/match_overs"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
@@ -210,7 +207,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="17dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -219,36 +216,20 @@
 
         </ListView>
 
-        <View
-            android:id="@+id/divider2"
-            style="@style/Divider"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/listOfAmenities"
-            app:layout_constraintVertical_bias="0.0" />
-
-
-        <TextView
-            android:id="@+id/review"
+        <Button
+            android:id="@+id/getDirections"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"
-            android:letterSpacing=".20"
-            android:text="REVIEW"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:background="@drawable/radius"
+            android:text="Get Directions"
+            app:layout_constraintBottom_toTopOf="@+id/book_btn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/divider2" />
+            app:layout_constraintStart_toEndOf="@+id/selectTime"
+            app:layout_constraintTop_toBottomOf="@+id/over_spinner" />
+
 
     </android.support.constraint.ConstraintLayout>
 

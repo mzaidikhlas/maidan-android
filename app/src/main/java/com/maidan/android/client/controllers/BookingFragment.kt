@@ -37,6 +37,7 @@ import com.maidan.android.client.retrofit.ApiInterface
 import com.maidan.android.client.retrofit.ApiResponse
 import com.maidan.android.client.retrofit.PayloadFormat
 import com.maidan.android.client.retrofit.RetrofitClient
+import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -63,7 +64,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
 
     //   private lateinit var category:Spinner
 
-    private lateinit var myDataSet: ArrayList<Category>
+    private lateinit var categories: ArrayList<Category>
     private lateinit var venues: ArrayList<Venue>
     private var dateString: String? = null
 
@@ -80,9 +81,10 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     //Google Maps
     private lateinit var myLastLocation: Location
     private var bounds: LatLngBounds? = null
-    private lateinit var boundsBuilder: LatLngBounds.Builder
+    private var boundsBuilder: LatLngBounds.Builder? = null
     private var city: String = "Lahore"
     private var country: String = "Pakistan"
+    private var categoryName: String? = null
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
@@ -132,10 +134,10 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
             dateString = DateFormat.getDateInstance(DateFormat.FULL).format(c.time)
 
             datePicker = DatePickerDialog(context, R.style.DatePickerTheme, DatePickerDialog.OnDateSetListener { p0, p1, p2, p3 ->
-                Log.d("P0", p0.toString());
-                Log.d("P1", p1.toString());
-                Log.d("P2", p2.toString());
-                Log.d("P3", p3.toString());
+                Log.d("P0", p0.toString())
+                Log.d("P1", p1.toString())
+                Log.d("P2", p2.toString())
+                Log.d("P3", p3.toString())
 
                 selectDate.text = dateString
 
@@ -143,46 +145,19 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
             datePicker.datePicker.minDate = c.timeInMillis
             datePicker.show()
         }
-        myDataSet = ArrayList()
+        categories = ArrayList()
 
-        myDataSet.add(Category(R.drawable.football, "FootBall"))
-        myDataSet.add(Category(R.drawable.hockey, "Hockey"))
-        myDataSet.add(Category(R.drawable.cricket, "Cricket"))
-        myDataSet.add(Category(R.drawable.swimming, "Swimming"))
-        myDataSet.add(Category(null, "Boxing"))
-        myDataSet.add(Category(null, "Rugby"))
-        myDataSet.add(Category(null, "Tennis"))
-        myDataSet.add(Category(null, "Squash"))
+        categories.add(Category(R.drawable.football, "Football"))
+        categories.add(Category(R.drawable.cricket, "Cricket"))
+        categories.add(Category(R.drawable.hockey, "Tennis"))
+        categories.add(Category(R.drawable.swimming, "Swimming"))
+        categories.add(Category(R.drawable.swimming, "Horse Riding"))
 
         recyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayout.HORIZONTAL, false)
-        recyclerView.adapter = CategoryRecyclerviewAdapter(myDataSet)
-        val middleOfView = (myDataSet.size)/2
-        Log.d("POSITION", middleOfView.toString())
-        recyclerView.scrollToPosition(middleOfView)
-
-        if  (checkLocation()) {
-            Log.d(TAG, "onCreateView: checklocation if")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Log.d(TAG, "onCreateView: version if")
-                if (checkLocationPermission()) {
-                    Log.d(TAG, "onCreateView: checklocationPermission if")
-                    buildLocationRequest()
-                    buildLocationCallback()
-                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
-                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
-                } else {
-                    Log.d(TAG, "onCreateView: checklocationPermission else")
-                    buildLocationRequest()
-                    buildLocationCallback()
-                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
-                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
-                }
-            }else{
-                Log.d(TAG, "onCreateView: version else")
-            }
-        }else{
-            Log.d(TAG, "onCreateView: checklocation else")
-        }
+        recyclerView.adapter = CategoryRecyclerviewAdapter(categories, this)
+//        val middleOfView = (categories.size)/2
+//        Log.d("POSITION", middleOfView.toString())
+//        recyclerView.scrollToPosition(middleOfView)
 
         //Search Button click listner
         searchBtn.setOnClickListener {
@@ -201,23 +176,31 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     }
 
     private fun onSearchClick(){
-        //val fragment = childFragmentManager.findFragmentById(R.id.bookingFooter) as SupportMapFragment
-        Log.d(TAG, "search btn click liestner")
+        val selectedVenues = ArrayList<Venue>()
         if (venues.isEmpty()){
             Toast.makeText(context, "No Venues found", Toast.LENGTH_LONG).show()
         }else {
-            val venueFragment = VenueFragment()
-            val args = Bundle()
-            args.putSerializable("venues", venues)
+            var i = 0
+            while (i < venues.size){
+                if (venues[i].getActivityType() == categoryName)
+                    selectedVenues.add(venues[i])
 
-            venueFragment.arguments = args
-
-            fragmentManager!!.beginTransaction().addToBackStack("booking fragment").replace(R.id.fragment_layout, venueFragment).commit()
+                i++
+            }
+            if (selectedVenues.isNotEmpty()){
+                val venueFragment = VenueFragment()
+                val args = Bundle()
+                args.putSerializable("venues", selectedVenues)
+                venueFragment.arguments = args
+                fragmentManager!!.beginTransaction().addToBackStack("booking fragment").replace(R.id.fragment_layout, venueFragment).commit()
+            }else{
+                Toast.makeText(context, "No Venues found of this category", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
     //Getting all values according to recyclerview selected items
-    private fun setMarkers(categoryName: String){
+    private fun setMarkers(){
         Log.d(TAG, "First")
         venues = ArrayList()
         currentUser.getIdToken(true)
@@ -251,26 +234,27 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                                     venue = gson.fromJson(jsonObject, Venue::class.java)
                                                     venue.setRef(item.getDocId())
                                                     Log.d(TAG, venue.toString())
-
-                                                    val latLng = LatLng(venue!!.getLocation().getLatitude(), venue.getLocation().getLongitude())
-                                                    markerOptions = MarkerOptions()
-                                                            .position(latLng)
-                                                            .title(venue.getName())
-                                                            .snippet("${venue.getLocation().getCountry()}," +
-                                                                    "${venue.getLocation().getCity()}," +
-                                                                    "${venue.getRate().getPerHrRate()}")
-                                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
-                                                    mMap.addMarker(markerOptions)
-                                                    Log.d(TAG, "Venues markers $latLng")
-                                                    boundsBuilder.include(latLng)
+                                                    if (venue!!.getActivityType() == categoryName){
+                                                        val latLng = LatLng(venue.getLocation().getLatitude(), venue.getLocation().getLongitude())
+                                                        markerOptions = MarkerOptions()
+                                                                .position(latLng)
+                                                                .title(venue.getName())
+                                                                .snippet(venue.getRef())
+                                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
+                                                        mMap.addMarker(markerOptions)
+                                                        Log.d(TAG, "Venues markers $latLng")
+                                                        boundsBuilder!!.include(latLng)
+                                                    }
                                                     venues.add(venue)
                                                 }
-                                                bounds = boundsBuilder.build()
-                                                try{
-                                                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150))
-                                                }catch (e:Exception ){
-                                                    e.printStackTrace()
-                                                }
+//                                                if (boundsBuilder != null)
+                                                //}
+                                            }
+                                            bounds = boundsBuilder!!.build()
+                                            try{
+                                                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 12))
+                                            }catch (e:Exception ){
+                                                e.printStackTrace()
                                             }
                                         }
 
@@ -290,7 +274,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     }
 
     override fun onStop() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        //fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         super.onStop()
     }
 
@@ -323,13 +307,11 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                 val markerOptions = MarkerOptions()
                         .position(latLng)
                         .title("Your position")
-                        .snippet("$country," +
-                                "$city," +
-                                "0")
+                        .snippet(null)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
                 mMap.addMarker(markerOptions)
                 Log.d(TAG, "Current location marker $latLng")
-                boundsBuilder.include(latLng)
+                boundsBuilder!!.include(latLng)
             }
         }
     }
@@ -379,8 +361,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
                             fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper())
                             mMap.isMyLocationEnabled = true
-                            mapFragment.getMapAsync(this)
-
+                            updateMaps("Cricket")
                         }else{
                             Log.d(TAG, "onRequestPermissionResult checkLocationPermission else")
                         }
@@ -424,48 +405,131 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         boundsBuilder = LatLngBounds.builder()
+        mMap.setMaxZoomPreference(12F)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "IDhr aya hai")
-                setMarkers("Cricket")
+        if (categoryName == null)
+            categoryName = "Cricket"
 
-                mMap.setInfoWindowAdapter(object: GoogleMap.InfoWindowAdapter{
-                    override fun getInfoContents(p0: Marker?): View {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
+        if  (checkLocation()) {
+            Log.d(TAG, "onCreateView: checklocation if")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Log.d(TAG, "onCreateView: version if")
+                if (checkLocationPermission()) {
+                    Log.d(TAG, "onCreateView: checklocationPermission if")
+                    buildLocationRequest()
+                    buildLocationCallback()
+                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity!!)
+                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
 
-                    override fun getInfoWindow(p0: Marker?): View {
-                        val v: View = View.inflate(context,R.layout.map_info_window, null)
+                    Log.d(TAG, "IDhr aya hai")
+                    setMarkers()
+                    mMap.setInfoWindowAdapter(object: GoogleMap.InfoWindowAdapter{
+                        override fun getInfoContents(p0: Marker?): View {
+                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                        }
 
-                        //val image: ImageView = v.findViewById(R.id.infoWindowImageview)
-                        val venueName: TextView = v.findViewById(R.id.infoWindowName)
-                        val country: TextView = v.findViewById(R.id.infoWindowCountry)
-                        val city: TextView = v.findViewById(R.id.infoWindowCity)
-                        val price: TextView = v.findViewById(R.id.infoWindowPrice)
+                        override fun getInfoWindow(p0: Marker?): View {
+                            val v: View = View.inflate(context,R.layout.venue_card, null)
 
-                        val data: List<String> = p0!!.snippet.split(",")
+                            val type = v.findViewById(R.id.type) as TextView
+                            val imageViewIcon = v.findViewById(R.id.ground) as ImageView
+                            val name = v.findViewById(R.id.groundname) as TextView
+                            val address = v.findViewById(R.id.address) as TextView
+                            val price = v.findViewById(R.id.price) as TextView
+                            var selectedVenue: List<Venue>? = null
 
-                        venueName.text = p0.title
-                        country.text = data[0]
-                        city.text = data[1]
-                        price.text = data[2]
+                            if (p0!!.snippet != null){
+//                                selectedVenue = ArrayList()
+                               selectedVenue = venues.filter {
+                                    venue -> venue.getRef() == p0.snippet
+                               }
+                                type.text = selectedVenue[0].getActivityType()
+                                name.text = selectedVenue[0].getName()
+                                address.text = selectedVenue[0].getLocation().getArea()
+                                price.text = selectedVenue[0].getRate().getPerHrRate().toString()
+                                if (selectedVenue[0].getPictures() != null)
+                                    Picasso.get().load(selectedVenue[0].getPictures()!![0]).into(imageViewIcon)
+                            }
+                            return v
+                        }
 
-                        return v
-                    }
+                    })
+                    mMap.setOnInfoWindowClickListener {p0: Marker? ->
 
-                })
-                mMap.setOnInfoWindowClickListener {p0: Marker? ->
-                    Log.d(TAG, "geo:$latitude,$longitude?q=${p0!!.position.latitude},${p0.position.longitude}")
-                    val gmmIntentUri = Uri.parse("geo:0,0?q=${p0.position.latitude},${p0.position.longitude}")
-                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                    if (mapIntent.resolveActivity(context!!.packageManager) != null){
-                        Log.d(TAG, "map intent")
-                        startActivity(mapIntent)
+                        if (p0!!.snippet != null){
+                            val selectedVenue = venues.filter {
+                                venue -> venue.getRef() == p0.snippet
+                            }
+                            val detailedVenueFragment = DetailedVenueFragment()
+                            val args = Bundle()
+                            args.putSerializable("venue", selectedVenue[0])
+                            detailedVenueFragment.arguments = args
+                            fragmentManager!!.beginTransaction().addToBackStack("venue fragment").replace(R.id.fragment_layout, detailedVenueFragment).commit()
+                        }
+
+//                        Log.d(TAG, "geo:$latitude,$longitude?q=${p0!!.position.latitude},${p0.position.longitude}")
+//                        val gmmIntentUri = Uri.parse("geo:0,0?q=${p0.position.latitude},${p0.position.longitude}")
+//                        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+//                        if (mapIntent.resolveActivity(context!!.packageManager) != null){
+//                            Log.d(TAG, "map intent")
+//                            startActivity(mapIntent)
+//                        }
                     }
                 }
+            }else{
+                Log.d(TAG, "onCreateView: version else")
             }
+        }else{
+            Log.d(TAG, "onCreateView: checklocation else")
         }
 
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (ContextCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//                Log.d(TAG, "IDhr aya hai")
+//                setMarkers()
+//
+//                mMap.setInfoWindowAdapter(object: GoogleMap.InfoWindowAdapter{
+//                    override fun getInfoContents(p0: Marker?): View {
+//                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//                    }
+//
+//                    override fun getInfoWindow(p0: Marker?): View {
+//                        val v: View = View.inflate(context,R.layout.map_info_window, null)
+//
+//                        //val image: ImageView = v.findViewById(R.id.infoWindowImageview)
+//                        val venueName: TextView = v.findViewById(R.id.infoWindowName)
+//                        val country: TextView = v.findViewById(R.id.infoWindowCountry)
+//                        val city: TextView = v.findViewById(R.id.infoWindowCity)
+//                        val price: TextView = v.findViewById(R.id.infoWindowPrice)
+//
+//                        val data: List<String> = p0!!.snippet.split(",")
+//
+//                        venueName.text = p0.title
+//                        country.text = data[0]
+//                        city.text = data[1]
+//                        price.text = data[2]
+//
+//                        return v
+//                    }
+//
+//                })
+//                mMap.setOnInfoWindowClickListener {p0: Marker? ->
+//                    Log.d(TAG, "geo:$latitude,$longitude?q=${p0!!.position.latitude},${p0.position.longitude}")
+//                    val gmmIntentUri = Uri.parse("geo:0,0?q=${p0.position.latitude},${p0.position.longitude}")
+//                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+//                    if (mapIntent.resolveActivity(context!!.packageManager) != null){
+//                        Log.d(TAG, "map intent")
+//                        startActivity(mapIntent)
+//                    }
+//                }
+//            }
+//        }
+
+    }
+
+    fun updateMaps(categoryName: String){
+        this.categoryName = categoryName
+        mMap.clear()
+        mapFragment.getMapAsync(this)
     }
 }

@@ -41,8 +41,8 @@ class SignupDetailsFragment : Fragment() {
     private lateinit var imageUri : Uri
 
     //Temp variables
-    private lateinit var name: String
-    private lateinit var email: String
+    private var name: String? = null
+    private var email: String? = null
     private var password: String? = null
 
     //layout
@@ -96,20 +96,23 @@ class SignupDetailsFragment : Fragment() {
 
         dobTxt.setOnClickListener {
             val c = Calendar.getInstance()
+            val maxTime = c.timeInMillis
+            c.set(1990,1,1)
             val year = c.get(Calendar.YEAR)
             val month = c.get(Calendar.MONTH)
             val day = c.get(Calendar.DAY_OF_MONTH)
 
             var dateString = "$day/$month/$year"
 
-            val datePicker = DatePickerDialog(context,android.R.style.Theme_Holo_Dialog,
+            val datePicker = DatePickerDialog(context,android.R.style.Theme_Holo_Light_Dialog,
                     DatePickerDialog.OnDateSetListener { _, yr, monthOfYear, dayOfMonth ->
                         Log.d(TAG, "Year: $yr, Month $monthOfYear, Day: $dayOfMonth")
                         dateString = "$dayOfMonth/$monthOfYear/$yr"
                         dobTxt.text = dateString
                     },year,month,day)
 
-            datePicker.datePicker.maxDate = c.timeInMillis
+            datePicker.datePicker.maxDate = maxTime
+
             datePicker.show()
             Log.d(TAG,dateString)
         }
@@ -131,35 +134,55 @@ class SignupDetailsFragment : Fragment() {
 
         }
         submitBtn.setOnClickListener {
-            Log.d(TAG, "AYA hai")
+            var flag = true
 
             progressBar.visibility = View.VISIBLE
             submitBtn.isEnabled = false
 
             if (phoneNumberTxt.text.isNotEmpty() && cnicTxt.text.isNotEmpty() && dobTxt.text.isNotEmpty()){
-                user = User(null, email, name, password, phoneNumberTxt.text.toString(), cnicTxt.text.toString(), displayAvatar,
+                if(name == null)
+                    name = null
+                user = User(null, email!!, name!!, password, phoneNumberTxt.text.toString(), cnicTxt.text.toString(), displayAvatar,
                         dobTxt.text.toString(), gender.selectedItem.toString(), true, false, null)
 
-                Log.d(TAG, currentUser.providerId)
-                currentUser.getIdToken(true).addOnCompleteListener { task ->
-                    val idToken = task.result.token
+                if (phoneNumberTxt.length() < 13){
+                    phoneNumberTxt.error = "Enter valid phone number"
+                    phoneNumberTxt.requestFocus()
+                    flag = false
+                }else{
+                    phoneNumberTxt.error = null
+                    phoneNumberTxt.clearFocus()
+                }
 
-                    val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
+                if (cnicTxt.length() < 13){
+                    cnicTxt.error = "Enter valid cnic number"
+                    cnicTxt.requestFocus()
+                    flag = false
+                }else{
+                    cnicTxt.error = null
+                    cnicTxt.clearFocus()
+                }
+                if (flag){
+                    currentUser.getIdToken(true).addOnCompleteListener { task ->
+                        val idToken = task.result.token
 
-                    val call: Call<ApiResponse> = apiService.createUser(idToken!!, user)
-                    call.enqueue(object: Callback<ApiResponse>{
-                        override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
-                            Log.d(TAG, t.toString())
-                            progressBar.visibility = View.INVISIBLE
-                            submitBtn.isEnabled = true
-                            throw t!!
-                        }
+                        val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
 
-                        override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
-                            Log.d(TAG, "OnResponse")
-                            updateUI(currentUser)
-                        }
-                    })
+                        val call: Call<ApiResponse> = apiService.createUser(idToken!!, user)
+                        call.enqueue(object: Callback<ApiResponse>{
+                            override fun onFailure(call: Call<ApiResponse>?, t: Throwable?) {
+                                Log.d(TAG, t.toString())
+                                progressBar.visibility = View.INVISIBLE
+                                submitBtn.isEnabled = true
+                                throw t!!
+                            }
+
+                            override fun onResponse(call: Call<ApiResponse>?, response: Response<ApiResponse>?) {
+                                Log.d(TAG, "OnResponse")
+                                updateUI(currentUser)
+                            }
+                        })
+                    }
                 }
             }else{
                 progressBar.visibility = View.INVISIBLE

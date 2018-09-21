@@ -3,8 +3,12 @@ package com.maidan.android.client.controllers
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -47,19 +51,14 @@ class DetailedVenueFragment : Fragment() {
     private lateinit var timeBtn: TextView
     private lateinit var clockImage: ImageView
     private lateinit var bookBtn: Button
-
-    private var availableSlotsFrom: ArrayList<Int>? = null
-    private var availableSlotsTo: ArrayList<Int>? = null
-
-    private var fromTimeSeconds: Int? = null
-    private var toTimeSeconds: Int? = null
+    private lateinit var getDirectionsBtn: Button
+    private lateinit var amenitiesRecyclerView: ListView
 
     //Model objects
     private lateinit var venue: Venue
     private var booking: Booking? = null
-    private var dateString: String? = null
-    private var timeString: String? = null
     private var bookings: ArrayList<Booking>? = null
+    private var today: Date? = null
 
     private val TAG = "DetailedVenueFragment"
 
@@ -93,6 +92,9 @@ class DetailedVenueFragment : Fragment() {
             Log.d(TAG, venue.toString())
             getAllBookingsOfThisVenue()
         }
+
+        val c = Calendar.getInstance()
+        today = c.time
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -113,6 +115,8 @@ class DetailedVenueFragment : Fragment() {
         timeBtn = view.findViewById(R.id.selectTime)
         clockImage = view.findViewById(R.id.clock)
         bookBtn = view.findViewById(R.id.book_btn)
+        amenitiesRecyclerView = view.findViewById(R.id.listOfAmenities)
+        getDirectionsBtn = view.findViewById(R.id.getDirections)
 
         bookBtn.letterSpacing = 0.3F
 
@@ -134,20 +138,37 @@ class DetailedVenueFragment : Fragment() {
         //book
         bookBtn.setOnClickListener {
 
-            if (timeString.isNullOrEmpty() || dateString.isNullOrEmpty()){
+            if (dateBtn.text.isEmpty() || timePicker.text.isEmpty()){
                 Log.d(TAG, "aa")
                 Toast.makeText(context, "Please set time and date for booking", Toast.LENGTH_LONG).show()
             }else{
-                val bookingDuration = overSpinner.selectedItem.toString()
-                val parsing = bookingDuration.split(" ")
-                toTimeSeconds = parsing[0].toInt()*3600
-                if (availabiltyCheck(fromTimeSeconds!!, toTimeSeconds!!)) {
+                Log.d(TAG, "Date ${dateBtn.text} - Time ${timePicker.text}")
+                val playHrs = overSpinner.selectedItem.toString().split(" ")
+
+                //Time date calculations
+                val temp = Calendar.getInstance()
+                //From Time
+                temp.time = DateFormat.getDateInstance(DateFormat.MEDIUM).parse(dateBtn.text.toString())
+                val time = timePicker.text.toString().split(":")
+                temp.set(Calendar.HOUR, time[0].toInt())
+                temp.set(Calendar.MINUTE, time[1].toInt())
+                val from = temp.time
+                val fromDate = DateFormat.getDateInstance(DateFormat.FULL).format(temp.time)
+                val fromTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(temp.time)
+
+                //To time
+                temp.set(Calendar.HOUR, (temp.get(Calendar.HOUR) + playHrs[0].toInt()))
+                val to = temp.time
+                val toTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(temp.time)
+                val toDate = DateFormat.getDateInstance(DateFormat.FULL).format(temp.time)
+                //Finish
+
+                if (slotCheck(from, to)) {
                     timePicker.error = null
                     timePicker.clearFocus()
 
-                    Log.d(TAG, "Duration $bookingDuration")
                     //Populate Booking object and pass it to receipt fragment
-                    booking = Booking(null, venue, null, loggedInUser, bookingDuration, timeString!!, dateString!!,null, "pending")
+                    booking = Booking(null, venue, null, loggedInUser, toTime, fromTime, fromDate,toDate, "booked", to, from)
 
                     Log.d(TAG, "Booking $booking")
 
@@ -155,80 +176,63 @@ class DetailedVenueFragment : Fragment() {
                     val receiptFragment = ReceiptFragment()
                     val args = Bundle()
                     args.putSerializable("booking", booking)
-
+                    args.putInt("playHrs", playHrs[0].toInt())
                     receiptFragment.arguments = args
 
                     fragmentManager!!.beginTransaction().addToBackStack("detailed venue fragment").replace(R.id.fragment_layout, receiptFragment).commit()
                 }else{
-                    Toast.makeText(context, "Your having clash with other booking change start time or change booking hours to fix it",Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "This slot is unavailable",Toast.LENGTH_LONG).show()
                     timePicker.error = "This slot is not available"
                     timePicker.requestFocus()
                 }
             }
         }
 
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
         // Date Selector
         dateBtn.setOnClickListener {
-            val c = Calendar.getInstance()
-            val year = c.get(Calendar.YEAR)
-            val month = c.get(Calendar.MONTH)
-            val day = c.get(Calendar.DAY_OF_MONTH)
-
-            dateString = DateFormat.getDateInstance(DateFormat.FULL).format(c.time)
-            //dateString = "$day/$month/$year"
 
             datePicker = DatePickerDialog(context,R.style.DatePickerTheme,
                     DatePickerDialog.OnDateSetListener { _, yr, monthOfYear, dayOfMonth ->
                         Log.d(TAG, "Year: $yr, Month $monthOfYear, Day: $dayOfMonth")
                         c.set(yr, monthOfYear, dayOfMonth)
-                        dateString = DateFormat.getDateInstance(DateFormat.FULL).format(c.time)
+                        val dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(c.time)
 
-                        checkingAvailabilitySlots(dateString!!)
+                        //checkingAvailabilitySlots(dateString!!)
                         //dateString = "$dayOfMonth/$monthOfYear/$yr"
                         dateBtn.text = dateString
                     },year,month,day)
             datePicker.datePicker.minDate = c.timeInMillis
             datePicker.show()
-            Log.d(TAG,dateString)
         }
 
         // Time Selector
         timePicker.setOnClickListener {
-            val c = Calendar.getInstance()
             val hourOfDay = c.get(Calendar.HOUR_OF_DAY)
             val minute = c.get(Calendar.MINUTE)
-
-            timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(c.time)
             // Launch Time Picker Dialog
             val timePickerDialog = TimePickerDialog(context,R.style.DatePickerTheme,
                     TimePickerDialog.OnTimeSetListener { _, hr, min ->
-                        val cc = Calendar.getInstance()
-                        cc.set(Calendar.HOUR_OF_DAY, hr)
-                        cc.set(Calendar.MINUTE, min)
 
-                        if (c.timeInMillis > cc.timeInMillis){
-                            timePicker.error = "Enter a valid time"
-                            timePicker.requestFocus()
-                        }else{
+                        c.set(Calendar.HOUR, hr)
+                        c.set(Calendar.MINUTE, min)
+
+                        if (today!! <= c.time){
                             timePicker.error = null
                             timePicker.clearFocus()
 
-                            fromTimeSeconds = ((hr*3600)+(min*60))
-
-                            if (!availabiltyFromCheck(fromTimeSeconds!!)){
-                                timePicker.error = "This slot is not available"
-                                timePicker.requestFocus()
-                            }else{
-                                timePicker.error = null
-                                timePicker.clearFocus()
-                            }
-                            timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(cc.time)
+                            val timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(c.time)
                             timePicker.text = timeString
+                        }else{
+                            timePicker.error = "Enter valid time"
+                            timePicker.requestFocus()
                         }
                     }, hourOfDay, minute, false)
 
             timePickerDialog.show()
-            Log.d(TAG, timeString)
         }
 
         // Dropdown list for overs
@@ -238,19 +242,42 @@ class DetailedVenueFragment : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         overSpinner.adapter = adapter
 
+        getDirectionsBtn.setOnClickListener {
+
+            val dialog = AlertDialog.Builder(context!!)
+            dialog.setTitle("Open google maps")
+                    .setMessage("This request is leading to open google maps")
+                    .setPositiveButton("Open") { _, _ ->
+                        val gmmIntentUri = Uri.parse("geo:0,0?q=${venue.getLocation().getLatitude()}" +
+                                ",${venue.getLocation().getLongitude()}")
+                        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                        if (mapIntent.resolveActivity(context!!.packageManager) != null){
+                            Log.d(TAG, "map intent")
+                            startActivity(mapIntent)
+                        }
+                    }
+                    .setNegativeButton("Cancel") { _, _ ->
+                        Log.d(TAG, "In show alert else")
+                    }
+            dialog.show()
+        }
+
         return view
     }
-
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         Log.d(TAG, "OnViewStateRestored")
         if (savedInstanceState != null){
             booking = savedInstanceState.getSerializable("booking") as Booking?
-            dateBtn.text = booking!!.getBookingDate()
+            val c = Calendar.getInstance()
+            c.time = DateFormat.getDateInstance(DateFormat.FULL).parse(booking!!.getBookingDate())
+            dateBtn.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(c.time)
             timePicker.text = booking!!.getStartTime()
         }else if (booking != null){
-            dateBtn.text = booking!!.getBookingDate()
+            val c = Calendar.getInstance()
+            c.time = DateFormat.getDateInstance(DateFormat.FULL).parse(booking!!.getBookingDate())
+            dateBtn.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(c.time)
             timePicker.text = booking!!.getStartTime()
         }else{
             Toast.makeText(context, "No state have saved", Toast.LENGTH_SHORT).show()
@@ -316,87 +343,19 @@ class DetailedVenueFragment : Fragment() {
         }
     }
 
-    private fun checkingAvailabilitySlots(date: String){
-        availableSlotsFrom = ArrayList()
-        availableSlotsTo = ArrayList()
-
-        var timeFrom:ArrayList<String>
-        var timeTo:ArrayList<String>
-        var temp = 0
-        if (bookings != null){
-            for (booking: Booking in bookings!!){
-                if (booking.getBookingDate() == date){
-                    //Parsing dates
-                    timeFrom = booking.getStartTime().split(":") as ArrayList<String>
-                    timeTo = booking.getDurationOfBooking().split(":") as ArrayList<String>
-
-                    //Converting dates in seconds to do some calculations
-                    val timeFromInSeconds = ((timeFrom[0].toInt() * 3600) + (timeFrom[1].toInt() * 60))
-                    val timeToInSeconds = ((timeTo[0].toInt() * 3600) + (timeTo[1].toInt() * 60))
-
-                    //Populating available slots list
-                    availableSlotsFrom!!.add(temp)
-                    availableSlotsTo!!.add(timeFromInSeconds)
-                    temp = timeToInSeconds
+    private fun slotCheck(from: Date?, to: Date?): Boolean {
+        var flag = true
+        var i = 0
+        if (bookings != null) {
+            while (i < bookings!!.size){
+                val startB = bookings!![i].getFrom()
+                val endB = bookings!![i].getTo()
+                if ((from!! <= endB) && (to!! >= startB)){
+                    flag = false
+                    break
                 }
+                i++
             }
-            if (availableSlotsFrom != null && availableSlotsTo != null){
-                availableSlotsFrom!!.add(temp)
-                availableSlotsTo!!.add(86400)
-
-                availableSlotsFrom!!.sort()
-                availableSlotsTo!!.sort()
-            }else {
-                availableSlotsFrom!!.add(0)
-                availableSlotsTo!!.add(86400)
-            }
-        }else{
-            availableSlotsFrom!!.add(0)
-            availableSlotsTo!!.add(86400)
-        }
-        Log.d(TAG, "Availability from $availableSlotsFrom")
-        Log.d(TAG, "Availability to $availableSlotsTo")
-    }
-
-    private fun availabiltyFromCheck(from: Int): Boolean{
-        var i = 0
-        var flag = false
-
-        while (i < availableSlotsFrom!!.size){
-            if (from >= availableSlotsFrom!![i]) {
-                if (from < availableSlotsTo!![i])
-                    flag = true
-            }
-            i++
-        }
-        return flag
-    }
-
-    private fun availabiltyToCheck(to: Int): Boolean{
-        var i = 0
-        var flag = false
-
-        while (i < availableSlotsTo!!.size){
-            if (to < availableSlotsTo!![i]) {
-                if (to >= availableSlotsFrom!![i])
-                    flag = true
-            }
-            i++
-        }
-        return flag
-    }
-
-    private fun availabiltyCheck(from:Int, to:Int): Boolean{
-        val count = if (availableSlotsFrom!!.size > availableSlotsTo!!.size) availableSlotsFrom!!.size else availableSlotsTo!!.size
-        var i = 0
-        var flag = false
-
-        while (i < count){
-            if (from >= availableSlotsFrom!![i]) {
-                if (to <= availableSlotsTo!![i])
-                    flag = true
-            }
-            i++
         }
         return flag
     }

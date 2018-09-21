@@ -16,6 +16,7 @@ import com.maidan.android.client.controllers.FavoritesFragment
 import com.maidan.android.client.controllers.SettingsFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
+import com.maidan.android.client.controllers.MyBookings
 import com.maidan.android.client.controllers.login.SignupDetailsFragment
 import com.maidan.android.client.models.User
 import com.maidan.android.client.retrofit.ApiInterface
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_favorites -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, FavoritesFragment()).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_layout, MyBookings()).commit()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_settings-> {
@@ -140,7 +141,7 @@ class MainActivity : AppCompatActivity() {
         outState!!.putSerializable("loggedInUser", loggedInUser)
     }
 
-    private fun showProgressDialog() {
+    fun showProgressDialog() {
         val builder = AlertDialog.Builder(this)
         val dialogView = layoutInflater.inflate(R.layout.progress_dialog, null)
         val loader = dialogView.findViewById<ImageView>(R.id.loadingProgressbar)
@@ -156,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
-    private fun hideProgressDialog(){
+    fun hideProgressDialog(){
         animation.stop()
         dialog!!.dismiss()
         window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)

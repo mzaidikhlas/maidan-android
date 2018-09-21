@@ -36,6 +36,11 @@ interface ApiInterface {
             @Path("id") id: String,
             @Header("Authorization") idToken: String): Call<ApiResponse>
 
+    @GET("booking/getUserBookings/{id}")
+    fun getUserBookings(
+            @Path("id") id: String,
+            @Header("Authorization") idToken: String): Call<ApiResponse>
+
     //Venue Routes
     @GET("venue/selectedVenues")
         fun getVenues(

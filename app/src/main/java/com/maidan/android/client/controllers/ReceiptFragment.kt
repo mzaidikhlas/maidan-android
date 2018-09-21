@@ -28,6 +28,7 @@ import java.util.*
 
 class ReceiptFragment : Fragment() {
     private lateinit var booking: Booking
+    private var playHrs: Int? = 0
 
     private val TAG = "VenueReceiptFragment"
 
@@ -59,6 +60,7 @@ class ReceiptFragment : Fragment() {
 
         if (!arguments!!.isEmpty){
             booking = arguments!!.getSerializable("booking") as Booking
+            playHrs = arguments!!.getInt("playHrs")
         }
         else
             Log.d(TAG, "Empty")
@@ -94,28 +96,16 @@ class ReceiptFragment : Fragment() {
         invoiceIdTxt.text = "#001"
         customerNameTxt.text = booking.getUser().getName()
         venueNameTxt.text = booking.getVenue().getName()
-        receiptBookingHoursTxt.text = booking.getDurationOfBooking()
-
+        receiptBookingHoursTxt.text = "${playHrs!!.toDouble()} hours"
         val date = DateFormat.getDateInstance(DateFormat.FULL).parse(booking.getBookingDate())
         receiptBookingDateTxt.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date)
-
-        val hours = booking.getDurationOfBooking().split(" ")
-
-        rc.set(Calendar.HOUR_OF_DAY, hours[0].toInt())
-        rc.set(Calendar.MINUTE, 0)
-        rc.set(Calendar.SECOND, 0)
-
-        val newTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(rc.time)
-        receiptBookingTimeTxt.text = "${booking.getStartTime()} - $newTime"
+        receiptBookingTimeTxt.text = "${booking.getStartTime()} - ${booking.getDurationOfBooking()}"
 
         //Calculating rate
         val perhr: Int = booking.getVenue().getRate().getPerHrRate()
         val serviceFeePercent = booking.getVenue().getRate().getVendorServiceFee()
 
-        val temp = booking.getDurationOfBooking().split(" ")
-        val playhrs: Int = temp[0].toInt()
-
-        val actualPrice = playhrs * perhr
+        val actualPrice = playHrs!! * perhr
         var serviceFee = serviceFeePercent/ 100.toFloat()
 
         serviceFee *= actualPrice
@@ -131,54 +121,13 @@ class ReceiptFragment : Fragment() {
                 progressBar.visibility = View.VISIBLE
                 payBtn.isEnabled = false
 
-                booking.setTransaction(Transaction(serviceFee, playhrs.toFloat(), actualPrice.toFloat(), totalSum, 0.toFloat()
-                        , "maualCashReciving", "maidan-customer"))
-
-                val st = booking.getStartTime().split(":")
-
-                val stSecs = ((st[0].toInt()*3600) + (st[1].toInt()*60))
-
-                var toSecs = (stSecs + (playhrs*3600))
-                Log.d(TAG, "To seconds $toSecs")
-
-                val c = Calendar.getInstance()
-                c.time = DateFormat.getDateInstance(DateFormat.FULL).parse(booking.getBookingDate())
-
-                if (toSecs > 86400){
-                    toSecs -= 86400
-                    Log.d(TAG, "in here")
-
-                    toSecs /= 3600
-                    c.set(Calendar.HOUR_OF_DAY, toSecs)
-                    c.set(Calendar.MINUTE, 0)
-                    c.set(Calendar.SECOND, 0)
-
-                    c.add(Calendar.DATE, 1)
-
-                    val newDate = DateFormat.getDateInstance(DateFormat.FULL).format(c.time)
-                    Log.d(TAG, "New date $newDate")
-                    booking.setToBookingDate(newDate)
-                }else{
-                    toSecs /= 3600
-                    c.set(Calendar.HOUR_OF_DAY, toSecs)
-                    c.set(Calendar.MINUTE, 0)
-                    c.set(Calendar.SECOND, 0)
-                    booking.setToBookingDate(booking.getBookingDate())
-                }
-                val toTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(c.time)
-                Log.d(TAG, "New to time $toTime")
-                booking.setDurationOfBooking(toTime)
+                booking.setTransaction(Transaction(serviceFee, playHrs!!.toFloat(), actualPrice.toFloat(), totalSum, 0.toFloat()
+                        , "manualCashReceiving", "maidan-customer"))
 
                 mAuth.currentUser!!.getIdToken(true).addOnCompleteListener {task ->
                     if (task.isSuccessful){
                         val idToken = task.result.token
-
                         Log.d(TAG, "Token Receipt $idToken")
-
-                        val gson = Gson()
-                        val bookingJson = gson.toJson(booking)
-                        Log.d(TAG, "Booking $booking")
-                        Log.d(TAG, "Booking json $bookingJson")
 
                         val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
                         val call: Call<ApiResponse> = apiService.createBooking(idToken!!, booking)

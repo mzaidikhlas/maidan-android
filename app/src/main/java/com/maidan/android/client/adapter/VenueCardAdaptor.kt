@@ -41,7 +41,6 @@ class VenueCardAdaptor(private val venues: ArrayList<Venue>, private val fragmen
             val detailedVenueFragment = DetailedVenueFragment()
             val args = Bundle()
             args.putSerializable("venue", venue)
-
             detailedVenueFragment.arguments = args
 
             fragmentManager.beginTransaction().addToBackStack("venue fragment").replace(R.id.fragment_layout, detailedVenueFragment).commit()

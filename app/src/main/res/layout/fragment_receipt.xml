@@ -60,7 +60,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="24dp"
             android:text="#001"
-            android:textSize="18sp"
+            android:textSize="22sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptCustomerName"
             app:layout_constraintStart_toEndOf="@+id/receiptUserImage"
             app:layout_constraintTop_toTopOf="parent" />
@@ -72,7 +72,7 @@
             android:layout_marginBottom="63dp"
             android:layout_marginStart="8dp"
             android:text="John Doe"
-            android:textSize="18sp"
+            android:textSize="22sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptVenueName"
             app:layout_constraintStart_toEndOf="@+id/receiptUserImage"
             app:layout_constraintTop_toBottomOf="@+id/invoiceId" />
@@ -85,7 +85,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginTop="24dp"
             android:text="11 July, 2018"
-            android:textSize="18sp"
+            android:textSize="22sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptTime"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -97,7 +97,7 @@
             android:layout_marginBottom="63dp"
             android:layout_marginEnd="8dp"
             android:text="12:51 PM"
-            android:textSize="18sp"
+            android:textSize="22sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptVenueName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/receiptDate" />
@@ -106,15 +106,12 @@
             android:id="@+id/receiptVenueName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="50dp"
             android:text="Model Town Greens"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/receiptBookingDate"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/receiptUserImage" />
 
@@ -124,9 +121,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="11 July, 2018"
-            android:textSize="18sp"
+            android:textSize="22sp"
             app:layout_constraintBottom_toTopOf="@+id/receiptBookingHours"
-            app:layout_constraintEnd_toStartOf="@+id/receiptBookingTime"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/receiptVenueName" />
 
@@ -248,14 +244,9 @@
             android:id="@+id/receiptBookingTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
-            android:layout_marginEnd="110dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
             android:text="8AM - 12PM"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toTopOf="@+id/totalPerHourPrice"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="22sp"
             app:layout_constraintStart_toEndOf="@+id/receiptBookingDate"
             app:layout_constraintTop_toBottomOf="@+id/receiptVenueName" />
     </android.support.constraint.ConstraintLayout>

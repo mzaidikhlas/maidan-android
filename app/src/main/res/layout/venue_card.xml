@@ -8,25 +8,23 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/categoryCard"
+        style="@style/curves"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        style="@style/curves">
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
+            style="@style/curves"
             android:layout_width="159dp"
-            android:layout_height="199dp"
-            style="@style/curves">
+            android:layout_height="199dp">
 
             <ImageView
                 android:id="@+id/ground"
-                android:layout_width="383dp"
+                android:layout_width="0dp"
                 android:layout_height="110dp"
                 android:layout_marginBottom="20dp"
                 android:background="@color/grey"
@@ -107,9 +105,9 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="12dp"
+                android:fontFamily="@font/montserrat_regular"
                 android:padding="3dp"
                 android:text="Rs1500"
-                android:fontFamily="@font/montserrat_regular"
                 android:textAlignment="center"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -143,8 +141,8 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="8dp"
-                android:text="min. 3 hrs"
                 android:fontFamily="@font/montserrat_regular"
+                android:text="min. 3 hrs"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"

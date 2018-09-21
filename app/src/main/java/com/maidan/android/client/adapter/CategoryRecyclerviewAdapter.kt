@@ -1,6 +1,6 @@
 package com.maidan.android.client.adapter
 
-import android.content.res.Resources
+import android.content.Context
 import android.graphics.Color
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
@@ -11,21 +11,23 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.maidan.android.client.R
+import com.maidan.android.client.controllers.BookingFragment
 import com.maidan.android.client.models.Category
 import com.squareup.picasso.Picasso
 import java.util.ArrayList
-import kotlin.coroutines.experimental.coroutineContext
 
-class CategoryRecyclerviewAdapter(val categoryList: ArrayList<Category>) : RecyclerView.Adapter<CategoryRecyclerviewAdapter.ViewHolder>() {
+class CategoryRecyclerviewAdapter(private val categoryList: ArrayList<Category>, private val fragment: BookingFragment) : RecyclerView.Adapter<CategoryRecyclerviewAdapter.ViewHolder>() {
 
     private var ROW_INDEX = -1
     private lateinit var image: ImageView
     private var selectedItem  = 0
+    private lateinit var context: Context
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.booking_category, parent, false)
-        return ViewHolder(view);
+        context = parent.context
+        return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
@@ -34,7 +36,7 @@ class CategoryRecyclerviewAdapter(val categoryList: ArrayList<Category>) : Recyc
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val categoryItem: Category = categoryList[position];
+        val categoryItem: Category = categoryList[position]
         holder.textViewName.text = categoryItem.name
         Log.d("TAG",position.toString())
 
@@ -49,6 +51,7 @@ class CategoryRecyclerviewAdapter(val categoryList: ArrayList<Category>) : Recyc
         holder.itemlayout.setOnClickListener {
             ROW_INDEX = holder.adapterPosition
             notifyDataSetChanged()
+            fragment.updateMaps(categoryItem.name)
         }
 
         if (ROW_INDEX == holder.adapterPosition) {
@@ -61,12 +64,14 @@ class CategoryRecyclerviewAdapter(val categoryList: ArrayList<Category>) : Recyc
             holder.textViewName.setTextColor(Color.parseColor("#000000"))
             //  holder.textViewName.setTextColor(Color.parseColor("#FFFFFF"))
         }
-        if (ROW_INDEX == -1){
-            if ((categoryList.size/2) == holder.adapterPosition) {
-                Log.d("Adapter: Init", " ${(categoryList.size/2)} - ${holder.adapterPosition}")
-                holder.itemlayout.setBackgroundResource(R.drawable.gradient)
-                holder.textViewName.setTextColor(Color.parseColor("#FFFFFF"))
-            }
+        if ((ROW_INDEX == -1) && (categoryItem.name == "Cricket")){
+            holder.itemlayout.setBackgroundResource(R.drawable.gradient)
+            holder.textViewName.setTextColor(Color.parseColor("#FFFFFF"))
+//            if ((categoryList.size/2) == holder.adapterPosition) {
+//                Log.d("Adapter: Init", " ${(categoryList.size/2)} - ${holder.adapterPosition}")
+//                holder.itemlayout.setBackgroundResource(R.drawable.gradient)
+//                holder.textViewName.setTextColor(Color.parseColor("#FFFFFF"))
+//            }
         }
     }
 
