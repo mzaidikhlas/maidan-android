@@ -176,7 +176,7 @@ class LoginFragment : Fragment() {
                             user.getIdToken(true)
                                     .addOnCompleteListener { task2 ->
                                         if (task2.isSuccessful) {
-                                            val idToken = task2.result.token
+                                            val idToken = task2.result!!.token
                                             Log.d("User", idToken)
 
                                             val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)

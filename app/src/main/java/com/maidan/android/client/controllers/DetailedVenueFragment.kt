@@ -4,12 +4,13 @@ package com.maidan.android.client.controllers
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,7 +53,7 @@ class DetailedVenueFragment : Fragment() {
     private lateinit var clockImage: ImageView
     private lateinit var bookBtn: Button
     private lateinit var getDirectionsBtn: Button
-    private lateinit var amenitiesRecyclerView: ListView
+    private lateinit var amenitiesView: LinearLayout
 
     //Model objects
     private lateinit var venue: Venue
@@ -115,7 +116,7 @@ class DetailedVenueFragment : Fragment() {
         timeBtn = view.findViewById(R.id.selectTime)
         clockImage = view.findViewById(R.id.clock)
         bookBtn = view.findViewById(R.id.book_btn)
-        amenitiesRecyclerView = view.findViewById(R.id.listOfAmenities)
+        amenitiesView = view.findViewById(R.id.listOfAmenities)
         getDirectionsBtn = view.findViewById(R.id.getDirections)
 
         bookBtn.letterSpacing = 0.3F
@@ -262,6 +263,24 @@ class DetailedVenueFragment : Fragment() {
             dialog.show()
         }
 
+        //Creating Amenities layout
+        if (venue.getAmenities() != null){
+            venue.getAmenities()!!.map {item ->
+                val textView = TextView(context)
+                val drawable = when(item.imageView) {
+                    "clock" -> R.drawable.clock_1
+                    "toilet" -> R.drawable.marker
+                    else -> R.drawable.clock_1
+                }
+                textView.text = item.name
+                textView.setPadding(0, 4, 0, 0)
+                textView.setCompoundDrawablesWithIntrinsicBounds(drawable, 0,0,0)
+                textView.gravity = Gravity.CENTER
+                textView.setTextColor(Color.GRAY)
+                textView.textSize = 18F
+                amenitiesView.addView(textView)
+            }
+        }
         return view
     }
 
@@ -293,7 +312,7 @@ class DetailedVenueFragment : Fragment() {
     private fun getAllBookingsOfThisVenue(){
         currentUser.getIdToken(true).addOnCompleteListener { task ->
             if (task.isSuccessful){
-                val idToken = task.result.token
+                val idToken = task.result!!.token
                 Log.d(TAG, "id ${venue.getRef()}")
                 Log.d(TAG, "token $idToken")
                 val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
@@ -315,7 +334,6 @@ class DetailedVenueFragment : Fragment() {
 
                                         Log.d(TAG, "Payload $payload")
                                         var booking: Booking
-
                                         for (item: PayloadFormat in payload!!) {
                                             val jsonObject = gson.toJsonTree(item.getData()).asJsonObject
                                             Log.d(TAG, "Json$jsonObject")

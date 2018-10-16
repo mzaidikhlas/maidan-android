@@ -3,7 +3,7 @@ package com.maidan.android.client.models
 import java.io.Serializable
 
 data class Venue(private var ref: String, private var name: String, private var location: Location, private var pictures: ArrayList<String>?,
-                 private var verified: Boolean, private var amenities: Amenities, private var reviews: Reviews,
+                 private var verified: Boolean, private var amenities: ArrayList<Amenities>?, private var reviews: Reviews,
                  private var ownerDocId: String, private var activityType: String, private var rate: Rate,
                  private var minBookingHour: Int, private var createdAt: String, private var updatedAt: String): Serializable {
 
@@ -14,7 +14,7 @@ data class Venue(private var ref: String, private var name: String, private var 
     fun getLocation(): Location {return this.location}
     fun getPictures(): ArrayList<String>?{return this.pictures}
     fun getVerified(): Boolean{return this.verified}
-    fun getAmenities(): Amenities {return this.amenities}
+    fun getAmenities(): ArrayList<Amenities>? {return this.amenities}
     fun getReviews(): Reviews {return this.reviews}
     fun getActivityType(): String{return this.activityType}
     fun getRate(): Rate {return this.rate}
@@ -29,7 +29,7 @@ data class Venue(private var ref: String, private var name: String, private var 
     fun setLocation(location: Location){this.location = location}
     fun setPictures(pictures: ArrayList<String>){this.pictures = pictures}
     fun setVerified(verified: Boolean){this.verified = verified}
-    fun setAmenities(amenities: Amenities){this.amenities = amenities}
+    fun setAmenities(amenities: ArrayList<Amenities>){this.amenities = amenities}
     fun setReviews(reviews: Reviews){this.reviews = reviews}
     fun setActivityType(activityType: String){this.activityType = activityType}
     fun setRate(rate: Rate){this.rate = rate}

@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 user.getIdToken(true).addOnCompleteListener { task ->
                     Log.d(TAG, "Calls 1")
                     if (task.isSuccessful) {
-                        val idToken = task.result.token
+                        val idToken = task.result!!.token
                         val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
                         val call: Call<ApiResponse> = apiService.getUserInfoByEmail(idToken!!)
                         call.enqueue(object : Callback<ApiResponse> {

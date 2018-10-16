@@ -54,7 +54,7 @@ class MyBookings : Fragment() {
         showProgressDialog()
         currentUser.getIdToken(true).addOnCompleteListener { task ->
             if (task.isSuccessful){
-                val idToken = task.result.token
+                val idToken = task.result!!.token
                 val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
                 val call: Call<ApiResponse> = apiService.getUserBookings(loggedInUser.getId()!!, idToken!!)
                 call.enqueue(object: Callback<ApiResponse>{

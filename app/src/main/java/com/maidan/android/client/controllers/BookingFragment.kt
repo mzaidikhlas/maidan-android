@@ -4,6 +4,11 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -24,7 +29,6 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.google.android.gms.location.*
 import android.location.LocationManager
-import android.net.Uri
 import android.provider.Settings
 import android.support.v7.app.AlertDialog
 import android.widget.*
@@ -51,6 +55,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
     private lateinit var mMap: GoogleMap
     private lateinit var markerOptions: MarkerOptions
     private lateinit var mapView: FrameLayout
+    private lateinit var markerLayout: View
 
     //Log Tag
     private val TAG = "BookingFragment"
@@ -113,6 +118,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                               savedInstanceState:    Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_booking, container, false)
+        markerLayout = (activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.custom_marker_layout, null)
 
         mapView = view.findViewById(R.id.mapBooking)
         selectDate = view.findViewById(R.id.selectDateCalendar)
@@ -154,6 +160,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         categories.add(Category(R.drawable.swimming, "Horse Riding"))
 
         recyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayout.HORIZONTAL, false)
+        recyclerView.isNestedScrollingEnabled = false
         recyclerView.adapter = CategoryRecyclerviewAdapter(categories, this)
 //        val middleOfView = (categories.size)/2
 //        Log.d("POSITION", middleOfView.toString())
@@ -206,7 +213,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         currentUser.getIdToken(true)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        val idToken = task.result.token
+                        val idToken = task.result!!.token
                         Log.d("User", idToken)
 
                         val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
@@ -226,6 +233,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                             payload = response.body()!!.getPayload()
 
                                             if (payload.isNotEmpty()){
+
                                                 var venue: Venue?
                                                 Log.d(TAG, "Payload$payload")
                                                 for (item: PayloadFormat in payload){
@@ -235,20 +243,20 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                                                     venue.setRef(item.getDocId())
                                                     Log.d(TAG, venue.toString())
                                                     if (venue!!.getActivityType() == categoryName){
+
+                                                        val bm = getMarkerBitmapFromView(markerLayout, venue.getRate().getPerHrRate().toString())
                                                         val latLng = LatLng(venue.getLocation().getLatitude(), venue.getLocation().getLongitude())
                                                         markerOptions = MarkerOptions()
                                                                 .position(latLng)
                                                                 .title(venue.getName())
                                                                 .snippet(venue.getRef())
-                                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.venue_marker))
+                                                                .icon(BitmapDescriptorFactory.fromBitmap(bm))
                                                         mMap.addMarker(markerOptions)
                                                         Log.d(TAG, "Venues markers $latLng")
                                                         boundsBuilder!!.include(latLng)
                                                     }
                                                     venues.add(venue)
                                                 }
-//                                                if (boundsBuilder != null)
-                                                //}
                                             }
                                             bounds = boundsBuilder!!.build()
                                             try{
@@ -266,7 +274,6 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
                             }
                         })
                     } else {
-                        // Handle error -> task.getException();
                         Log.d(TAG, "Task Exception ${task.exception}")
                         throw task.exception!!
                     }
@@ -277,6 +284,24 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
         //fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         super.onStop()
     }
+
+
+    private fun getMarkerBitmapFromView(view: View, priceText: String): Bitmap{
+        view.findViewById<TextView>(R.id.priceTextView).text = priceText
+//        view.findViewById<ImageView>(R.id.ImageView01).setImageResource(R.drawable.marker_)
+        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+        view.buildDrawingCache()
+        val returnedBitmap = Bitmap.createBitmap(view.measuredWidth, view.measuredHeight,
+        Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(returnedBitmap)
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN)
+        view.background?.draw(canvas)
+        view.draw(canvas)
+
+        return returnedBitmap
+    }
+
 
     private fun buildLocationCallback() {
         Log.d(TAG, "buildLocationCallback")
@@ -489,11 +514,11 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
 //                setMarkers()
 //
 //                mMap.setInfoWindowAdapter(object: GoogleMap.InfoWindowAdapter{
-//                    override fun getInfoContents(p0: Marker?): View {
+//                    override fun getInfoContents(p0: marker?): View {
 //                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 //                    }
 //
-//                    override fun getInfoWindow(p0: Marker?): View {
+//                    override fun getInfoWindow(p0: marker?): View {
 //                        val v: View = View.inflate(context,R.layout.map_info_window, null)
 //
 //                        //val image: ImageView = v.findViewById(R.id.infoWindowImageview)
@@ -513,7 +538,7 @@ class BookingFragment : Fragment(), OnMapReadyCallback{
 //                    }
 //
 //                })
-//                mMap.setOnInfoWindowClickListener {p0: Marker? ->
+//                mMap.setOnInfoWindowClickListener {p0: marker? ->
 //                    Log.d(TAG, "geo:$latitude,$longitude?q=${p0!!.position.latitude},${p0.position.longitude}")
 //                    val gmmIntentUri = Uri.parse("geo:0,0?q=${p0.position.latitude},${p0.position.longitude}")
 //                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)

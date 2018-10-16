@@ -164,7 +164,7 @@ class SignupDetailsFragment : Fragment() {
                 }
                 if (flag){
                     currentUser.getIdToken(true).addOnCompleteListener { task ->
-                        val idToken = task.result.token
+                        val idToken = task.result!!.token
 
                         val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
 

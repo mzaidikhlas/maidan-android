@@ -86,7 +86,7 @@
             android:layout_height="21dp"
             android:layout_marginEnd="8dp"
             android:fontFamily="@font/raleway_regular"
-            android:text="min. 3 hrs"
+            android:text="min. 1 hrs"
             android:textColor="@color/unimpColor"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -174,16 +174,12 @@
         <View
             android:id="@+id/divider"
             style="@style/Divider"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/book_btn"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/book_btn" />
 
         <TextView
             android:id="@+id/amenities"
@@ -191,7 +187,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="32dp"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:letterSpacing=".20"
             android:text="AMENITIES"
             android:textColor="@color/black"
@@ -201,8 +197,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
-        <ListView
+        <LinearLayout
             android:id="@+id/listOfAmenities"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -214,7 +211,7 @@
             app:layout_constraintTop_toBottomOf="@+id/amenities">
 
 
-        </ListView>
+        </LinearLayout>
 
         <Button
             android:id="@+id/getDirections"

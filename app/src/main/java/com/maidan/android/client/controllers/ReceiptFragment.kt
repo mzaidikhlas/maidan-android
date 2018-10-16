@@ -126,7 +126,7 @@ class ReceiptFragment : Fragment() {
 
                 mAuth.currentUser!!.getIdToken(true).addOnCompleteListener {task ->
                     if (task.isSuccessful){
-                        val idToken = task.result.token
+                        val idToken = task.result!!.token
                         Log.d(TAG, "Token Receipt $idToken")
 
                         val apiService: ApiInterface = RetrofitClient.instance.create(ApiInterface::class.java)
