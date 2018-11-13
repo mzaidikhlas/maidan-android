@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.maidan.android.client.R
 import com.maidan.android.client.models.Booking
 import com.squareup.picasso.Picasso
+import java.text.DateFormat
 import java.util.ArrayList
 
 class BookingScheduleAdapter(private val bookingSchedule: ArrayList<Booking>) : RecyclerView.Adapter<BookingScheduleAdapter.ViewHolder>() {
@@ -31,8 +32,8 @@ class BookingScheduleAdapter(private val bookingSchedule: ArrayList<Booking>) : 
         }
 
         holder.venue.text = bookingItem.getVenue().getName()
-        holder.date.text = bookingItem.getBookingDate()
-        holder.time.text = bookingItem.getStartTime()
+        holder.date.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(bookingItem.getFrom())
+        holder.time.text = DateFormat.getTimeInstance(DateFormat.SHORT).format(bookingItem.getFrom())
         holder.statusBooking.text  = bookingItem.getStatus()
         holder.amount.text = bookingItem.getTransaction()!!.getTotal().toString()
     }

@@ -150,18 +150,18 @@ class DetailedVenueFragment : Fragment() {
                 val temp = Calendar.getInstance()
                 //From Time
                 temp.time = DateFormat.getDateInstance(DateFormat.MEDIUM).parse(dateBtn.text.toString())
+
                 val time = timePicker.text.toString().split(":")
                 temp.set(Calendar.HOUR, time[0].toInt())
-                temp.set(Calendar.MINUTE, time[1].toInt())
+
+                val min = time[1].split(" ")
+                temp.set(Calendar.MINUTE, min[0].toInt())
                 val from = temp.time
-                val fromDate = DateFormat.getDateInstance(DateFormat.FULL).format(temp.time)
-                val fromTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(temp.time)
 
                 //To time
                 temp.set(Calendar.HOUR, (temp.get(Calendar.HOUR) + playHrs[0].toInt()))
                 val to = temp.time
-                val toTime = DateFormat.getTimeInstance(DateFormat.SHORT).format(temp.time)
-                val toDate = DateFormat.getDateInstance(DateFormat.FULL).format(temp.time)
+
                 //Finish
 
                 if (slotCheck(from, to)) {
@@ -169,7 +169,7 @@ class DetailedVenueFragment : Fragment() {
                     timePicker.clearFocus()
 
                     //Populate Booking object and pass it to receipt fragment
-                    booking = Booking(null, venue, null, loggedInUser, toTime, fromTime, fromDate,toDate, "booked", to, from)
+                    booking = Booking(null, venue, null, loggedInUser,"booked", to, from)
 
                     Log.d(TAG, "Booking $booking")
 
@@ -201,9 +201,6 @@ class DetailedVenueFragment : Fragment() {
                         Log.d(TAG, "Year: $yr, Month $monthOfYear, Day: $dayOfMonth")
                         c.set(yr, monthOfYear, dayOfMonth)
                         val dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(c.time)
-
-                        //checkingAvailabilitySlots(dateString!!)
-                        //dateString = "$dayOfMonth/$monthOfYear/$yr"
                         dateBtn.text = dateString
                     },year,month,day)
             datePicker.datePicker.minDate = c.timeInMillis
@@ -287,19 +284,21 @@ class DetailedVenueFragment : Fragment() {
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         Log.d(TAG, "OnViewStateRestored")
-        if (savedInstanceState != null){
-            booking = savedInstanceState.getSerializable("booking") as Booking?
-            val c = Calendar.getInstance()
-            c.time = DateFormat.getDateInstance(DateFormat.FULL).parse(booking!!.getBookingDate())
-            dateBtn.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(c.time)
-            timePicker.text = booking!!.getStartTime()
-        }else if (booking != null){
-            val c = Calendar.getInstance()
-            c.time = DateFormat.getDateInstance(DateFormat.FULL).parse(booking!!.getBookingDate())
-            dateBtn.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(c.time)
-            timePicker.text = booking!!.getStartTime()
-        }else{
-            Toast.makeText(context, "No state have saved", Toast.LENGTH_SHORT).show()
+        when {
+            savedInstanceState != null -> {
+                booking = savedInstanceState.getSerializable("booking") as Booking?
+                val c = Calendar.getInstance()
+                c.time = booking!!.getFrom()
+                dateBtn.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(c.time)
+                timePicker.text = DateFormat.getTimeInstance(DateFormat.SHORT).format(c.time)
+            }
+            booking != null -> {
+                val c = Calendar.getInstance()
+                c.time = booking!!.getFrom()
+                dateBtn.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(c.time)
+                timePicker.text = DateFormat.getTimeInstance(DateFormat.SHORT).format(c.time)
+            }
+            else -> Toast.makeText(context, "No state have saved", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -364,6 +363,8 @@ class DetailedVenueFragment : Fragment() {
     private fun slotCheck(from: Date?, to: Date?): Boolean {
         var flag = true
         var i = 0
+        Log.d(TAG, "From: $from ---- To: $to")
+        Log.d(TAG, "StartFrom: $from ---- StartTo: $to")
         if (bookings != null) {
             while (i < bookings!!.size){
                 val startB = bookings!![i].getFrom()

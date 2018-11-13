@@ -1,6 +1,5 @@
 package com.maidan.android.client.controllers
 
-import android.graphics.drawable.shapes.RoundRectShape
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.gson.Gson
 
 import com.maidan.android.client.R
 import com.maidan.android.client.models.Booking
@@ -97,9 +95,10 @@ class ReceiptFragment : Fragment() {
         customerNameTxt.text = booking.getUser().getName()
         venueNameTxt.text = booking.getVenue().getName()
         receiptBookingHoursTxt.text = "${playHrs!!.toDouble()} hours"
-        val date = DateFormat.getDateInstance(DateFormat.FULL).parse(booking.getBookingDate())
-        receiptBookingDateTxt.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date)
-        receiptBookingTimeTxt.text = "${booking.getStartTime()} - ${booking.getDurationOfBooking()}"
+        //val date = DateFormat.getDateInstance(DateFormat.FULL).parse(booking.getBookingDate())
+        receiptBookingDateTxt.text = DateFormat.getDateInstance(DateFormat.MEDIUM).format(booking.getFrom())
+        receiptBookingTimeTxt.text = "${DateFormat.getTimeInstance(DateFormat.SHORT).format(booking.getFrom())}" +
+                " - ${DateFormat.getTimeInstance(DateFormat.SHORT).format(booking.getTo())}"
 
         //Calculating rate
         val perhr: Int = booking.getVenue().getRate().getPerHrRate()
